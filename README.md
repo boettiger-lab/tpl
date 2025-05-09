@@ -1,6 +1,6 @@
 ---
-title: Tpl
-emoji: 💻
+title: TPL
+emoji: 🌳
 colorFrom: indigo
 colorTo: blue
 sdk: streamlit

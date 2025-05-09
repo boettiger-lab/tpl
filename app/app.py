@@ -356,7 +356,7 @@ db_uri = "duckdb:///my.duckdb"
 engine = create_engine(db_uri) #connect_args={'read_only': True})
 con = engine.connect()
 con.execute("install spatial; load spatial;")
-con.execute(f"create or replace table protected as select *, st_geomfromwkb(geom) as geometry from read_parquet('{parquet}');").fetchall()
+con.execute(f"create or replace table protected as select *, geom as geometry from read_parquet('{parquet}');").fetchall()
 db = SQLDatabase(engine, view_support=True)
 
 from langchain_openai import ChatOpenAI 

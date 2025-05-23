@@ -1,5 +1,5 @@
 leafmap[maplibre]==0.38.12
-streamlit==1.44.1
+streamlit==1.45.1
 ibis-framework[duckdb]==10.3.1
 lonboard==0.10.4
 altair==5.3.0

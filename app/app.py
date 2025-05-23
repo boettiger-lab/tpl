@@ -228,4 +228,9 @@ with col3:
 
 # # +
 
+st.divider()
 
+st.markdown('''
+## Data Sources
+PRIVATE DRAFT.  Developed at UC Berkeley. All data copyright to Trust for Public Land.  See <https://conservationalmanac.org/> for details.
+''')

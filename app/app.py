@@ -29,7 +29,7 @@ with st.sidebar:
 
     # st.markdown("Filters")
     year_range = st.slider(
-    "Acquisition Year", min_value = 1998, max_value = 2021, value=(1998, 2021)
+    "Year", min_value = 1988, max_value = 2025, value=(1988, 2025)
 )
     st.divider()
 
@@ -204,9 +204,10 @@ with st.container():
     col2.metric(label=f"Private", value=f"${private_dollars:,}", delta = f"{private_delta:}%")
     col3.metric(label=f"Total", value=f"${total_dollars:,}")    
 
+st.markdown('#')
 
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 with col1:
     # st.markdown('Protected Area Cost')
     gdf_tpl = group_data(gdf, 'Acquisition Cost')
@@ -217,14 +218,12 @@ with col2:
     gdf_landvote = group_data(gdf_landvote.filter(_.measure_status == 'Pass'), 'Measure Cost')
     get_bar(gdf_landvote, style_choice, 'year', 'total_amount', paint, 'Year','Funds Approved ($)','Yearly funds from conservation ballot measures')
 
-area_totals = get_area_totals(gdf, 'year')
+# area_totals = get_area_totals(gdf, 'year')
 # timeseries = calc_timeseries(gdf, column)
 
 
-with col3:
-    
-    "Total Area protected (hectares):"
-    st.altair_chart(bar(area_totals, 'year', paint))
+# "Total Area protected (hectares):"
+# st.altair_chart(bar(area_totals, 'year', paint))
 
 # # +
 

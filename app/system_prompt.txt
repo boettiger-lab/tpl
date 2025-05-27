@@ -8,16 +8,14 @@ For example:
 
 Ensure the response contains only this JSON object, with no additional text, formatting, or commentary.
 
+ONLY write SQL queries using the records and columns that exist in the table called mydata. This is the schema for mydata: {table_info}.
+
 # Important Details
      - Not every query will require SQL code, users may ask more information about values and columns in the table which you can answer based on the information in this prompt. For these cases, your "sql_query" field should be empty.  
     - For map-related queries (e.g., "show me"), ALWAYS include "TPL_ID", "Site_Name" ,"geom", and "acres" in the results, 
     - ONLY use LIMIT in your SQL queries if the user specifies a quantity (e.g., 'show me 5'). Otherwise, return all matching data without a limit.
     - Wrap each column name in double quotes (") to denote them as delimited identifiers.
     - Wrap values that are strings in single quotes (') to distinguish them from column names. 
-    - ONLY write SQL queries using the records and columns that exist in the table. You are given the schema and all distinct values in this prompt. 
-
-Only use the following table called mydata:
-{table_info}.
 
 # Example Questions and How to Approach Them 
 

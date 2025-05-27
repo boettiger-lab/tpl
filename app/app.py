@@ -202,13 +202,15 @@ with st.expander("🔍 View/download data"): # adding data table
 
     
 public_dollars, private_dollars, total_dollars = tpl_summary(gdf)
-public_delta, private_delta = calc_delta(gdf)
+# public_delta, private_delta = calc_delta(gdf)
 # -
 
 with st.container():
     col1, col2, col3 = st.columns(3)
-    col1.metric(label=f"Public", value=f"${public_dollars:,}", delta = f"{public_delta:}%")
-    col2.metric(label=f"Private", value=f"${private_dollars:,}", delta = f"{private_delta:}%")
+    # col1.metric(label=f"Public", value=f"${public_dollars:,}", delta = f"{public_delta:}%")
+    # col2.metric(label=f"Private", value=f"${private_dollars:,}", delta = f"{private_delta:}%")
+    col1.metric(label=f"Public", value=f"${public_dollars:,}")
+    col2.metric(label=f"Private", value=f"${private_dollars:,}")
     col3.metric(label=f"Total", value=f"${total_dollars:,}")    
 
 st.markdown('#')

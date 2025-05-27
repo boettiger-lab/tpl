@@ -23,7 +23,9 @@ tracts_z8 = con.read_parquet("https://minio.carlboettiger.info/public-social-vul
 pad_z8 = con.read_parquet("https://minio.carlboettiger.info/public-biodiversity/pad-us-4/pad-h3-z8.parquet")
 mobi = con.read_parquet("https://minio.carlboettiger.info/public-mobi/hex/all-richness-h8.parquet").select("h8", "Z").rename(richness = "Z")
 svi = con.read_parquet("https://minio.carlboettiger.info/public-social-vulnerability/2022/SVI2022_US_tract.parquet").select("FIPS", "RPL_THEMES").filter(_.RPL_THEMES > 0).rename(svi = "RPL_THEMES").rename(FIPS_tract = "FIPS")
-carbon = con.read_parquet("https://minio.carlboettiger.info/public-carbon/hex/us-vulnerable-total-carbon-2018-h8.parquet").select('carbon','h8')
+# carbon = con.read_parquet("https://minio.carlboettiger.info/public-carbon/hex/us-vulnerable-total-carbon-2018-h8.parquet").select('carbon','h8')
+
+carbon = con.read_parquet("https://minio.carlboettiger.info/public-carbon/hex/us-tracts-vuln-total-carbon-2018-h8.parquet").select('carbon','h8')
 
 tpl_geom_url = "s3://shared-tpl/tpl.parquet"
 tpl_table = con.read_parquet(tpl_geom_url).mutate(geom = _.geom.convert("ESRI:102039", "EPSG:4326")).rename(year = 'Close_Year', state_name = 'State', county = 'County')
@@ -61,7 +63,8 @@ select_cols = ['fid','TPL_ID','landvote_id',
  'Sponsor_Type','measure_year',
  'measure_status','measure_purpose',
  'measure_amount',
- 'carbon','richness','svi',
+ 'carbon',
+ 'richness','svi',
  'h8']
 
 

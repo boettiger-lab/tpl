@@ -13,14 +13,16 @@ def get_counties(state_selection):
     return counties
      
 def filter_data(table, state_choice, county_choice, year_range):
-    county_choice = re.sub(r"(?i)\s*(County)\b", "", county_choice)    
     min_year, max_year = year_range
     gdf = (table.filter(_.year>=(min_year))
            .filter(_.year<=(max_year))
           )
-    if state_choice[0] != "All":
-        gdf = gdf.filter(_.state_name.isin(state_choice))
-        if (county_choice != "All") and (county_choice[0]):
+    if state_choice != "All":
+        # gdf = gdf.filter(_.state_name.isin(state_choice))
+        gdf = gdf.filter(_.state_name == state_choice)
+
+        if (county_choice != "All") and (county_choice):
+            county_choice = re.sub(r"(?i)\s*(County)\b", "", county_choice)    
             gdf = gdf.filter(_.county == county_choice)
     return gdf
 
@@ -31,12 +33,14 @@ def group_data(table, style_choice):
     
 
 def fit_bounds(state_choice, county_choice, m):
-    if state_choice[0] != "All":
-        gdf = county_bounds.filter(_.state_name.isin(state_choice))
-        if (county_choice != "All") and (county_choice[0]):
+    if state_choice != "All":
+        # gdf = county_bounds.filter(_.state_name.isin(state_choice))
+        gdf = county_bounds.filter(_.state_name == state_choice)
+
+        if (county_choice != "All") and (county_choice):
             gdf = gdf.filter(_.county == county_choice)
         bounds = list(gdf.execute().total_bounds)
-        m.fit_bounds(bounds) # need to zoom to filtered area
+        m.fit_bounds(bounds) # need to zoom to filtered area    
         return
 
 
@@ -61,7 +65,31 @@ def get_bar(df, style_choice, group_col, metric_col, paint, x_lab, y_lab, title)
             )
     st.altair_chart(chart, use_container_width = True)
     return 
-    
+
+def tpl_style_default(paint):
+    style =  {
+    "version": 8,
+    "sources": {
+        "tpl": {
+            "type": "vector",
+            "url": "pmtiles://" + pmtiles,
+            "attribution": "TPL"
+        },
+    },
+    "layers": [{
+            "id": "tpl",
+            "source": "tpl",
+            "source-layer": source_layer_name,
+            "type": "fill",
+            "paint": {
+                "fill-color": paint,
+                "fill-opacity": 1
+            }
+        }]
+    }
+    return style
+
+
 def tpl_style(ids, paint):
     style =  {
     "version": 8,
@@ -102,7 +130,6 @@ def get_legend(paint):
 @st.cache_data
 def tpl_summary(_df):
     summary = _df.group_by(_.Manager_Type).agg(Amount = _.Amount.sum())
-    # summary = _df.filter(~_.Amount.isnull()).group_by(_.Manager_Type).agg(Amount = _.Amount.sum())
     public_dollars = round( summary.filter(_.Manager_Type.isin(["FED", "STAT", "LOC", "DIST"])).agg(total = _.Amount.sum()).to_pandas().values[0][0] )
     private_dollars = round( summary.filter(_.Manager_Type.isin(["PVT", "NGO"])).agg(total = _.Amount.sum()).to_pandas().values[0][0] )
     # tribal_dollars = summary.filter(_.Manager_Type.isin(["TRIB"])).agg(total = _.Amount.sum()).to_pandas().values[0][0] 
@@ -118,15 +145,13 @@ def calc_delta(_df):
      .mutate(total = _.Amount.cumsum(order_by=_.year, group_by=_.Manager_Type))
      .mutate(lag = _.total.lag(1))
      .mutate(delta = (100*(_.total - _.lag) / _.total).round(2)  )
-     .filter(_.year >=2019)
+     # .filter(_.year >=2019)
      .select(_.Manager_Type, _.year, _.total, _.lag, _.delta)
     )
     public_delta = deltas.filter(_.Manager_Type.isin(["FED", "STAT", "LOC", "DIST"])).to_pandas()
-    public_delta =  0 if public_delta.empty else public_delta.delta[0]
-
+    public_delta =  0 if public_delta.empty else public_delta.delta[-1]
     private_delta = deltas.filter(_.Manager_Type.isin(["PVT", "NGO"])).to_pandas()
-    private_delta =  0 if private_delta.empty else private_delta.delta[0]
-    
+    private_delta =  0 if private_delta.empty else private_delta.delta[-1]
     return public_delta, private_delta
     
 # @st.cache_data

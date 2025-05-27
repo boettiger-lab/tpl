@@ -8,7 +8,7 @@ current_tables = con.list_tables()
 
 if "mydata" not in set(current_tables):
     con.create_table("mydata", database_geom)
-    
+
 chatbot_data = con.table("mydata")
 
 
@@ -20,43 +20,47 @@ st.set_page_config(layout="wide",
 # TPL Conservation Almanac
 A data visualization tool built for the Trust for Public Land
 '''
+
+basemaps = leafmap.basemaps.keys()
+
+m = leafmap.Map(style = "positron")
+
+
 from datetime import time
 
 with st.sidebar:
+    b = st.selectbox("Basemap", basemaps)
+    m.add_basemap(b)
+    st.divider()
+
     style_choice = st.radio("Color by:", style_options)
     paint = style_options[style_choice]
     st.divider()
 
-    # st.markdown("Filters")
     year_range = st.slider(
     "Year", min_value = 1988, max_value = 2025, value=(1988, 2025)
 )
     st.divider()
 
     state_choice = st.selectbox("State", states,index = 6, placeholder='Pick a state')
-    one_state = state_choice[0] != 'All'
+    one_state = state_choice != 'All'
     counties = get_counties(state_choice)
     if one_state:
         county_choice = st.selectbox("County", counties, index = 0, placeholder='Select a county')
     else:
-        county_choice = None
-
+        county_choice = 'All'
     st.divider()
 
 # even if we only pick 1 state or 1 gap code, make them lists so it still works with our functions 
-if isinstance(state_choice, str):
-    state_choice = [state_choice]  # convert single string to list
-
-## Respond to sidebar
-m = leafmap.Map(style = "positron")
-# m.add_basemap('NASAGIBS.BlueMarble')
+# if isinstance(state_choice, str):
+#     state_choice = [state_choice]  # convert single string to list
 
 # get all the ids that correspond to the filter
 gdf = filter_data(tpl_table, state_choice, county_choice, year_range)
 gdf_landvote = filter_data(landvote_table, state_choice, county_choice, year_range)
-ids = gdf.execute()['TPL_ID'].tolist()
-unique_ids = list(set(ids))
+unique_ids = gdf.select('TPL_ID').distinct().execute()['TPL_ID'].to_list()
 
+##### Chatbot stuff 
 chatbot_container = st.container()
 with chatbot_container:
     llm_left_col, llm_right_col = st.columns([5,1], vertical_alignment = "bottom")
@@ -79,8 +83,6 @@ with chatbot_container:
         llm_choice = st.selectbox("Select LLM:", llm_options, key = "llm", help = "Select which model to use.")   
         llm = llm_options[llm_choice]
 
-        
-##### Chatbot stuff 
 from pydantic import BaseModel, Field
 class SQLResponse(BaseModel):
     """Defines the structure for SQL response."""
@@ -144,7 +146,6 @@ def run_sql(query,paint):
         st.code(sql_query,language = "sql")        
     return result
 
-##### Chatbot 
 with chatbot_container:
     with llm_left_col:
         example_query = "👋 Input query here"
@@ -175,10 +176,15 @@ with st.container():
             st.warning("Please try again with a different query", icon="⚠️")
             st.write(error_message)
             st.stop()
+##### end of chatbot code 
 
 
 if 'out' not in locals():
-    m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), opacity=0.5, tooltip=True, fit_bounds=True)
+    if one_state:
+        m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), opacity=0.5, tooltip=True, fit_bounds=True)
+    else:
+        m.add_pmtiles(pmtiles, style=tpl_style_default(paint), opacity=0.5, tooltip=True, fit_bounds=True)
+
     # legend, position, bg_color, fontsize = get_legend(paint)
     # m.add_legend(legend_dict = legend, position = position, bg_color = bg_color, fontsize = fontsize)
     #zoom to state(s)
@@ -186,6 +192,7 @@ if 'out' not in locals():
 
 ## Render display panels
 # 
+
 m.to_streamlit()
 with st.expander("🔍 View/download data"): # adding data table  
     if 'out' not in locals():
@@ -193,7 +200,7 @@ with st.expander("🔍 View/download data"): # adding data table
     else:
         st.dataframe(out, use_container_width = True)
 
-
+    
 public_dollars, private_dollars, total_dollars = tpl_summary(gdf)
 public_delta, private_delta = calc_delta(gdf)
 # -

@@ -12,7 +12,7 @@ ONLY write SQL queries using the records and columns that exist in the table cal
 
 # Important Details
      - Not every query will require SQL code, users may ask more information about values and columns in the table which you can answer based on the information in this prompt. For these cases, your "sql_query" field should be empty.  
-    - For map-related queries (e.g., "show me"), ALWAYS include "TPL_ID", "Site_Name" ,"geom", and "acres" in the results, 
+    - For map-related queries (e.g., "show me"), ALWAYS include "fid", "Site_Name" ,"geom", and "acres" in the results, 
     - ONLY use LIMIT in your SQL queries if the user specifies a quantity (e.g., 'show me 5'). Otherwise, return all matching data without a limit.
     - Wrap each column name in double quotes (") to denote them as delimited identifiers.
     - Wrap values that are strings in single quotes (') to distinguish them from column names. 
@@ -22,7 +22,7 @@ ONLY write SQL queries using the records and columns that exist in the table cal
 ## Example:
 example_user: "What is most expensive protected site?"
 example_assistant: {{"sql_query": 
-    SELECT "TPL_ID", "Site_Name" ,"geom", "acres", "Amount"
+    SELECT "fid", "Site_Name" ,"geom", "acres", "Amount"
     FROM mydata 
     WHERE "Amount" = (SELECT MAX("Amount") FROM mydata);
 "explanation":"I selected the site with the highest `Amount`.
@@ -31,7 +31,7 @@ example_assistant: {{"sql_query":
 ## Example:
 example_user: "Which sites are owned, managed or sponsored by the Trust for Public Land?"
 example_assistant: {{"sql_query": 
-    SELECT DISTINCT "TPL_ID", "Site_Name", "geom", "acres", "Owner_Name", "Manager_Name", "Sponsor_Name" FROM mydata 
+    SELECT DISTINCT "fid", "Site_Name", "geom", "acres", "Owner_Name", "Manager_Name", "Sponsor_Name" FROM mydata 
     WHERE "Owner_Name" ILIKE '%Trust for Public Land%' OR "Manager_Name" ILIKE '%Trust for Public Land%' OR "Sponsor_Name" ILIKE '%Trust for Public Land%' 
     ORDER BY "Site_Name";
 "explanation":"I selected all sites affiliated with the Trust for Public Land.

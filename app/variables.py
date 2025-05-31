@@ -19,18 +19,15 @@ key = st.secrets["MINIO_KEY"]
 secret = st.secrets["MINIO_SECRET"]
 client = Minio("minio.carlboettiger.info", key, secret)
 
-tracts_z8 = con.read_parquet("https://minio.carlboettiger.info/public-social-vulnerability/2022-tracts-h3-z8.parquet").select('FIPS','h8').mutate(h8 = _.h8.lower()).rename(FIPS_tract = "FIPS")
-pad_z8 = con.read_parquet("https://minio.carlboettiger.info/public-biodiversity/pad-us-4/pad-h3-z8.parquet")
 mobi = con.read_parquet("https://minio.carlboettiger.info/public-mobi/hex/all-richness-h8.parquet").select("h8", "Z").rename(richness = "Z")
-svi = con.read_parquet("https://minio.carlboettiger.info/public-social-vulnerability/2022/SVI2022_US_tract.parquet").select("FIPS", "RPL_THEMES").filter(_.RPL_THEMES > 0).rename(svi = "RPL_THEMES").rename(FIPS_tract = "FIPS")
-# carbon = con.read_parquet("https://minio.carlboettiger.info/public-carbon/hex/us-vulnerable-total-carbon-2018-h8.parquet").select('carbon','h8')
-
+svi = con.read_parquet("https://minio.carlboettiger.info/public-social-vulnerability/2022/SVI2022_US_tract_h3_z8.parquet").select("h8", "svi").filter(_.svi > 0)
 # carbon = con.read_parquet("https://minio.carlboettiger.info/public-carbon/hex/us-tracts-vuln-total-carbon-2018-h8.parquet").select('carbon','h8')
 
 tpl_geom_url = "s3://shared-tpl/tpl.parquet"
 tpl_table = con.read_parquet(tpl_geom_url).mutate(geom = _.geom.convert("ESRI:102039", "EPSG:4326")).rename(year = 'Close_Year', state_name = 'State', county = 'County')
 
 county_bounds = con.read_parquet("https://minio.carlboettiger.info/public-census/2024/county/2024_us_county.parquet")
+
 landvote_z8 = (con.read_parquet("s3://shared-tpl/landvote_h3_z8.parquet")
             .rename(FIPS_county = "FIPS", measure_amount = 'Conservation Funds Approved', 
                     measure_status = "Status", measure_purpose = "Purpose",)
@@ -51,7 +48,7 @@ tpl_z8 = con.read_parquet(tpl_z8_url).mutate(h8 = _.h8.lower()).drop(tpl_drop_co
 
 select_cols = ['fid','TPL_ID','landvote_id',
 'state','state_name','county',
- 'FIPS_county', 'FIPS_tract',
+ 'FIPS_county',
  'city','jurisdiction',
  'Close_Year', 'Site_Name',
  'Owner_Name','Owner_Type',
@@ -67,20 +64,17 @@ select_cols = ['fid','TPL_ID','landvote_id',
  'richness','svi',
  'h8']
 
-
-
 database = (
   tpl_z8.drop('State','County')
   .left_join(landvote_z8, "h8").drop('h8_right')
+  .left_join(svi, "h8").drop('h8_right')
   .left_join(mobi, "h8").drop('h8_right')
   # .left_join(carbon, "h8").drop('h8_right')
-  .left_join(tracts_z8, "h8").drop('h8_right')
-  .inner_join(svi, "FIPS_tract")
 ).select(select_cols).distinct()
 
-database_geom = (database.drop('h8').distinct().inner_join(tpl_table.select('geom','TPL_ID','fid','Shape_Area'), [database.TPL_ID == tpl_table.TPL_ID, database.fid == tpl_table.fid])
+database_geom = (database.drop('h8').distinct().inner_join(tpl_table.select('geom','TPL_ID','fid','Shape_Area'), [database.fid == tpl_table.fid])
             .mutate(acres = _.Shape_Area*0.0002471054)
-           ).distinct()
+           )
 
 pmtiles = client.get_presigned_url(
     "GET",
@@ -88,9 +82,9 @@ pmtiles = client.get_presigned_url(
     "tpl_v2.pmtiles",
     expires=timedelta(hours=2),
 )
-# source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
-source_layer_name = 'tpl'
 
+source_layer_name = 'tpl'
+# source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
 
 states = (
     "All", "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",

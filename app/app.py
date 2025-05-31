@@ -51,14 +51,10 @@ with st.sidebar:
         county_choice = 'All'
     st.divider()
 
-# even if we only pick 1 state or 1 gap code, make them lists so it still works with our functions 
-# if isinstance(state_choice, str):
-#     state_choice = [state_choice]  # convert single string to list
-
 # get all the ids that correspond to the filter
 gdf = filter_data(tpl_table, state_choice, county_choice, year_range)
 gdf_landvote = filter_data(landvote_table, state_choice, county_choice, year_range)
-unique_ids = gdf.select('TPL_ID').distinct().execute()['TPL_ID'].to_list()
+unique_ids = gdf.select('fid').distinct().execute()['fid'].to_list()
 
 ##### Chatbot stuff 
 chatbot_container = st.container()
@@ -117,7 +113,7 @@ def run_sql(query,paint):
     explanation =output.explanation
     if not sql_query: # if the chatbot can't generate a SQL query.
         st.success(explanation)
-        return pd.DataFrame({'TPL_ID' : []})
+        return pd.DataFrame({'fid' : []})
         
     result = chatbot_data.sql(sql_query).distinct().execute()
     if result.empty :
@@ -129,8 +125,8 @@ def run_sql(query,paint):
             return result.drop('geom',axis = 1)
         else: 
             return result
-    elif ("TPL_ID" and "geom" in result.columns): 
-        style = tpl_style(result["TPL_ID"].tolist(), paint)
+    elif ("fid" and "geom" in result.columns): 
+        style = tpl_style(result["fid"].tolist(), paint)
         # legend, position, bg_color, fontsize = get_legend(paint)
     
         # m.add_legend(legend_dict = legend, position = position, bg_color = bg_color, fontsize = fontsize)
@@ -160,8 +156,8 @@ with st.container():
                 with st.spinner("Invoking query..."):
 
                     out = run_sql(prompt,paint)
-                    if ("TPL_ID" in out.columns) and (not out.empty):
-                        ids = out['TPL_ID'].tolist()
+                    if ("fid" in out.columns) and (not out.empty):
+                        ids = out['fid'].tolist()
                         cols = out.columns.tolist()
                         # chatbot_toggles = {
                         #         key: (True if key in cols else value) 
@@ -182,7 +178,7 @@ with st.container():
 if 'out' not in locals():
     if one_state:
         m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), opacity=0.5, tooltip=True, fit_bounds=True)
-    else:
+    else:        
         m.add_pmtiles(pmtiles, style=tpl_style_default(paint), opacity=0.5, tooltip=True, fit_bounds=True)
 
     # legend, position, bg_color, fontsize = get_legend(paint)
@@ -207,8 +203,6 @@ public_dollars, private_dollars, total_dollars = tpl_summary(gdf)
 
 with st.container():
     col1, col2, col3 = st.columns(3)
-    # col1.metric(label=f"Public", value=f"${public_dollars:,}", delta = f"{public_delta:}%")
-    # col2.metric(label=f"Private", value=f"${private_dollars:,}", delta = f"{private_delta:}%")
     col1.metric(label=f"Public", value=f"${public_dollars:,}")
     col2.metric(label=f"Private", value=f"${private_dollars:,}")
     col3.metric(label=f"Total", value=f"${total_dollars:,}")    
@@ -218,23 +212,12 @@ st.markdown('#')
 
 col1, col2 = st.columns(2)
 with col1:
-    # st.markdown('Protected Area Cost')
     gdf_tpl = group_data(gdf, 'Acquisition Cost')
     get_bar(gdf_tpl, style_choice, 'year', 'total_amount', paint,'Year','Acquisition Cost ($)',"Yearly investment ($) in protected area")
 
 with col2:
-    # st.markdown('Measure Cost')
     gdf_landvote = group_data(gdf_landvote.filter(_.measure_status == 'Pass'), 'Measure Cost')
     get_bar(gdf_landvote, style_choice, 'year', 'total_amount', paint, 'Year','Funds Approved ($)','Yearly funds from conservation ballot measures')
-
-# area_totals = get_area_totals(gdf, 'year')
-# timeseries = calc_timeseries(gdf, column)
-
-
-# "Total Area protected (hectares):"
-# st.altair_chart(bar(area_totals, 'year', paint))
-
-# # +
 
 st.divider()
 

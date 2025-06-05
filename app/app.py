@@ -4,13 +4,28 @@ from cng.h3 import *
 from utils import *
 from ibis import _
 
-current_tables = con.list_tables()
+# current_tables = con.list_tables()
 
-if "mydata" not in set(current_tables):
-    con.create_table("mydata", database_geom)
+# if "conservation_almanac" not in set(current_tables):
+#     con.create_table("conservation_almanac", tpl_z8)
 
-chatbot_data = con.table("mydata")
+# if "landvote" not in set(current_tables):
+#     con.create_table("landvote", landvote_z8)
 
+# if "carbon" not in set(current_tables):
+#     con.create_table("carbon", carbon_z8)
+
+# if "mobi" not in set(current_tables):
+#     con.create_table("mobi", mobi_z8)
+
+# if "svi" not in set(current_tables):
+#     con.create_table("svi", svi_z8)
+
+# conservation_almanac = con.table("conservation_almanac")
+# landvote = con.table("landvote")
+# carbon = con.table("carbon")
+# mobi = con.table("mobi")
+# svi = con.table("svi")
 
 st.set_page_config(layout="wide",
                    page_title="TPL Conservation Almanac",
@@ -24,7 +39,6 @@ A data visualization tool built for the Trust for Public Land
 basemaps = leafmap.basemaps.keys()
 
 m = leafmap.Map(style = "positron")
-
 
 from datetime import time
 
@@ -93,7 +107,9 @@ from langchain_core.prompts import ChatPromptTemplate
 prompt = ChatPromptTemplate.from_messages([
     ("system", template),
     ("human", "{input}")
-]).partial(dialect="duckdb", table_info = chatbot_data.schema())
+]).partial(dialect="duckdb", conservation_almanac = tpl_z8.schema(),
+          landvote = landvote_z8.schema(), carbon = carbon_z8.schema(),
+          svi = svi_z8.schema(), mobi = mobi_z8.schema())
 
 # chatbot_toggles = {key: False for key in keys}
 structured_llm = llm.with_structured_output(SQLResponse)
@@ -115,7 +131,7 @@ def run_sql(query,paint):
         st.success(explanation)
         return pd.DataFrame({'fid' : []})
         
-    result = chatbot_data.sql(sql_query).distinct().execute()
+    result = con.sql(sql_query).distinct().execute()
     if result.empty :
         explanation = "This query did not return any results. Please try again with a different query."
         st.warning(explanation, icon="⚠️")
@@ -127,9 +143,6 @@ def run_sql(query,paint):
             return result
     elif ("fid" and "geom" in result.columns): 
         style = tpl_style(result["fid"].tolist(), paint)
-        # legend, position, bg_color, fontsize = get_legend(paint)
-    
-        # m.add_legend(legend_dict = legend, position = position, bg_color = bg_color, fontsize = fontsize)
         m.add_pmtiles(pmtiles, style=style, opacity=0.5, tooltip=True, fit_bounds=True)
         m.fit_bounds(result.total_bounds.tolist())    
         result = result.drop('geom',axis = 1) #printing to streamlit so I need to drop geom
@@ -180,14 +193,8 @@ if 'out' not in locals():
         m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), opacity=0.5, tooltip=True, fit_bounds=True)
     else:        
         m.add_pmtiles(pmtiles, style=tpl_style_default(paint), opacity=0.5, tooltip=True, fit_bounds=True)
-
-    # legend, position, bg_color, fontsize = get_legend(paint)
-    # m.add_legend(legend_dict = legend, position = position, bg_color = bg_color, fontsize = fontsize)
-    #zoom to state(s)
     fit_bounds(state_choice, county_choice, m)
 
-## Render display panels
-# 
 
 m.to_streamlit()
 with st.expander("🔍 View/download data"): # adding data table  
@@ -216,7 +223,7 @@ with col1:
     get_bar(gdf_tpl, style_choice, 'year', 'total_amount', paint,'Year','Acquisition Cost ($)',"Yearly investment ($) in protected area")
 
 with col2:
-    gdf_landvote = group_data(gdf_landvote.filter(_.measure_status == 'Pass'), 'Measure Cost')
+    gdf_landvote = group_data(gdf_landvote.filter(_.status == 'Pass'), 'Measure Cost')
     get_bar(gdf_landvote, style_choice, 'year', 'total_amount', paint, 'Year','Funds Approved ($)','Yearly funds from conservation ballot measures')
 
 st.divider()

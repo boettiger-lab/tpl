@@ -10,8 +10,8 @@ from datetime import timedelta
 import re
 duckdb_install_h3()
 
-# con = ibis.duckdb.connect("duck.db",extensions = ["spatial", "h3"])
 con = ibis.duckdb.connect(extensions = ["spatial", "h3"])
+con.raw_sql("SET THREADS=100;")
 set_secrets(con)
 
 # Get signed URLs to access license-controlled layers
@@ -19,72 +19,30 @@ key = st.secrets["MINIO_KEY"]
 secret = st.secrets["MINIO_SECRET"]
 client = Minio("minio.carlboettiger.info", key, secret)
 
-mobi = con.read_parquet("https://minio.carlboettiger.info/public-mobi/hex/all-richness-h8.parquet").select("h8", "Z").rename(richness = "Z")
-svi = con.read_parquet("https://minio.carlboettiger.info/public-social-vulnerability/2022/SVI2022_US_tract_h3_z8.parquet").select("h8", "svi").filter(_.svi > 0)
-# carbon = con.read_parquet("https://minio.carlboettiger.info/public-carbon/hex/us-tracts-vuln-total-carbon-2018-h8.parquet").select('carbon','h8')
-
-tpl_geom_url = "s3://shared-tpl/tpl.parquet"
-tpl_table = con.read_parquet(tpl_geom_url).mutate(geom = _.geom.convert("ESRI:102039", "EPSG:4326")).rename(year = 'Close_Year', state_name = 'State', county = 'County')
+tpl_z8 = con.read_parquet("s3://shared-tpl/conservation_almanac/z8/tpl_h3_z8.parquet", table_name = 'conservation_almanac')
+landvote_z8 = con.read_parquet("s3://shared-tpl/landvote/z8/landvote_h3_z8.parquet", table_name = 'landvote')
+mobi_z8 = con.read_parquet("https://minio.carlboettiger.info/public-mobi/hex/all-richness-h8.parquet", table_name = 'mobi')
+svi_z8 = con.read_parquet("https://minio.carlboettiger.info/public-social-vulnerability/2022/SVI2022_US_tract_h3_z8.parquet",table_name = 'svi')
+carbon_z8 = con.read_parquet("https://minio.carlboettiger.info/public-carbon/hex/us-tracts-vuln-total-carbon-2018-h8.parquet",table_name = 'carbon')
 
 county_bounds = con.read_parquet("https://minio.carlboettiger.info/public-census/2024/county/2024_us_county.parquet")
-
-landvote_z8 = (con.read_parquet("s3://shared-tpl/landvote_h3_z8.parquet")
-            .rename(FIPS_county = "FIPS", measure_amount = 'Conservation Funds Approved', 
-                    measure_status = "Status", measure_purpose = "Purpose",)
-            .mutate(measure_year = _.Date.year()).drop('Date','geom'))
-
-
-landvote_table = (con.read_parquet("s3://shared-tpl/landvote_geom.parquet")
-            .rename(FIPS_county = "FIPS", measure_amount = 'Conservation Funds Approved', 
-                    measure_status = "Status", measure_purpose = "Purpose")
-            .mutate(year = _.Date.year()).drop('Date'))
-
-
-tpl_drop_cols = ['Reported_Acres','Close_Date','EasementHolder_Name',
-        'Data_Provider','Data_Source','Data_Aggregator',
-        'Program_ID','Sponsor_ID']
-tpl_z8_url = "s3://shared-tpl/tpl_h3_z8.parquet"
-tpl_z8 = con.read_parquet(tpl_z8_url).mutate(h8 = _.h8.lower()).drop(tpl_drop_cols)
-
-select_cols = ['fid','TPL_ID','landvote_id',
-'state','state_name','county',
- 'FIPS_county',
- 'city','jurisdiction',
- 'Close_Year', 'Site_Name',
- 'Owner_Name','Owner_Type',
- 'Manager_Name','Manager_Type',
- 'Purchase_Type','EasementHolder_Type',
- 'Public_Access_Type','Purpose_Type',
- 'Duration_Type','Amount',
- 'Program_Name','Sponsor_Name',
- 'Sponsor_Type','measure_year',
- 'measure_status','measure_purpose',
- 'measure_amount',
- # 'carbon',
- 'richness','svi',
- 'h8']
-
-database = (
-  tpl_z8.drop('State','County')
-  .left_join(landvote_z8, "h8").drop('h8_right')
-  .left_join(svi, "h8").drop('h8_right')
-  .left_join(mobi, "h8").drop('h8_right')
-  # .left_join(carbon, "h8").drop('h8_right')
-).select(select_cols).distinct()
-
-database_geom = (database.drop('h8').distinct().inner_join(tpl_table.select('geom','TPL_ID','fid','Shape_Area'), [database.fid == tpl_table.fid])
-            .mutate(acres = _.Shape_Area*0.0002471054)
-           )
+landvote_table = con.read_parquet("s3://shared-tpl/landvote/landvote_geom.parquet")
+tpl_table = con.read_parquet('s3://shared-tpl/conservation_almanac/tpl.parquet')
 
 pmtiles = client.get_presigned_url(
     "GET",
     "shared-tpl",
-    "tpl_v2.pmtiles",
+    "conservation_almanac/tpl.pmtiles",
     expires=timedelta(hours=2),
 )
+# pmtiles = client.get_presigned_url(
+#     "GET",
+#     "shared-tpl",
+#     "tpl_v2.pmtiles",
+#     expires=timedelta(hours=2),
+# )
 
-source_layer_name = 'tpl'
-# source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
+source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
 
 states = (
     "All", "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
@@ -116,7 +74,7 @@ style_options = {
     "Acquisition Cost":  
             ["interpolate",
                 ['exponential', 1], 
-                ["get", "Amount"],
+                ["get", "amount"],
                     0,	"#fde725",
                     36000,	"#b4de2c",
                     93000,	"#6ccd59",
@@ -130,7 +88,7 @@ style_options = {
                     ] 
             ,
     "Manager Type":  {
-            'property': 'Manager_Type',
+            'property': 'manager_type',
             'type': 'categorical',
             'stops': [
                 ['FED', darkblue],
@@ -145,7 +103,7 @@ style_options = {
             ]
             },
     "Access": {
-        'property': 'Public_Access_Type',
+        'property': 'access_type',
         'type': 'categorical',
         'stops': [
             ['OA', green],
@@ -155,7 +113,7 @@ style_options = {
         ]
     },
     "Purpose": {
-        'property': 'Purpose_Type',
+        'property': 'purpose_type',
         'type': 'categorical',
         'stops': [
             ['FOR', green],
@@ -174,11 +132,9 @@ style_options = {
 style_choice_columns = {'Manager Type': style_options['Manager Type']['property'],
               'Access' : style_options['Access']['property'],
               'Purpose': style_options['Purpose']['property'],
-                'Acquisition Cost': 'Amount',
-                'Measure Cost': 'measure_amount',
+                'Acquisition Cost': 'amount',
+                'Measure Cost': 'conservation_funds_approved',
              }
-
-# metric_columns = {'svi': 'svi', 'mobi': 'richness', 'landvote':'measure_status'}
 
 from langchain_openai import ChatOpenAI
 import streamlit as st

@@ -5,22 +5,23 @@ import altair as alt
 import re
 
 def get_counties(state_selection):
+    tpl_table.head().execute()
+
     if state_selection != 'All':
-        counties = database.filter(_.state_name == state_selection).select('county').distinct().order_by('county').execute()
+        counties = tpl_table.filter(_.state == state_selection).select('county').distinct().order_by('county').execute()
         counties = ['All'] + counties['county'].tolist()
     else: 
         counties = None
     return counties
      
 def filter_data(table, state_choice, county_choice, year_range):
+
     min_year, max_year = year_range
     gdf = (table.filter(_.year>=(min_year))
            .filter(_.year<=(max_year))
           )
     if state_choice != "All":
-        # gdf = gdf.filter(_.state_name.isin(state_choice))
-        gdf = gdf.filter(_.state_name == state_choice)
-
+        gdf = gdf.filter(_.state == state_choice)
         if (county_choice != "All") and (county_choice):
             county_choice = re.sub(r"(?i)\s*(County)\b", "", county_choice)    
             gdf = gdf.filter(_.county == county_choice)
@@ -34,8 +35,8 @@ def group_data(table, style_choice):
 
 def fit_bounds(state_choice, county_choice, m):
     if state_choice != "All":
-        # gdf = county_bounds.filter(_.state_name.isin(state_choice))
-        gdf = county_bounds.filter(_.state_name == state_choice)
+        # gdf = county_bounds.filter(_.state.isin(state_choice))
+        gdf = county_bounds.filter(_.state == state_choice)
 
         if (county_choice != "All") and (county_choice):
             gdf = gdf.filter(_.county == county_choice)
@@ -105,7 +106,8 @@ def tpl_style(ids, paint):
             "source": "tpl",
             "source-layer": source_layer_name,
             "type": "fill",
-            'filter': ['in', ['get', 'fid'], ["literal", ids]],
+            'filter': ["match", ["get", 'fid'], ids, True, False],
+            # 'filter': ['in', ['get', 'fid'], ["literal", ids]],
             "paint": {
                 "fill-color": paint,
                 "fill-opacity": 1
@@ -129,28 +131,26 @@ def get_legend(paint):
 
 @st.cache_data
 def tpl_summary(_df):
-    summary = _df.group_by(_.Manager_Type).agg(Amount = _.Amount.sum())
-    public_dollars = round( summary.filter(_.Manager_Type.isin(["FED", "STAT", "LOC", "DIST"])).agg(total = _.Amount.sum()).to_pandas().values[0][0] )
-    private_dollars = round( summary.filter(_.Manager_Type.isin(["PVT", "NGO"])).agg(total = _.Amount.sum()).to_pandas().values[0][0] )
-    # tribal_dollars = summary.filter(_.Manager_Type.isin(["TRIB"])).agg(total = _.Amount.sum()).to_pandas().values[0][0] 
-    # tribal_dollars = tribal_dollars if tribal_dollars else round(tribal_dollars)
-    total_dollars = round( summary.agg(total = _.Amount.sum()).to_pandas().values[0][0] )
+    summary = _df.group_by(_.manager_type).agg(amount = _.amount.sum())
+    public_dollars = round( summary.filter(_.manager_type.isin(["FED", "STAT", "LOC", "DIST"])).agg(total = _.amount.sum()).to_pandas().values[0][0] )
+    private_dollars = round( summary.filter(_.manager_type.isin(["PVT", "NGO"])).agg(total = _.amount.sum()).to_pandas().values[0][0] )
+    total_dollars = round( summary.agg(total = _.amount.sum()).to_pandas().values[0][0] )
     return public_dollars, private_dollars, total_dollars
 
 # @st.cache_data
 def calc_delta(_df):
     deltas = (_df
-     .group_by(_.Manager_Type, _.year)
-     .agg(Amount = _.Amount.sum())
-     .mutate(total = _.Amount.cumsum(order_by=_.year, group_by=_.Manager_Type))
+     .group_by(_.manager_type, _.year)
+     .agg(amount = _.amount.sum())
+     .mutate(total = _.amount.cumsum(order_by=_.year, group_by=_.manager_type))
      .mutate(lag = _.total.lag(1))
      .mutate(delta = (100*(_.total - _.lag) / _.total).round(2)  )
      # .filter(_.year >=2019)
-     .select(_.Manager_Type, _.year, _.total, _.lag, _.delta)
+     .select(_.manager_type, _.year, _.total, _.lag, _.delta)
     )
-    public_delta = deltas.filter(_.Manager_Type.isin(["FED", "STAT", "LOC", "DIST"])).to_pandas()
+    public_delta = deltas.filter(_.manager_type.isin(["FED", "STAT", "LOC", "DIST"])).to_pandas()
     public_delta =  0 if public_delta.empty else public_delta.delta[-1]
-    private_delta = deltas.filter(_.Manager_Type.isin(["PVT", "NGO"])).to_pandas()
+    private_delta = deltas.filter(_.manager_type.isin(["PVT", "NGO"])).to_pandas()
     private_delta =  0 if private_delta.empty else private_delta.delta[-1]
     return public_delta, private_delta
     
@@ -180,9 +180,9 @@ def bar(area_totals, column, paint):
 #         .filter(~_.year.isnull())
 #         .filter(_.year > 0)
 #         .group_by([_.year, _[column]])
-#         .agg(Amount = _.Amount.sum())
+#         .agg(amount = _.amount.sum())
 #         .mutate(year = _.year.cast("int"),
-#                 Amount = _.Amount.cumsum(group_by=_[column], order_by=_.year))
+#                 amount = _.amount.cumsum(group_by=_[column], order_by=_.year))
         
 #         .to_pandas()
 #     )
@@ -196,7 +196,7 @@ def chart_time(timeseries, column, paint):
     # use the colors 
     plt = alt.Chart(timeseries).mark_line().encode(
         x='year:O',
-        y = alt.Y('Amount:Q'),
+        y = alt.Y('amount:Q'),
             color=alt.Color(column,scale= alt.Scale(domain=domain, range=range_))
     ).properties(height=350)
     return plt

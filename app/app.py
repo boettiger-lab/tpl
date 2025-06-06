@@ -130,7 +130,6 @@ def run_sql(query,paint):
     if not sql_query: # if the chatbot can't generate a SQL query.
         st.success(explanation)
         return pd.DataFrame({'fid' : []})
-        
     result = con.sql(sql_query).distinct().execute()
     if result.empty :
         explanation = "This query did not return any results. Please try again with a different query."
@@ -142,7 +141,7 @@ def run_sql(query,paint):
         else: 
             return result
     elif ("fid" and "geom" in result.columns): 
-        style = tpl_style(result["fid"].tolist(), paint)
+        style = tpl_style(result["fid"].unique().tolist(), paint)
         m.add_pmtiles(pmtiles, style=style, opacity=0.5, tooltip=True, fit_bounds=True)
         m.fit_bounds(result.total_bounds.tolist())    
         result = result.drop('geom',axis = 1) #printing to streamlit so I need to drop geom
@@ -170,7 +169,7 @@ with st.container():
 
                     out = run_sql(prompt,paint)
                     if ("fid" in out.columns) and (not out.empty):
-                        ids = out['fid'].tolist()
+                        ids = out['fid'].unique().tolist()
                         cols = out.columns.tolist()
                         # chatbot_toggles = {
                         #         key: (True if key in cols else value) 

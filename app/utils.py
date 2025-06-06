@@ -106,8 +106,8 @@ def tpl_style(ids, paint):
             "source": "tpl",
             "source-layer": source_layer_name,
             "type": "fill",
-            'filter': ["match", ["get", 'fid'], ids, True, False],
-            # 'filter': ['in', ['get', 'fid'], ["literal", ids]],
+            # 'filter': ["match", ["get", 'fid'], ids, True, False],
+            'filter': ['in', ['get', 'fid'], ["literal", ids]],
             "paint": {
                 "fill-color": paint,
                 "fill-opacity": 1

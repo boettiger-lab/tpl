@@ -4,29 +4,6 @@ from cng.h3 import *
 from utils import *
 from ibis import _
 
-# current_tables = con.list_tables()
-
-# if "conservation_almanac" not in set(current_tables):
-#     con.create_table("conservation_almanac", tpl_z8)
-
-# if "landvote" not in set(current_tables):
-#     con.create_table("landvote", landvote_z8)
-
-# if "carbon" not in set(current_tables):
-#     con.create_table("carbon", carbon_z8)
-
-# if "mobi" not in set(current_tables):
-#     con.create_table("mobi", mobi_z8)
-
-# if "svi" not in set(current_tables):
-#     con.create_table("svi", svi_z8)
-
-# conservation_almanac = con.table("conservation_almanac")
-# landvote = con.table("landvote")
-# carbon = con.table("carbon")
-# mobi = con.table("mobi")
-# svi = con.table("svi")
-
 st.set_page_config(layout="wide",
                    page_title="TPL Conservation Almanac",
                    page_icon=":globe:")
@@ -188,7 +165,9 @@ with st.container():
 
 
 if 'out' not in locals():
+    
     if one_state:
+        print(tpl_style(unique_ids, paint))
         m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), opacity=0.5, tooltip=True, fit_bounds=True)
     else:        
         m.add_pmtiles(pmtiles, style=tpl_style_default(paint), opacity=0.5, tooltip=True, fit_bounds=True)

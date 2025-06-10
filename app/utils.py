@@ -23,7 +23,7 @@ def filter_data(table, state_choice, county_choice, year_range):
     if state_choice != "All":
         gdf = gdf.filter(_.state == state_choice)
         if (county_choice != "All") and (county_choice):
-            county_choice = re.sub(r"(?i)\s*(County)\b", "", county_choice)    
+            # county_choice = re.sub(r"(?i)\s*(County)\b", "", county_choice)    
             gdf = gdf.filter(_.county == county_choice)
     return gdf
 

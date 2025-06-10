@@ -35,12 +35,6 @@ pmtiles = client.get_presigned_url(
     "conservation_almanac/tpl.pmtiles",
     expires=timedelta(hours=2),
 )
-# pmtiles = client.get_presigned_url(
-#     "GET",
-#     "shared-tpl",
-#     "tpl_v2.pmtiles",
-#     expires=timedelta(hours=2),
-# )
 
 source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
 

@@ -167,7 +167,6 @@ with st.container():
 if 'out' not in locals():
     
     if one_state:
-        print(tpl_style(unique_ids, paint))
         m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), opacity=0.5, tooltip=True, fit_bounds=True)
     else:        
         m.add_pmtiles(pmtiles, style=tpl_style_default(paint), opacity=0.5, tooltip=True, fit_bounds=True)

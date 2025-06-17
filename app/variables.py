@@ -7,6 +7,7 @@ from cng.h3 import *
 from minio import Minio
 import streamlit 
 from datetime import timedelta
+import streamlit
 import re
 duckdb_install_h3()
 
@@ -29,12 +30,15 @@ county_bounds = con.read_parquet("https://minio.carlboettiger.info/public-census
 landvote_table = con.read_parquet("s3://shared-tpl/landvote/landvote_geom.parquet")
 tpl_table = con.read_parquet('s3://shared-tpl/conservation_almanac/tpl.parquet')
 
-pmtiles = client.get_presigned_url(
-    "GET",
-    "shared-tpl",
-    "conservation_almanac/tpl.pmtiles",
-    expires=timedelta(hours=2),
-)
+@st.cache_data(ttl = timedelta(hours=2))
+def get_pmtiles_url():
+    return client.get_presigned_url(
+        "GET",
+        "shared-tpl",
+        "conservation_almanac/tpl.pmtiles",
+        expires=timedelta(hours=2),
+    )
+pmtiles = get_pmtiles_url()
 
 source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
 

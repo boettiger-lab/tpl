@@ -1,12 +1,13 @@
 import streamlit as st
 import leafmap.maplibregl as leafmap
 from cng.h3 import *
-from utils import *
 from ibis import _
 
 st.set_page_config(layout="wide",
                    page_title="TPL Conservation Almanac",
                    page_icon=":globe:")
+
+from utils import *
 
 '''
 # TPL Conservation Almanac

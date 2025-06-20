@@ -1,5 +1,6 @@
 import streamlit as st
-import leafmap.maplibregl as leafmap
+# import leafmap.maplibregl as leafmap
+import leafmap.foliumap as leafmap
 from cng.h3 import *
 from ibis import _
 
@@ -16,7 +17,8 @@ A data visualization tool built for the Trust for Public Land
 
 basemaps = leafmap.basemaps.keys()
 
-m = leafmap.Map(style = "positron")
+# m = leafmap.Map(style = "positron")
+m = leafmap.Map(center=[35, -100], zoom=5, layers_control=True, fullscreen_control=True)
 
 from datetime import time
 
@@ -120,8 +122,11 @@ def run_sql(query,paint):
             return result
     elif ("fid" and "geom" in result.columns): 
         style = tpl_style(result["fid"].unique().tolist(), paint)
-        m.add_pmtiles(pmtiles, style=style, opacity=0.5, tooltip=True, fit_bounds=True)
-        m.fit_bounds(result.total_bounds.tolist())    
+        # m.add_pmtiles(pmtiles, style=style, opacity=0.5, tooltip=True, fit_bounds=True)
+        m.add_pmtiles(pmtiles, style=style, tooltip=True, zoom_to_layer=False)
+        # m.fit_bounds(result.total_bounds.tolist())
+        m.zoom_to_bounds(result.total_bounds.tolist())  
+
         result = result.drop('geom',axis = 1) #printing to streamlit so I need to drop geom
     else:   
         st.write(result)  # if we aren't mapping, just print out the data  
@@ -168,10 +173,14 @@ with st.container():
 if 'out' not in locals():
     
     if one_state:
-        m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), opacity=0.5, tooltip=True, fit_bounds=True)
-    else:        
-        m.add_pmtiles(pmtiles, style=tpl_style_default(paint), opacity=0.5, tooltip=True, fit_bounds=True)
+        # m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), opacity=0.5, tooltip=True, fit_bounds=True)
+        m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), tooltip = True, zoom_to_layer= False)
+
+    else:
+        # m.add_pmtiles(pmtiles, style=tpl_style_default(paint), opacity=0.5, tooltip=True, fit_bounds=True)
+        m.add_pmtiles(pmtiles, style=tpl_style_default(paint), tooltip = True, zoom_to_layer= False)
     fit_bounds(state_choice, county_choice, m)
+
 
 
 m.to_streamlit()

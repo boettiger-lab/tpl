@@ -41,7 +41,9 @@ def fit_bounds(state_choice, county_choice, m):
         if (county_choice != "All") and (county_choice):
             gdf = gdf.filter(_.county == county_choice)
         bounds = list(gdf.execute().total_bounds)
-        m.fit_bounds(bounds) # need to zoom to filtered area    
+        # m.fit_bounds(bounds) # need to zoom to filtered area
+        m.zoom_to_bounds(bounds) # need to zoom to filtered area    
+
         return
 
 

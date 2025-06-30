@@ -33,18 +33,17 @@ def group_data(table, style_choice):
     return gdf
     
 
-def fit_bounds(state_choice, county_choice, m):
+def get_bounds(state_choice, county_choice, m):
     if state_choice != "All":
-        # gdf = county_bounds.filter(_.state.isin(state_choice))
         gdf = county_bounds.filter(_.state == state_choice)
 
         if (county_choice != "All") and (county_choice):
             gdf = gdf.filter(_.county == county_choice)
-        bounds = list(gdf.execute().total_bounds)
-        # m.fit_bounds(bounds) # need to zoom to filtered area
-        m.zoom_to_bounds(bounds) # need to zoom to filtered area    
-
-        return
+        bounds = list(gdf.execute().total_bounds)   
+    else:
+        # if selecting all states, use these bounds
+        bounds = [-167.80517179043034, 19.015233153742425, -66.97618043381198, 70.03327935821838]
+    return bounds
 
 
 def get_bar(df, style_choice, group_col, metric_col, paint, x_lab, y_lab, title):
@@ -171,25 +170,6 @@ def bar(area_totals, column, paint):
             # color=alt.Color(column).scale(domain = domain, range = range_)
         ).properties(height=350)
     return plt
-#bar
-
-# +
-
-# @st.cache_data
-# def calc_timeseries(_df, column):
-#     timeseries = (
-#         _df
-#         .filter(~_.year.isnull())
-#         .filter(_.year > 0)
-#         .group_by([_.year, _[column]])
-#         .agg(amount = _.amount.sum())
-#         .mutate(year = _.year.cast("int"),
-#                 amount = _.amount.cumsum(group_by=_[column], order_by=_.year))
-        
-#         .to_pandas()
-#     )
-#     return timeseries
-
 
 # @st.cache_data
 def chart_time(timeseries, column, paint):

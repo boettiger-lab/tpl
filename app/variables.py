@@ -6,7 +6,7 @@ from cng.utils import *
 from cng.h3 import *
 from minio import Minio
 import streamlit 
-from datetime import timedelta
+from datetime import datetime, timedelta
 import streamlit
 import re
 duckdb_install_h3()
@@ -39,6 +39,25 @@ def get_pmtiles_url():
         expires=timedelta(hours=2),
     )
 pmtiles = get_pmtiles_url()
+print(f'\nPMTiles url: {pmtiles}')
+
+# parsing URL to get the generation and expiration date 
+from urllib.parse import urlparse, parse_qs
+parsed_url = urlparse(pmtiles)
+query_params = parse_qs(parsed_url.query)
+
+# extract X-Amz-Date and X-Amz-Expires
+x_amz_date_str = query_params.get("X-Amz-Date", [None])[0]
+x_amz_expires_str = query_params.get("X-Amz-Expires", [None])[0]
+
+if x_amz_date_str and x_amz_expires_str:
+    generated_dt = datetime.strptime(x_amz_date_str, "%Y%m%dT%H%M%SZ")
+    expires_seconds = int(x_amz_expires_str)
+    expiration_dt = generated_dt + timedelta(seconds=expires_seconds)
+    print(f"PMTiles Generated:  {generated_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
+    print(f"PMTiles Expiration: {expiration_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
+else:
+    print("Required query parameters not found in the URL.")
 
 source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
 
@@ -144,7 +163,7 @@ if api_key is None:
     api_key = st.secrets["NRP_API_KEY"]
 
 llm_options = {
-    "llama3.3": ChatOpenAI(model = "llama3-sdsc", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
     "gemma3": ChatOpenAI(model = "gemma3", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
+    "llama3.3": ChatOpenAI(model = "llama3-sdsc", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
     "watt": ChatOpenAI(model = "watt", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
 }

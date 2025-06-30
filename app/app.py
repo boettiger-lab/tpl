@@ -1,8 +1,10 @@
 import streamlit as st
 # import leafmap.maplibregl as leafmap
-import leafmap.foliumap as leafmap
+# import leafmap.foliumap as leafmap
 from cng.h3 import *
 from ibis import _
+import importlib
+from datetime import time
 
 st.set_page_config(layout="wide",
                    page_title="TPL Conservation Almanac",
@@ -15,12 +17,17 @@ from utils import *
 A data visualization tool built for the Trust for Public Land
 '''
 
+with st.sidebar:
+    leafmap_choice = st.selectbox("Leafmap module", ['maplibregl','foliumap'])
+
+if leafmap_choice == "maplibregl":
+    leafmap = importlib.import_module("leafmap.maplibregl")
+    m = leafmap.Map(style="positron")
+else:
+    leafmap = importlib.import_module("leafmap.foliumap")
+    m = leafmap.Map(center=[35, -100], zoom=5, layers_control=True, fullscreen_control=True)
+
 basemaps = leafmap.basemaps.keys()
-
-# m = leafmap.Map(style = "positron")
-m = leafmap.Map(center=[35, -100], zoom=5, layers_control=True, fullscreen_control=True)
-
-from datetime import time
 
 with st.sidebar:
     b = st.selectbox("Basemap", basemaps)
@@ -120,15 +127,7 @@ def run_sql(query,paint):
             return result.drop('geom',axis = 1)
         else: 
             return result
-    elif ("fid" and "geom" in result.columns): 
-        style = tpl_style(result["fid"].unique().tolist(), paint)
-        # m.add_pmtiles(pmtiles, style=style, opacity=0.5, tooltip=True, fit_bounds=True)
-        m.add_pmtiles(pmtiles, style=style, tooltip=True, zoom_to_layer=False)
-        # m.fit_bounds(result.total_bounds.tolist())
-        m.zoom_to_bounds(result.total_bounds.tolist())  
-
-        result = result.drop('geom',axis = 1) #printing to streamlit so I need to drop geom
-    else:   
+    elif ("fid" and "geom" not in result.columns): 
         st.write(result)  # if we aren't mapping, just print out the data  
     
     with st.popover("Explanation"):
@@ -154,12 +153,8 @@ with st.container():
                     if ("fid" in out.columns) and (not out.empty):
                         ids = out['fid'].unique().tolist()
                         cols = out.columns.tolist()
-                        # chatbot_toggles = {
-                        #         key: (True if key in cols else value) 
-                        #         for key, value in chatbot_toggles.items()
-                        #     }
-                        # for key, value in chatbot_toggles.items():
-                        #     st.session_state[key] = value  # Update session state
+                        bounds = out.total_bounds.tolist()
+                        style = tpl_style(ids, paint)
                     else:
                         ids = []
         except Exception as e:
@@ -169,31 +164,35 @@ with st.container():
             st.stop()
 ##### end of chatbot code 
 
-
-if 'out' not in locals():
-    
+# define PMTiles style dict (if we didn't already do so using the chatbot)
+if 'style' not in locals(): 
     if one_state:
-        # m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), opacity=0.5, tooltip=True, fit_bounds=True)
-        m.add_pmtiles(pmtiles, style=tpl_style(unique_ids, paint), tooltip = True, zoom_to_layer= False)
+        # filter to ids in that state 
+        style = tpl_style(unique_ids, paint)
+    else: 
+        # selected all states, so no need to filter 
+        style=tpl_style_default(paint)
+    bounds = get_bounds(state_choice, county_choice, m)
 
-    else:
-        # m.add_pmtiles(pmtiles, style=tpl_style_default(paint), opacity=0.5, tooltip=True, fit_bounds=True)
-        m.add_pmtiles(pmtiles, style=tpl_style_default(paint), tooltip = True, zoom_to_layer= False)
-    fit_bounds(state_choice, county_choice, m)
-
-
+# add pmtiles to map (using user-specified module)
+if leafmap_choice == "maplibregl":
+    m.add_pmtiles(pmtiles, style=style, tooltip=True, fit_bounds=True)
+    m.fit_bounds(bounds) 
+    print(f'\nAdded PMTiles url to map with maplibregl: {pmtiles}')
+else: 
+    m.add_pmtiles(pmtiles, style = style, tooltip = True, zoom_to_layer= False)
+    m.zoom_to_bounds(bounds)   
+    print(f'\nAdded PMTiles url to map with foliumap: {pmtiles}')
 
 m.to_streamlit()
+
 with st.expander("🔍 View/download data"): # adding data table  
     if 'out' not in locals():
         st.dataframe(gdf.drop('geom').head(100).execute(), use_container_width = True)  
     else:
-        st.dataframe(out, use_container_width = True)
+        st.dataframe(out.drop('geom',axis = 1), use_container_width = True)
 
-    
 public_dollars, private_dollars, total_dollars = tpl_summary(gdf)
-# public_delta, private_delta = calc_delta(gdf)
-# -
 
 with st.container():
     col1, col2, col3 = st.columns(3)

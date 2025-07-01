@@ -15,6 +15,8 @@ con = ibis.duckdb.connect(extensions = ["spatial", "h3"])
 con.raw_sql("SET THREADS=100;")
 set_secrets(con)
 
+print('variables.py is executed')
+
 # Get signed URLs to access license-controlled layers
 key = st.secrets["MINIO_KEY"]
 secret = st.secrets["MINIO_SECRET"]
@@ -30,7 +32,7 @@ county_bounds = con.read_parquet("https://minio.carlboettiger.info/public-census
 landvote_table = con.read_parquet("s3://shared-tpl/landvote/landvote_geom.parquet")
 tpl_table = con.read_parquet('s3://shared-tpl/conservation_almanac/tpl.parquet')
 
-@st.cache_data(ttl = timedelta(hours=2))
+# @st.cache_data(ttl = timedelta(hours=2))
 def get_pmtiles_url():
     return client.get_presigned_url(
         "GET",
@@ -38,28 +40,6 @@ def get_pmtiles_url():
         "conservation_almanac/tpl.pmtiles",
         expires=timedelta(hours=2),
     )
-pmtiles = get_pmtiles_url()
-print(f'\nPMTiles url: {pmtiles}')
-
-# parsing URL to get the generation and expiration date 
-from urllib.parse import urlparse, parse_qs
-parsed_url = urlparse(pmtiles)
-query_params = parse_qs(parsed_url.query)
-
-# extract X-Amz-Date and X-Amz-Expires
-x_amz_date_str = query_params.get("X-Amz-Date", [None])[0]
-x_amz_expires_str = query_params.get("X-Amz-Expires", [None])[0]
-
-if x_amz_date_str and x_amz_expires_str:
-    generated_dt = datetime.strptime(x_amz_date_str, "%Y%m%dT%H%M%SZ")
-    expires_seconds = int(x_amz_expires_str)
-    expiration_dt = generated_dt + timedelta(seconds=expires_seconds)
-    print(f"PMTiles Generated:  {generated_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
-    print(f"PMTiles Expiration: {expiration_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
-else:
-    print("Required query parameters not found in the URL.")
-
-source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
 
 states = (
     "All", "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",

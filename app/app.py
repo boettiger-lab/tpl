@@ -5,6 +5,7 @@ from cng.h3 import *
 from ibis import _
 import importlib
 from datetime import time
+print('app.py is executed')
 
 st.set_page_config(layout="wide",
                    page_title="TPL Conservation Almanac",
@@ -16,6 +17,10 @@ from utils import *
 # TPL Conservation Almanac
 A data visualization tool built for the Trust for Public Land
 '''
+
+pmtiles = get_pmtiles_url()
+print(f'\nPMTiles url: {pmtiles}')
+pmtiles_expiration(pmtiles) # print out expiration 
 
 with st.sidebar:
     leafmap_choice = st.selectbox("Leafmap module", ['maplibregl','foliumap'])
@@ -154,7 +159,7 @@ with st.container():
                         ids = out['fid'].unique().tolist()
                         cols = out.columns.tolist()
                         bounds = out.total_bounds.tolist()
-                        style = tpl_style(ids, paint)
+                        style = tpl_style(ids, paint, pmtiles)
                     else:
                         ids = []
         except Exception as e:
@@ -168,21 +173,21 @@ with st.container():
 if 'style' not in locals(): 
     if one_state:
         # filter to ids in that state 
-        style = tpl_style(unique_ids, paint)
+        style = tpl_style(unique_ids, paint, pmtiles)
     else: 
         # selected all states, so no need to filter 
-        style=tpl_style_default(paint)
+        style=tpl_style_default(paint, pmtiles)
     bounds = get_bounds(state_choice, county_choice, m)
 
 # add pmtiles to map (using user-specified module)
 if leafmap_choice == "maplibregl":
     m.add_pmtiles(pmtiles, style=style, tooltip=True, fit_bounds=True)
     m.fit_bounds(bounds) 
-    print(f'\nAdded PMTiles url to map with maplibregl: {pmtiles}')
+    print(f'\nAdded PMTiles url to map with maplibregl')
 else: 
     m.add_pmtiles(pmtiles, style = style, tooltip = True, zoom_to_layer= False)
     m.zoom_to_bounds(bounds)   
-    print(f'\nAdded PMTiles url to map with foliumap: {pmtiles}')
+    print(f'\nAdded PMTiles url to map with foliumap')
 
 m.to_streamlit()
 

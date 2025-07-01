@@ -4,6 +4,8 @@ from variables import *
 import altair as alt
 import re
 
+print('utils.py is executed')
+
 def get_counties(state_selection):
     tpl_table.head().execute()
 
@@ -68,7 +70,8 @@ def get_bar(df, style_choice, group_col, metric_col, paint, x_lab, y_lab, title)
     st.altair_chart(chart, use_container_width = True)
     return 
 
-def tpl_style_default(paint):
+def tpl_style_default(paint,pmtiles):
+    source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
     style =  {
     "version": 8,
     "sources": {
@@ -92,7 +95,8 @@ def tpl_style_default(paint):
     return style
 
 
-def tpl_style(ids, paint):
+def tpl_style(ids, paint, pmtiles):
+    source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
     style =  {
     "version": 8,
     "sources": {
@@ -182,3 +186,22 @@ def chart_time(timeseries, column, paint):
             color=alt.Color(column,scale= alt.Scale(domain=domain, range=range_))
     ).properties(height=350)
     return plt
+
+from urllib.parse import urlparse, parse_qs
+def pmtiles_expiration(pmtiles):
+    # parsing URL to get the generation and expiration date 
+    parsed_url = urlparse(pmtiles)
+    query_params = parse_qs(parsed_url.query)
+    
+    # extract X-Amz-Date and X-Amz-Expires
+    x_amz_date_str = query_params.get("X-Amz-Date", [None])[0]
+    x_amz_expires_str = query_params.get("X-Amz-Expires", [None])[0]
+    
+    if x_amz_date_str and x_amz_expires_str:
+        generated_dt = datetime.strptime(x_amz_date_str, "%Y%m%dT%H%M%SZ")
+        expires_seconds = int(x_amz_expires_str)
+        expiration_dt = generated_dt + timedelta(seconds=expires_seconds)
+        print(f"PMTiles Generated:  {generated_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
+        print(f"PMTiles Expiration: {expiration_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
+    else:
+        print("Required query parameters not found in the URL.")

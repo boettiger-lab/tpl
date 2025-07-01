@@ -1,11 +1,8 @@
 import streamlit as st
-# import leafmap.maplibregl as leafmap
-# import leafmap.foliumap as leafmap
 from cng.h3 import *
 from ibis import _
 import importlib
 from datetime import time
-print('app.py is executed')
 
 st.set_page_config(layout="wide",
                    page_title="TPL Conservation Almanac",
@@ -18,9 +15,7 @@ from utils import *
 A data visualization tool built for the Trust for Public Land
 '''
 
-pmtiles = get_pmtiles_url()
-print(f'\nPMTiles url: {pmtiles}')
-pmtiles_expiration(pmtiles) # print out expiration 
+pmtiles = get_pmtiles_url() # generate PMTiles url
 
 with st.sidebar:
     leafmap_choice = st.selectbox("Leafmap module", ['maplibregl','foliumap'])
@@ -103,7 +98,6 @@ prompt = ChatPromptTemplate.from_messages([
           landvote = landvote_z8.schema(), carbon = carbon_z8.schema(),
           svi = svi_z8.schema(), mobi = mobi_z8.schema())
 
-# chatbot_toggles = {key: False for key in keys}
 structured_llm = llm.with_structured_output(SQLResponse)
 few_shot_structured_llm = prompt | structured_llm
 
@@ -183,11 +177,9 @@ if 'style' not in locals():
 if leafmap_choice == "maplibregl":
     m.add_pmtiles(pmtiles, style=style, tooltip=True, fit_bounds=True)
     m.fit_bounds(bounds) 
-    print(f'\nAdded PMTiles url to map with maplibregl')
 else: 
     m.add_pmtiles(pmtiles, style = style, tooltip = True, zoom_to_layer= False)
     m.zoom_to_bounds(bounds)   
-    print(f'\nAdded PMTiles url to map with foliumap')
 
 m.to_streamlit()
 
@@ -206,7 +198,6 @@ with st.container():
     col3.metric(label=f"Total", value=f"${total_dollars:,}")    
 
 st.markdown('#')
-
 
 col1, col2 = st.columns(2)
 with col1:

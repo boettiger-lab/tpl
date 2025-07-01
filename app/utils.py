@@ -4,8 +4,14 @@ from variables import *
 import altair as alt
 import re
 
-print('utils.py is executed')
-
+def get_pmtiles_url():
+    return client.get_presigned_url(
+        "GET",
+        "shared-tpl",
+        "conservation_almanac/tpl.pmtiles",
+        expires=timedelta(hours=2),
+    )
+    
 def get_counties(state_selection):
     tpl_table.head().execute()
 
@@ -25,7 +31,6 @@ def filter_data(table, state_choice, county_choice, year_range):
     if state_choice != "All":
         gdf = gdf.filter(_.state == state_choice)
         if (county_choice != "All") and (county_choice):
-            # county_choice = re.sub(r"(?i)\s*(County)\b", "", county_choice)    
             gdf = gdf.filter(_.county == county_choice)
     return gdf
 
@@ -59,11 +64,6 @@ def get_bar(df, style_choice, group_col, metric_col, paint, x_lab, y_lab, title)
                     x=alt.X(f"{group_col}:N", axis=alt.Axis(title=x_lab)),
                     y=alt.Y(f"{metric_col}:Q", axis=alt.Axis(title=y_lab)),
                     tooltip=[alt.Tooltip(group_col, type="nominal"), alt.Tooltip(metric_col, type="quantitative")],
-                    # color=alt.Color(
-                    #         f"{group_col}:N",
-                    #         legend=alt.Legend(title=style_choice,symbolStrokeWidth=0.5),
-                    #         scale=alt.Scale(domain=domain, range=range_)
-                    #      ),
                     )
              .properties(title=f"{title}")
             )
@@ -94,7 +94,6 @@ def tpl_style_default(paint,pmtiles):
     }
     return style
 
-
 def tpl_style(ids, paint, pmtiles):
     source_layer_name = re.sub(r'\W+', '', os.path.splitext(os.path.basename(pmtiles))[0]) #stripping hyphens to get layer name 
     style =  {
@@ -121,7 +120,6 @@ def tpl_style(ids, paint, pmtiles):
     }
     return style
 
-    
 def get_legend(paint):
     """
     Generates a legend dictionary with color mapping and formatting adjustments.
@@ -131,8 +129,6 @@ def get_legend(paint):
     bg_color = 'rgba(255, 255, 255, 0.6)'
     fontsize = 12
     return legend, position, bg_color, fontsize
-
-
 
 @st.cache_data
 def tpl_summary(_df):
@@ -166,12 +162,9 @@ def get_area_totals(_df, column):
 
 # @st.cache_data
 def bar(area_totals, column, paint):
-    # domain = [stop[0] for stop in paint['stops']]
-    # range_ = [stop[1] for stop in paint['stops']]
     plt = alt.Chart(area_totals).mark_bar().encode(
             x=column,
             y=alt.Y("area"),
-            # color=alt.Color(column).scale(domain = domain, range = range_)
         ).properties(height=350)
     return plt
 
@@ -186,22 +179,3 @@ def chart_time(timeseries, column, paint):
             color=alt.Color(column,scale= alt.Scale(domain=domain, range=range_))
     ).properties(height=350)
     return plt
-
-from urllib.parse import urlparse, parse_qs
-def pmtiles_expiration(pmtiles):
-    # parsing URL to get the generation and expiration date 
-    parsed_url = urlparse(pmtiles)
-    query_params = parse_qs(parsed_url.query)
-    
-    # extract X-Amz-Date and X-Amz-Expires
-    x_amz_date_str = query_params.get("X-Amz-Date", [None])[0]
-    x_amz_expires_str = query_params.get("X-Amz-Expires", [None])[0]
-    
-    if x_amz_date_str and x_amz_expires_str:
-        generated_dt = datetime.strptime(x_amz_date_str, "%Y%m%dT%H%M%SZ")
-        expires_seconds = int(x_amz_expires_str)
-        expiration_dt = generated_dt + timedelta(seconds=expires_seconds)
-        print(f"PMTiles Generated:  {generated_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
-        print(f"PMTiles Expiration: {expiration_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
-    else:
-        print("Required query parameters not found in the URL.")

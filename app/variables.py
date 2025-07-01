@@ -15,8 +15,6 @@ con = ibis.duckdb.connect(extensions = ["spatial", "h3"])
 con.raw_sql("SET THREADS=100;")
 set_secrets(con)
 
-print('variables.py is executed')
-
 # Get signed URLs to access license-controlled layers
 key = st.secrets["MINIO_KEY"]
 secret = st.secrets["MINIO_SECRET"]
@@ -31,15 +29,6 @@ carbon_z8 = con.read_parquet("https://minio.carlboettiger.info/public-carbon/hex
 county_bounds = con.read_parquet("https://minio.carlboettiger.info/public-census/2024/county/2024_us_county.parquet")
 landvote_table = con.read_parquet("s3://shared-tpl/landvote/landvote_geom.parquet")
 tpl_table = con.read_parquet('s3://shared-tpl/conservation_almanac/tpl.parquet')
-
-# @st.cache_data(ttl = timedelta(hours=2))
-def get_pmtiles_url():
-    return client.get_presigned_url(
-        "GET",
-        "shared-tpl",
-        "conservation_almanac/tpl.pmtiles",
-        expires=timedelta(hours=2),
-    )
 
 states = (
     "All", "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",

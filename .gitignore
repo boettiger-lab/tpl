@@ -9,3 +9,8 @@
 *.vrt
 .streamlit
 __pycache__
+*.block
+*.tmp
+*.parquet
+*.geojson
+**/*.shp

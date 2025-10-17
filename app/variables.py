@@ -60,6 +60,7 @@ style_options = {
     "Acquisition Cost":  
             ["interpolate",
                 ['exponential', 1], 
+                # ['linear'], 
                 ["get", "amount"],
                     0,	"#fde725",
                     36000,	"#b4de2c",
@@ -122,6 +123,106 @@ style_choice_columns = {'Manager Type': style_options['Manager Type']['property'
                 'Measure Cost': 'conservation_funds_approved',
              }
 
+basemaps = ['CartoDB.DarkMatter', 'CartoDB.DarkMatterNoLabels', 
+            'CartoDB.DarkMatterOnlyLabels','CartoDB.Positron', 
+            'CartoDB.PositronNoLabels', 'CartoDB.PositronOnlyLabels',
+            'CartoDB.Voyager', 'CartoDB.VoyagerLabelsUnder', 'CartoDB.VoyagerNoLabels',
+            'CartoDB.VoyagerOnlyLabels', 'CyclOSM', 'Esri.NatGeoWorldMap',
+            'Esri.WorldGrayCanvas', 'Esri.WorldPhysical', 'Esri.WorldShadedRelief',
+            'Esri.WorldStreetMap', 'Gaode.Normal', 'Gaode.Satellite',
+            'NASAGIBS.ASTER_GDEM_Greyscale_Shaded_Relief', 'NASAGIBS.BlueMarble', 
+            'NASAGIBS.ModisTerraBands367CR','NASAGIBS.ModisTerraTrueColorCR',
+            'NLCD 2021 CONUS Land Cover', 'OPNVKarte',
+            'OpenStreetMap', 'OpenTopoMap', 'SafeCast',
+            'TopPlusOpen.Color', 'TopPlusOpen.Grey', 'UN.ClearMap',
+            'USGS Hydrography', 'USGS.USImagery', 'USGS.USImageryTopo',
+            'USGS.USTopo']
+
+# legend_labels = {
+#     "Acquisition Cost":  [],
+#     "Manager Type":  
+#                 ['Federal', 'State', 'Local','District','Unknown','Joint','Tribal','Private', 'NGO'],
+#     "Access": 
+#             ['Open Access', 'Closed','Unknown','Restricted'],
+#     "Purpose": 
+#     ['Forestry','Historical','Unknown','Other','Farming','Recreation','Environment','Scenic','RAN'],
+# }
+
+
+#maplibregl tooltip 
+tooltip_cols = ['fid','state','site','sponsor','program','county','year','manager',
+                'amount','acres']
+tooltip_template = "<br>".join([f"{col}: {{{{ {col} }}}}" for col in tooltip_cols])
+
+
+error_messages = {
+    "bad_request": lambda llm, e, tb_str: f"""
+**Error – LLM Unavailable** 
+
+*The LLM you selected `{llm}` is no longer available. Please select a different model.*
+
+**Error Details:**
+`{type(e)}: {e}`
+
+""",
+
+    "internal_server_error": lambda llm, e, tb_str: f"""
+**Error – LLM Temporarily Unavailable**
+
+The LLM you selected `{llm}` is currently down due to maintenance or provider outages. It may remain offline for several hours.
+
+**Please select a different model or try again later.**
+
+**Error Details:**
+`{type(e)}: {e}`
+
+""",
+
+    "unexpected_llm_error": lambda prompt, e, tb_str: f"""
+🐞 **BUG: Unexpected Error in Application**
+
+An error occurred while processing your query:
+
+> "{prompt}"
+
+**Error Details:**
+`{type(e)}: {e}`
+
+Traceback:
+
+```{tb_str}```
+---
+
+🚨 **Help Us Improve!**
+
+Please help us fix this issue by reporting it on GitHub:
+[📄 Report this issue](https://github.com/boettiger-lab/CBN-taskforce/issues)
+
+Include the query you ran and any other relevant details. Thanks!
+""",
+
+    "unexpected_error": lambda e, tb_str: f"""
+🐞 **BUG: Unexpected Error in Application**
+
+
+**Error Details:**
+`{type(e)}: {e}`
+
+Traceback:
+
+```{tb_str}```
+
+---
+
+🚨 **Help Us Improve!**
+
+Please help us fix this issue by reporting it on GitHub:
+[📄 Report this issue](https://github.com/boettiger-lab/CBN-taskforce/issues)
+
+Include the steps you took to get this message and any other details that might help us debug. Thanks!
+"""
+}
+
 from langchain_openai import ChatOpenAI
 import streamlit as st
 from langchain_openai.chat_models.base import BaseChatOpenAI
@@ -143,9 +244,11 @@ llm_options = {
     "deepseek-r1t2-chimera": ChatOpenAI(model = "tngtech/deepseek-r1t2-chimera:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
     "kimi-dev-72b": ChatOpenAI(model = "moonshotai/kimi-dev-72b:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
     "hunyuan-a13b-instruct": ChatOpenAI(model = "tencent/hunyuan-a13b-instruct:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
-    "olmo": ChatOpenAI(model = "olmo", api_key=api_key, base_url = "http://ellm.nrp-nautilus.io/",  temperature=0),
-    "llama3": ChatOpenAI(model = "llama3", api_key=api_key, base_url = "http://ellm.nrp-nautilus.io/",  temperature=0),
-    "qwen3": ChatOpenAI(model = "qwen3", api_key=api_key, base_url = "http://ellm.nrp-nautilus.io/",  temperature=0),
-    "gemma3": ChatOpenAI(model = "gemma3", api_key=api_key, base_url = "http://ellm.nrp-nautilus.io/",  temperature=0),
+    # "deepseek-chat-v3-0324": ChatOpenAI(model = "deepseek/deepseek-chat-v3-0324:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
+    "olmo": ChatOpenAI(model = "olmo", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
+    "llama3": ChatOpenAI(model = "llama3", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
+    # "deepseek-r1": BaseChatOpenAI(model = "deepseek-r1", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
+    "qwen3": ChatOpenAI(model = "qwen3", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
+    "gemma3": ChatOpenAI(model = "gemma3", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
 
 }

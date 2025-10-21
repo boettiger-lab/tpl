@@ -3,6 +3,8 @@ from ibis import _
 from variables import *
 import altair as alt
 import re
+from leafmap.foliumap import PMTilesMapLibreTooltip
+from branca.element import Template
 
 def get_pmtiles_url():
     return client.get_presigned_url(
@@ -13,8 +15,6 @@ def get_pmtiles_url():
     )
     
 def get_counties(state_selection):
-    tpl_table.head().execute()
-
     if state_selection != 'All':
         counties = tpl_table.filter(_.state == state_selection).select('county').distinct().order_by('county').execute()
         counties = ['All'] + counties['county'].tolist()
@@ -120,15 +120,45 @@ def tpl_style(ids, paint, pmtiles):
     }
     return style
 
-def get_legend(paint):
+def get_colorbar(gdf, paint):
+    """
+    Extracts color hex codes and value range (vmin, vmax) from paint
+    to make a color bar. Used for mapping continuous data. 
+    """
+    # numbers = [x for x in paint if isinstance(x, (int, float))]
+    vmin = gdf.amount.min().execute()
+    vmax = gdf.amount.max().execute()
+    # min(numbers), max(numbers),
+    colors = [x for x in paint if isinstance(x, str) and x.startswith('#')]
+    orientation = 'vertical'
+    position = 'bottom-right'
+    label = "Acquisition Cost"
+    height = 3
+    width = .2
+    return colors, vmin, vmax, orientation, position, label, height, width
+    
+
+def get_legend(paint, leafmap_backend, df = None, column = None):
     """
     Generates a legend dictionary with color mapping and formatting adjustments.
     """
-    legend = {cat: color for cat, color in paint['stops']}
-    position, fontsize, bg_color = 'bottom-left', 15, 'white'
-    bg_color = 'rgba(255, 255, 255, 0.6)'
-    fontsize = 12
-    return legend, position, bg_color, fontsize
+    if 'stops' in paint:
+        legend = {cat: color for cat, color in paint['stops']}
+    else:
+        legend = {}
+    if df is not None:
+        if ~df.empty:
+            categories = df[column].to_list() #if we filter out categories, don't show them on the legend 
+            legend = {cat: color for cat, color in legend.items() if str(cat) in categories}
+    position, fontsize, bg_color = 'bottomright', 15, 'white'
+    controls={'navigation': 'bottom-left', 
+              'fullscreen':'bottom-left'}
+    shape_type = 'circle'
+
+    if leafmap_backend == 'maplibregl':
+        position = 'bottom-right'
+    return legend, position, bg_color, fontsize, shape_type, controls 
+
 
 @st.cache_data
 def tpl_summary(_df):
@@ -179,3 +209,75 @@ def chart_time(timeseries, column, paint):
             color=alt.Color(column,scale= alt.Scale(domain=domain, range=range_))
     ).properties(height=350)
     return plt
+    
+class CustomTooltip(PMTilesMapLibreTooltip):
+    _template = Template("""
+    {% macro script(this, kwargs) -%}
+    var maplibre = {{ this._parent.get_name() }}.getMaplibreMap();
+    const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false });
+
+    maplibre.on('mousemove', function(e) {
+        const features = maplibre.queryRenderedFeatures(e.point);
+        const filtered = features.filter(f => f.properties && f.properties.fid);
+
+        if (filtered.length) {
+            const props = filtered[0].properties;
+            const html = `
+                <div><strong>fid:</strong> ${props.fid || 'N/A'}</div>
+                <div><strong>Site:</strong> ${props.site || 'N/A'}</div>
+                <div><strong>Sponsor:</strong> ${props.sponsor || 'N/A'}</div>
+                <div><strong>Program:</strong> ${props.program || 'N/A'}</div>
+                <div><strong>State:</strong> ${props.state || 'N/A'}</div>
+                <div><strong>County:</strong> ${props.county || 'N/A'}</div>
+                <div><strong>Year:</strong> ${props.year || 'N/A'}</div>
+                <div><strong>Manager:</strong> ${props.manager || 'N/A'}</div>
+                <div>
+                    <strong>Amount:</strong> ${
+                        props.amount
+                            ? `$${parseFloat(props.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                            : 'N/A'
+                    }
+                </div>
+                <div>
+                    <strong>Acres:</strong> ${
+                        props.acres
+                            ? parseFloat(props.acres).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            : 'N/A'
+                    }
+                </div>
+            `;
+            popup.setLngLat(e.lngLat).setHTML(html).addTo(maplibre);
+            if (popup._container) {
+                popup._container.style.zIndex = 9999;
+            }
+        } else {
+            popup.remove();
+        }
+    });
+    {% endmacro %}
+    """)
+    
+minio_key = os.getenv("MINIO_KEY")
+if minio_key is None:
+    minio_key = st.secrets["MINIO_KEY"]
+
+minio_secret = os.getenv("MINIO_SECRET")
+if minio_secret is None:
+    minio_secret = st.secrets["MINIO_SECRET"]
+
+def minio_logger(consent, query, sql_query, llm_explanation, llm_choice, filename="query_log.csv", bucket="shared-tpl",
+                 key=minio_key, secret=minio_secret,
+                 endpoint="minio.carlboettiger.info"):
+    mc = minio.Minio(endpoint, key, secret)
+    mc.fget_object(bucket, filename, filename)
+    log = pd.read_csv(filename)
+    timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    if consent:
+        df = pd.DataFrame({"timestamp": [timestamp], "user_query": [query], "llm_sql": [sql_query], "llm_explanation": [llm_explanation], "llm_choice":[llm_choice]})
+
+    # if user opted out, do not store query
+    else:  
+        df = pd.DataFrame({"timestamp": [timestamp], "user_query": ['USER OPTED OUT'], "llm_sql": [''], "llm_explanation": [''], "llm_choice":['']})
+    
+    pd.concat([log,df]).to_csv(filename, index=False, header=True)
+    mc.fput_object(bucket, filename, filename, content_type="text/csv")

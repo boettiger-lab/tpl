@@ -20,15 +20,44 @@ key = st.secrets["MINIO_KEY"]
 secret = st.secrets["MINIO_SECRET"]
 client = Minio("minio.carlboettiger.info", key, secret)
 
-tpl_z8 = con.read_parquet("https://minio.carlboettiger.info/shared-tpl/conservation_almanac/z8/tpl_h3_z8.parquet", table_name = 'conservation_almanac')
-landvote_z8 = con.read_parquet("https://minio.carlboettiger.info/shared-tpl/landvote/z8/landvote_h3_z8.parquet", table_name = 'landvote')
+
+tpl_z8_url = client.get_presigned_url(
+        "GET",
+        "shared-tpl",
+        "conservation_almanac/z8/tpl_h3_z8.parquet",
+        expires=timedelta(hours=48),
+    )
+
+    
+landvote_z8_url = client.get_presigned_url(
+        "GET",
+        "shared-tpl",
+        "landvote/z8/landvote_h3_z8.parquet",
+        expires=timedelta(hours=48),
+    )
+landvote_table_url = client.get_presigned_url(
+        "GET",
+        "shared-tpl",
+        "landvote/landvote_geom.parquet",
+        expires=timedelta(hours=48),
+    )
+
+tpl_table_url = client.get_presigned_url(
+        "GET",
+        "shared-tpl",
+        "conservation_almanac/tpl.parquet",
+        expires=timedelta(hours=48),
+    )
+
+tpl_z8 = con.read_parquet(tpl_z8_url, table_name = 'conservation_almanac')
+landvote_z8 = con.read_parquet(landvote_z8_url, table_name = 'landvote')
 mobi_z8 = con.read_parquet("https://minio.carlboettiger.info/public-mobi/hex/all-richness-h8.parquet", table_name = 'mobi')
 svi_z8 = con.read_parquet("https://minio.carlboettiger.info/public-social-vulnerability/2022/SVI2022_US_tract_h3_z8.parquet",table_name = 'svi')
 carbon_z8 = con.read_parquet("https://minio.carlboettiger.info/public-carbon/hex/us-tracts-vuln-total-carbon-2018-h8.parquet",table_name = 'carbon')
 
 county_bounds = con.read_parquet("https://minio.carlboettiger.info/public-census/2024/county/2024_us_county.parquet")
-landvote_table = con.read_parquet("https://minio.carlboettiger.info/shared-tpl/landvote/landvote_geom.parquet")
-tpl_table = con.read_parquet('https://minio.carlboettiger.info/shared-tpl/conservation_almanac/tpl.parquet')
+landvote_table = con.read_parquet(landvote_table_url)
+tpl_table = con.read_parquet(tpl_table_url)
 
 states = (
     "All", "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",

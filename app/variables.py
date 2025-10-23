@@ -25,7 +25,7 @@ tpl_z8_url = client.get_presigned_url(
         "GET",
         "shared-tpl",
         "conservation_almanac/z8/tpl_h3_z8.parquet",
-        expires=timedelta(hours=2),
+        expires=timedelta(hours=48),
     )
 
     
@@ -33,20 +33,20 @@ landvote_z8_url = client.get_presigned_url(
         "GET",
         "shared-tpl",
         "landvote/z8/landvote_h3_z8.parquet",
-        expires=timedelta(hours=2),
+        expires=timedelta(hours=48),
     )
 landvote_table_url = client.get_presigned_url(
         "GET",
         "shared-tpl",
         "landvote/landvote_geom.parquet",
-        expires=timedelta(hours=2),
+        expires=timedelta(hours=48),
     )
 
 tpl_table_url = client.get_presigned_url(
         "GET",
         "shared-tpl",
         "conservation_almanac/tpl.parquet",
-        expires=timedelta(hours=2),
+        expires=timedelta(hours=48),
     )
 
 tpl_z8 = con.read_parquet(tpl_z8_url, table_name = 'conservation_almanac')

@@ -20,15 +20,15 @@ key = st.secrets["MINIO_KEY"]
 secret = st.secrets["MINIO_SECRET"]
 client = Minio("minio.carlboettiger.info", key, secret)
 
-tpl_z8 = con.read_parquet("https://minio.carlboettiger.info/shared-tpl/conservation_almanac/z8/tpl_h3_z8.parquet", table_name = 'conservation_almanac')
-landvote_z8 = con.read_parquet("https://minio.carlboettiger.info/shared-tpl/landvote/z8/landvote_h3_z8.parquet", table_name = 'landvote')
+tpl_z8 = con.read_parquet("s3://shared-tpl/conservation_almanac/z8/tpl_h3_z8.parquet", table_name = 'conservation_almanac')
+landvote_z8 = con.read_parquet("s3://shared-tpl/landvote/z8/landvote_h3_z8.parquet", table_name = 'landvote')
 mobi_z8 = con.read_parquet("https://minio.carlboettiger.info/public-mobi/hex/all-richness-h8.parquet", table_name = 'mobi')
 svi_z8 = con.read_parquet("https://minio.carlboettiger.info/public-social-vulnerability/2022/SVI2022_US_tract_h3_z8.parquet",table_name = 'svi')
 carbon_z8 = con.read_parquet("https://minio.carlboettiger.info/public-carbon/hex/us-tracts-vuln-total-carbon-2018-h8.parquet",table_name = 'carbon')
 
 county_bounds = con.read_parquet("https://minio.carlboettiger.info/public-census/2024/county/2024_us_county.parquet")
-landvote_table = con.read_parquet("https://minio.carlboettiger.info/shared-tpl/landvote/landvote_geom.parquet")
-tpl_table = con.read_parquet('https://minio.carlboettiger.info/shared-tpl/conservation_almanac/tpl.parquet')
+landvote_table = con.read_parquet("s3://shared-tpl/landvote/landvote_geom.parquet")
+tpl_table = con.read_parquet('s3://shared-tpl/conservation_almanac/tpl.parquet')
 
 states = (
     "All", "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",

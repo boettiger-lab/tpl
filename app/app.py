@@ -15,7 +15,6 @@ from utils import *
 A data visualization tool built for the Trust for Public Land
 '''
 
-pmtiles = get_pmtiles_url() # generate PMTiles url
 with st.sidebar:
     leafmap_choice = st.selectbox("Leafmap module", ['maplibregl','foliumap'])
 

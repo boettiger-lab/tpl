@@ -6,14 +6,6 @@ import re
 from leafmap.foliumap import PMTilesMapLibreTooltip
 from branca.element import Template
 
-def get_pmtiles_url():
-    return client.get_presigned_url(
-        "GET",
-        "shared-tpl",
-        "conservation_almanac/tpl.pmtiles",
-        expires=timedelta(hours=2),
-    )
-    
 def get_counties(state_selection):
     if state_selection != 'All':
         counties = tpl_table.filter(_.state == state_selection).select('county').distinct().order_by('county').execute()

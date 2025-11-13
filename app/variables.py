@@ -21,7 +21,7 @@ set_secrets(con)
 # client = Minio("minio.carlboettiger.info", key, secret)
 
 pmtiles = "https://minio.carlboettiger.info/public-tpl/conservation_almanac/tpl.pmtiles"
-tpl_z8_url = "s3://public-tpl/conservation_almanac/z8/tpl_h3_z8.parquet"
+tpl_z8_url = "https://minio.carlboettiger.info/public-tpl/conservation_almanac/z8/tpl_h3_z8.parquet"
 landvote_z8_url = "https://minio.carlboettiger.info/public-tpl/landvote/z8/landvote_h3_z8.parquet"
 tpl_table_url = "https://minio.carlboettiger.info/public-tpl/conservation_almanac/tpl.parquet"
 landvote_table_url = "https://minio.carlboettiger.info/public-tpl/landvote/landvote_geom.parquet"

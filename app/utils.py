@@ -5,6 +5,8 @@ import altair as alt
 import re
 from leafmap.foliumap import PMTilesMapLibreTooltip
 from branca.element import Template
+import pandas as pd
+import datetime
 
 def get_counties(state_selection):
     if state_selection != 'All':
@@ -112,6 +114,14 @@ def tpl_style(ids, paint, pmtiles):
     }
     return style
 
+
+
+    
+def extract_columns(sql_query):
+    # Find all substrings inside double quotes
+    columns = list(dict.fromkeys(re.findall(r'"(.*?)"', sql_query)))
+    return columns
+    
 def get_colorbar(gdf, paint):
     """
     Extracts color hex codes and value range (vmin, vmax) from paint

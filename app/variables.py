@@ -5,7 +5,7 @@ import ibis.selectors as s
 from cng.utils import *
 from cng.h3 import *
 from minio import Minio
-import streamlit 
+import streamlit as st
 from datetime import datetime, timedelta
 import streamlit
 import re
@@ -16,9 +16,9 @@ con.raw_sql("SET THREADS=100;")
 set_secrets(con)
 
 # Get signed URLs to access license-controlled layers
-# key = st.secrets["MINIO_KEY"]
-# secret = st.secrets["MINIO_SECRET"]
-# client = Minio("minio.carlboettiger.info", key, secret)
+key = st.secrets["MINIO_KEY"]
+secret = st.secrets["MINIO_SECRET"]
+client = Minio("minio.carlboettiger.info", key, secret)
 
 pmtiles = "https://minio.carlboettiger.info/public-tpl/conservation_almanac/tpl.pmtiles"
 tpl_z8_url = "https://minio.carlboettiger.info/public-tpl/conservation_almanac/z8/tpl_h3_z8.parquet"
@@ -159,6 +159,11 @@ basemaps = ['CartoDB.DarkMatter', 'CartoDB.DarkMatterNoLabels',
 #     ['Forestry','Historical','Unknown','Other','Farming','Recreation','Environment','Scenic','RAN'],
 # }
 
+help_message = '''
+- ❌ Safari/iOS not fully supported. For Safari/iOS users, change the **Leafmap module** from MapLibre to Folium in **(Map Settings)** below. 
+- 📊 Use this sidebar to color-code the map by different attributes **(Group by)**
+- 💬 For a more tailored experience, query our dataset of protected areas and their precomputed metrics for each of the displayed layers, using the experimental chatbot. The language model tries to answer natural language questions by drawing only from curated datasets (listed below).
+'''
 
 #maplibregl tooltip 
 tooltip_cols = ['fid','state','site','sponsor','program','county','year','manager',
@@ -249,9 +254,9 @@ if openrouter_api is None:
     openrouter_api = st.secrets["OPENROUTER_API_KEY"]
 
 llm_options = {
+    "gpt-oss-20b": ChatOpenAI(model = "openai/gpt-oss-20b:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
     "mistral-small-3.2-24b-instruct": ChatOpenAI(model = "mistralai/mistral-small-3.2-24b-instruct:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
     "devstral-small-2505": ChatOpenAI(model = "mistralai/devstral-small-2505:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
-    "gpt-oss-20b": ChatOpenAI(model = "openai/gpt-oss-20b:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
     "deepseek-r1t2-chimera": ChatOpenAI(model = "tngtech/deepseek-r1t2-chimera:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
     "kimi-dev-72b": ChatOpenAI(model = "moonshotai/kimi-dev-72b:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
     "hunyuan-a13b-instruct": ChatOpenAI(model = "tencent/hunyuan-a13b-instruct:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),

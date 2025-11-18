@@ -54,6 +54,13 @@ with st.sidebar:
         county_choice = 'All'
     st.divider()
 
+with st.sidebar:
+    with st.popover("ℹ️ Help"):
+        st.markdown(help_message)
+    if st.button("🧹 Clear Filters", type="secondary", help = 'Reset all the filters to their default state.'):
+        st.rerun()
+    st.divider()
+
 legend, position, bg_color, fontsize, shape_type, controls = get_legend(paint, leafmap_choice)
 # get all the ids that correspond to the filter
 gdf = filter_data(tpl_table, state_choice, county_choice, year_range)
@@ -69,7 +76,7 @@ with chatbot_container:
             '''
             Mapping queries: 
             - Show me the most expensive protected site
-            - Show me protected areas with high levels of carbon
+            - Show me protected areas with high levels of carbon in Florida
             - Show me sites owned, managed or sponsored by the Trust for Public Land
             '''
 
@@ -170,11 +177,11 @@ with st.container():
                                 
                     # extract ids, columns, bounds if present
                     if "fid" in llm_output.columns and not llm_output.empty:
-                        ids = list(set(llm_output['fid'].tolist()))
+                        unique_ids = list(set(llm_output['fid'].tolist()))
                         llm_cols = extract_columns(sql_query)
-                        bounds = llm_output.total_bounds.tolist()
+                        llm_bounds = llm_output.total_bounds.tolist()
                     else:
-                        ids, llm_cols = [], []
+                        unique_ids, llm_cols = [], []
                         not_mapping = True
 
         except Exception as e:
@@ -201,13 +208,16 @@ with st.container():
 
 # define PMTiles style dict (if we didn't already do so using the chatbot)
 if 'style' not in locals(): 
-    if one_state:
+    if one_state or ('llm_output' in locals()):
         # filter to ids in that state 
         style = tpl_style(unique_ids, paint, pmtiles)
     else: 
         # selected all states, so no need to filter 
         style=tpl_style_default(paint, pmtiles)
-    bounds = get_bounds(state_choice, county_choice, m)
+    if 'llm_output' in locals():
+        bounds = llm_bounds
+    else:
+        bounds = get_bounds(state_choice, county_choice, m)
 
 # add pmtiles to map (using user-specified module)
 if leafmap_choice == "maplibregl":

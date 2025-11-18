@@ -159,6 +159,11 @@ basemaps = ['CartoDB.DarkMatter', 'CartoDB.DarkMatterNoLabels',
 #     ['Forestry','Historical','Unknown','Other','Farming','Recreation','Environment','Scenic','RAN'],
 # }
 
+help_message = '''
+- ❌ Safari/iOS not fully supported. For Safari/iOS users, change the **Leafmap module** from MapLibre to Folium in **(Map Settings)** below. 
+- 📊 Use this sidebar to color-code the map by different attributes **(Group by)**
+- 💬 For a more tailored experience, query our dataset of protected areas and their precomputed metrics for each of the displayed layers, using the experimental chatbot. The language model tries to answer natural language questions by drawing only from curated datasets (listed below).
+'''
 
 #maplibregl tooltip 
 tooltip_cols = ['fid','state','site','sponsor','program','county','year','manager',

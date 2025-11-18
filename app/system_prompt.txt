@@ -65,7 +65,19 @@ example_assistant: {{"sql_query":
     LEFT JOIN carbon
     USING (h8)
     GROUP BY "fid", "site", geom"
-    ORDER BY "mean_carbon" DESC LIMIT 10;
+    ORDER BY "mean_carbon" DESC LIMIT 100;
 "explanation":"I joined `conservation_almanac` with `carbon` to retrieve irrecoverable carbon levels for protected areas in the `conservation_almanac`. I returned 10 areas with highest levels of carbon.  
+}}
+
+## Example:
+example_user: "Show me protected areas with high species richness"
+example_assistant: {{"sql_query": 
+    SELECT "fid", "geom", "site", AVG("richness") AS "mean_richness"
+    FROM conservation_almanac
+    LEFT JOIN richness
+    USING (h8)
+    GROUP BY "fid", "site", geom"
+    ORDER BY "mean_richness" DESC LIMIT 100;
+"explanation":"I joined `conservation_almanac` with `richness` to retrieve species richness for protected areas in the `conservation_almanac`. I returned 100 areas with highest levels of carbon.  
 }}
 

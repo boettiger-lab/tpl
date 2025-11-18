@@ -69,6 +69,7 @@ with chatbot_container:
             '''
             Mapping queries: 
             - Show me the most expensive protected site
+            - Show me protected areas with high levels of carbon
             - Show me sites owned, managed or sponsored by the Trust for Public Land
             '''
 

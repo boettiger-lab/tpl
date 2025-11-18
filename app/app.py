@@ -1,8 +1,12 @@
 import streamlit as st
 from cng.h3 import *
-from ibis import _
 import importlib
 from datetime import time
+import traceback
+import ibis.selectors as s
+from ibis import _
+import ibis 
+import openai
 
 st.set_page_config(layout="wide",
                    page_title="TPL Conservation Almanac",
@@ -277,7 +281,7 @@ with col1:
     get_bar(gdf_tpl, style_choice, 'year', 'total_amount', paint,'Year','Acquisition Cost ($)',"Yearly investment ($) in protected area")
 
 with col2:
-    gdf_landvote = group_data(gdf_landvote.filter(_.status == 'Pass'), 'Measure Cost')
+    gdf_landvote = group_data(gdf_landvote.filter(gdf_landvote.status == 'Pass'), 'Measure Cost')
     get_bar(gdf_landvote, style_choice, 'year', 'total_amount', paint, 'Year','Funds Approved ($)','Yearly funds from conservation ballot measures')
 
 st.divider()

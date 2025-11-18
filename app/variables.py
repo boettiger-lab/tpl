@@ -5,7 +5,7 @@ import ibis.selectors as s
 from cng.utils import *
 from cng.h3 import *
 from minio import Minio
-import streamlit 
+import streamlit as st
 from datetime import datetime, timedelta
 import streamlit
 import re
@@ -16,9 +16,9 @@ con.raw_sql("SET THREADS=100;")
 set_secrets(con)
 
 # Get signed URLs to access license-controlled layers
-# key = st.secrets["MINIO_KEY"]
-# secret = st.secrets["MINIO_SECRET"]
-# client = Minio("minio.carlboettiger.info", key, secret)
+key = st.secrets["MINIO_KEY"]
+secret = st.secrets["MINIO_SECRET"]
+client = Minio("minio.carlboettiger.info", key, secret)
 
 pmtiles = "https://minio.carlboettiger.info/public-tpl/conservation_almanac/tpl.pmtiles"
 tpl_z8_url = "https://minio.carlboettiger.info/public-tpl/conservation_almanac/z8/tpl_h3_z8.parquet"

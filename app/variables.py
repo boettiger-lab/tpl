@@ -27,12 +27,11 @@ tpl_table_url = "https://minio.carlboettiger.info/public-tpl/conservation_almana
 landvote_table_url = "https://minio.carlboettiger.info/public-tpl/landvote/landvote_geom.parquet"
 county_bounds_url = "https://minio.carlboettiger.info/public-census/2024/county/2024_us_county.parquet"
 
-
 mobi_z8_url = "https://minio.carlboettiger.info/public-mobi/hex/all-richness-h8.parquet"
 svi_z8_url = "https://minio.carlboettiger.info/public-social-vulnerability/2022/SVI2022_US_tract_h3_z8.parquet"
 carbon_z8_url = "https://minio.carlboettiger.info/public-carbon/hex/us-tracts-vuln-total-carbon-2018-h8.parquet"
-lower_chamber_z8_url = "https://minio.carlboettiger.info/public-census/2024/sld/lower/z8/**"
-upper_chamber_z8_url = "https://minio.carlboettiger.info/public-census/2024/sld/upper/z8/**"
+lower_chamber_z8_url = "s3://public-census/2024/sld/lower/z8/**"
+upper_chamber_z8_url = "s3://public-census/2024/sld/upper/z8/**"
 
 tpl_z8 = con.read_parquet(tpl_z8_url, table_name = 'conservation_almanac')
 landvote_z8 = con.read_parquet(landvote_z8_url, table_name = 'landvote')

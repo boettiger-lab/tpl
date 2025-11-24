@@ -90,14 +90,28 @@ example_assistant: {{"sql_query":
 }}
 
 ## Example:
-example_user: "Which House legislative districts districts have low conservation investment?"
+example_user: "Which house legislative districts have the highest conservation investments?"
 example_assistant: {{"sql_query": 
-    SELECT "fid", "geom", "site", SUM("amount") AS "total_investment"
-    FROM conservation_almanac
-    LEFT JOIN lower_chamber
+    SELECT ca.fid, ca.geom, ca.site, lc.NAMELSAD, SUM(ca.amount) as total_investment
+    FROM conservation_almanac as ca
+    LEFT JOIN lower_chamber as lc
     USING (h8)
-    GROUP BY "fid", "site", geom"
-    ORDER BY "total_investment" ASC LIMIT 100;
+    GROUP BY fid, geom, site, NAMELSAD
+    ORDER BY total_investment ASC LIMIT 100;
 "explanation":"I intersected `lower_chamber` districts with `conservation_almanac` spending data to calculate total conservation investment within each district. I then returned the 100 districts with the lowest investment levels."
 }}
 
+## Example:
+example_user: "Which state senate districts have the highest percentage of protected areas?"
+example_assistant: {{"sql_query": 
+    SELECT lc.NAMELSAD, lc.STATEFP, 
+        COUNT(DISTINCT ca.h8)::float / COUNT(DISTINCT lc.h8) AS fraction_protected
+    FROM lower_chamber AS lc
+    LEFT JOIN conservation_almanac AS ca
+    USING (h8)
+    GROUP BY lc.NAMELSAD, lc.STATEFP
+    ORDER BY fraction_protected DESC
+    LIMIT 20;
+"explanation":"I joined `lower_chamber` with `conservation_almanac` on the `h8` column. Since each `h8` hex is the same size, the fraction of a district that is protected can be calculated as the number of unique `h8` hexes with protected areas divided by the total number of `h8` hexes in the district. The query returns the 20 districts with the highest fraction of protected land."
+}}
+    

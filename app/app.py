@@ -216,7 +216,7 @@ if 'style' not in locals():
     else: 
         # selected all states, so no need to filter 
         style=tpl_style_default(paint, pmtiles)
-    if 'llm_output' in locals():
+    if 'llm_bounds' in locals()
         bounds = llm_bounds
     else:
         bounds = get_bounds(state_choice, county_choice, m)

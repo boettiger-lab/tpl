@@ -13,7 +13,7 @@ duckdb_install_h3()
 
 con = ibis.duckdb.connect(extensions = ["spatial", "h3"])
 con.raw_sql("SET THREADS=100;")
-set_secrets(con)
+set_secrets(con, "", "", "minio.carlboettiger.info")
 
 # Get signed URLs to access license-controlled layers
 key = st.secrets["MINIO_KEY"]

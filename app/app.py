@@ -106,8 +106,10 @@ prompt = ChatPromptTemplate.from_messages([
     ("system", template),
     ("human", "{input}")
 ]).partial(dialect="duckdb", conservation_almanac = tpl_z8.schema(),
-          landvote = landvote_z8.schema(), carbon = carbon_z8.schema(),
-          svi = svi_z8.schema(), mobi = mobi_z8.schema())
+           landvote = landvote_z8.schema(), carbon = carbon_z8.schema(),
+           svi = svi_z8.schema(), mobi = mobi_z8.schema(), 
+           lower_chamber = lower_chamber_z8.schema(), upper_chamber = upper_chamber_z8.schema())
+
 
 structured_llm = llm.with_structured_output(SQLResponse)
 few_shot_structured_llm = prompt | structured_llm

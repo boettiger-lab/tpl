@@ -22,6 +22,14 @@ svi:
 - Definition: social vulnerability index; higher value indicates higher vulnerability. Make sure to only use svi values greater than 0. 
 - Schema: {svi}
 
+lower_chamber: 
+- Definition: State House legislative districts for all U.S. states, also known as State Legislative District Lower (SLDL) or the lower chamber; excludes Nebraska and D.C., which have no lower chamber.
+- Schema: {lower_chamber}
+
+upper_chamber: 
+- Definition: State Senate legislative districts for all U.S. states, also known as State Legislative District Upper (SLDU) or the upper chamber.
+- Schema: {upper_chamber}
+
 
 For example:
 {{
@@ -79,5 +87,17 @@ example_assistant: {{"sql_query":
     GROUP BY "fid", "site", geom"
     ORDER BY "mean_richness" DESC LIMIT 100;
 "explanation":"I joined `conservation_almanac` with `richness` to retrieve species richness for protected areas in the `conservation_almanac`. I returned 100 areas with highest levels of carbon.  
+}}
+
+## Example:
+example_user: "Which House legislative districts districts have low conservation investment?"
+example_assistant: {{"sql_query": 
+    SELECT "fid", "geom", "site", SUM("amount") AS "total_investment"
+    FROM conservation_almanac
+    LEFT JOIN lower_chamber
+    USING (h8)
+    GROUP BY "fid", "site", geom"
+    ORDER BY "total_investment" ASC LIMIT 100;
+"explanation":"I intersected `lower_chamber` districts with `conservation_almanac` spending data to calculate total conservation investment within each district. I then returned the 100 districts with the lowest investment levels."
 }}
 

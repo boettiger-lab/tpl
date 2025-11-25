@@ -22,6 +22,14 @@ svi:
 - Definition: social vulnerability index; higher value indicates higher vulnerability. Make sure to only use svi values greater than 0. 
 - Schema: {svi}
 
+lower_chamber: 
+- Definition: State House legislative districts for all U.S. states, also known as State Legislative District Lower (SLDL) or the lower chamber; excludes Nebraska and D.C., which have no lower chamber.
+- Schema: {lower_chamber}
+
+upper_chamber: 
+- Definition: State Senate legislative districts for all U.S. states, also known as State Legislative District Upper (SLDU) or the upper chamber.
+- Schema: {upper_chamber}
+
 
 For example:
 {{
@@ -81,3 +89,29 @@ example_assistant: {{"sql_query":
 "explanation":"I joined `conservation_almanac` with `richness` to retrieve species richness for protected areas in the `conservation_almanac`. I returned 100 areas with highest levels of carbon.  
 }}
 
+## Example:
+example_user: "Which house legislative districts have the highest conservation investments?"
+example_assistant: {{"sql_query": 
+    SELECT ca.fid, ca.geom, ca.site, lc.NAMELSAD, SUM(ca.amount) as total_investment
+    FROM conservation_almanac as ca
+    LEFT JOIN lower_chamber as lc
+    USING (h8)
+    GROUP BY fid, geom, site, NAMELSAD
+    ORDER BY total_investment ASC LIMIT 100;
+"explanation":"I intersected `lower_chamber` districts with `conservation_almanac` spending data to calculate total conservation investment within each district. I then returned the 100 districts with the lowest investment levels."
+}}
+
+## Example:
+example_user: "Which state senate districts have the highest percentage of protected areas?"
+example_assistant: {{"sql_query": 
+    SELECT lc.NAMELSAD, lc.STATEFP, 
+        COUNT(DISTINCT ca.h8)::float / COUNT(DISTINCT lc.h8) AS fraction_protected
+    FROM lower_chamber AS lc
+    LEFT JOIN conservation_almanac AS ca
+    USING (h8)
+    GROUP BY lc.NAMELSAD, lc.STATEFP
+    ORDER BY fraction_protected DESC
+    LIMIT 20;
+"explanation":"I joined `lower_chamber` with `conservation_almanac` on the `h8` column. Since each `h8` hex is the same size, the fraction of a district that is protected can be calculated as the number of unique `h8` hexes with protected areas divided by the total number of `h8` hexes in the district. The query returns the 20 districts with the highest fraction of protected land."
+}}
+    

@@ -7,6 +7,7 @@ import ibis.selectors as s
 from ibis import _
 import ibis 
 import openai
+import pandas as pd
 
 st.set_page_config(layout="wide",
                    page_title="TPL Conservation Almanac",
@@ -82,6 +83,8 @@ with chatbot_container:
 
             '''
             Exploratory data queries:
+            - Which state senate districts have the highest percentage of protected areas?
+            - Which house legislative districts have the highest conservation investments?
             - Which states have the highest average cost per acre?
             '''
             
@@ -106,8 +109,10 @@ prompt = ChatPromptTemplate.from_messages([
     ("system", template),
     ("human", "{input}")
 ]).partial(dialect="duckdb", conservation_almanac = tpl_z8.schema(),
-          landvote = landvote_z8.schema(), carbon = carbon_z8.schema(),
-          svi = svi_z8.schema(), mobi = mobi_z8.schema())
+           landvote = landvote_z8.schema(), carbon = carbon_z8.schema(),
+           svi = svi_z8.schema(), mobi = mobi_z8.schema(), 
+           lower_chamber = lower_chamber_z8.schema(), upper_chamber = upper_chamber_z8.schema())
+
 
 structured_llm = llm.with_structured_output(SQLResponse)
 few_shot_structured_llm = prompt | structured_llm
@@ -214,7 +219,7 @@ if 'style' not in locals():
     else: 
         # selected all states, so no need to filter 
         style=tpl_style_default(paint, pmtiles)
-    if 'llm_output' in locals():
+    if 'llm_bounds' in locals():
         bounds = llm_bounds
     else:
         bounds = get_bounds(state_choice, county_choice, m)

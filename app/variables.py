@@ -13,7 +13,7 @@ duckdb_install_h3()
 
 con = ibis.duckdb.connect(extensions = ["spatial", "h3"])
 con.raw_sql("SET THREADS=100;")
-set_secrets(con)
+set_secrets(con, "", "", "minio.carlboettiger.info")
 
 # Get signed URLs to access license-controlled layers
 key = st.secrets["MINIO_KEY"]
@@ -30,6 +30,8 @@ county_bounds_url = "https://minio.carlboettiger.info/public-census/2024/county/
 mobi_z8_url = "https://minio.carlboettiger.info/public-mobi/hex/all-richness-h8.parquet"
 svi_z8_url = "https://minio.carlboettiger.info/public-social-vulnerability/2022/SVI2022_US_tract_h3_z8.parquet"
 carbon_z8_url = "https://minio.carlboettiger.info/public-carbon/hex/us-tracts-vuln-total-carbon-2018-h8.parquet"
+lower_chamber_z8_url = "s3://public-census/2024/sld/lower/z8/**"
+upper_chamber_z8_url = "s3://public-census/2024/sld/upper/z8/**"
 
 tpl_z8 = con.read_parquet(tpl_z8_url, table_name = 'conservation_almanac')
 landvote_z8 = con.read_parquet(landvote_z8_url, table_name = 'landvote')
@@ -40,6 +42,8 @@ county_bounds = con.read_parquet(county_bounds_url)
 mobi_z8 = con.read_parquet(mobi_z8_url, table_name = 'mobi')
 svi_z8 = con.read_parquet(svi_z8_url,table_name = 'svi')
 carbon_z8 = con.read_parquet(carbon_z8_url, table_name = 'carbon')
+lower_chamber_z8 = con.read_parquet(lower_chamber_z8_url, table_name = 'lower_chamber')
+upper_chamber_z8 = con.read_parquet(upper_chamber_z8_url, table_name = 'upper_chamber')
 
 states = (
     "All", "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
@@ -162,7 +166,6 @@ basemaps = ['CartoDB.DarkMatter', 'CartoDB.DarkMatterNoLabels',
 help_message = '''
 - ❌ Safari/iOS not fully supported. For Safari/iOS users, change the **Leafmap module** from MapLibre to Folium in **(Map Settings)** below. 
 - 📊 Use this sidebar to color-code the map by different attributes **(Group by)**
-- 💬 For a more tailored experience, query our dataset of protected areas and their precomputed metrics for each of the displayed layers, using the experimental chatbot. The language model tries to answer natural language questions by drawing only from curated datasets (listed below).
 '''
 
 #maplibregl tooltip 
@@ -253,18 +256,90 @@ openrouter_api = os.getenv("OPENROUTER_API_KEY")
 if openrouter_api is None:
     openrouter_api = st.secrets["OPENROUTER_API_KEY"]
 
-llm_options = {
-    "gpt-oss-20b": ChatOpenAI(model = "openai/gpt-oss-20b:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
-    "mistral-small-3.2-24b-instruct": ChatOpenAI(model = "mistralai/mistral-small-3.2-24b-instruct:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
-    "devstral-small-2505": ChatOpenAI(model = "mistralai/devstral-small-2505:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
-    "deepseek-r1t2-chimera": ChatOpenAI(model = "tngtech/deepseek-r1t2-chimera:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
-    "kimi-dev-72b": ChatOpenAI(model = "moonshotai/kimi-dev-72b:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
-    "hunyuan-a13b-instruct": ChatOpenAI(model = "tencent/hunyuan-a13b-instruct:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
-    # "deepseek-chat-v3-0324": ChatOpenAI(model = "deepseek/deepseek-chat-v3-0324:free", api_key=openrouter_api, base_url = "https://openrouter.ai/api/v1",  temperature=0),
-    "olmo": ChatOpenAI(model = "olmo", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
-    "llama3": ChatOpenAI(model = "llama3", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
-    # "deepseek-r1": BaseChatOpenAI(model = "deepseek-r1", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
-    "qwen3": ChatOpenAI(model = "qwen3", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
-    "gemma3": ChatOpenAI(model = "gemma3", api_key=api_key, base_url = "https://llm.nrp-nautilus.io/",  temperature=0),
+openrouter_endpoint="https://openrouter.ai/api/v1"
+nrp_endpoint="https://ellm.nrp-nautilus.io/v1"
 
+# don't use a provider that collects data
+data_policy = {
+    "provider": {
+        "data_collection": "deny"
+    }
+}
+
+llm_options = {
+     "kat-coder-pro": ChatOpenAI(
+        model="kwaipilot/kat-coder-pro:free",
+        api_key=openrouter_api,
+        base_url=openrouter_endpoint,
+        temperature=0,
+        extra_body=data_policy
+    ),
+
+    "llama-3.3-70b-instruct": ChatOpenAI(
+        model="meta-llama/llama-3.3-70b-instruct:free",
+        api_key=openrouter_api,
+        base_url=openrouter_endpoint,
+        temperature=0,
+        extra_body=data_policy
+    ),
+        
+    "gpt-oss-20b": ChatOpenAI(
+        model="openai/gpt-oss-20b:free",
+        api_key=openrouter_api,
+        base_url=openrouter_endpoint,
+        temperature=0,
+        extra_body=data_policy
+    ),
+    
+    "qwen3-coder": ChatOpenAI(
+        model="qwen/qwen3-coder:free",
+        api_key=openrouter_api,
+        base_url=openrouter_endpoint,
+        temperature=0,
+        extra_body=data_policy
+    ),  
+    
+    "dolphin-mistral-24b-venice-edition": ChatOpenAI(
+        model="cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+        api_key=openrouter_api,
+        base_url=openrouter_endpoint,
+        temperature=0,
+        extra_body=data_policy
+    ),
+
+    "nemotron-nano-9b-v2": ChatOpenAI(
+        model="nvidia/nemotron-nano-9b-v2:free",
+        api_key=openrouter_api,
+        base_url=openrouter_endpoint,
+        temperature=0,
+        extra_body=data_policy
+    ),
+
+    "gemma-3-27b-it": ChatOpenAI(
+        model="gemma3",
+        api_key=api_key,
+        base_url=nrp_endpoint,
+        temperature=0
+    ),
+
+    "gpt-oss-120b": ChatOpenAI(
+        model="gpt-oss",
+        api_key=api_key,
+        base_url=nrp_endpoint,
+        temperature=0
+    ),
+
+    "glm-4.6-gptq-int4-int8mix": ChatOpenAI(
+        model="glm-4.6",
+        api_key=api_key,
+        base_url=nrp_endpoint,
+        temperature=0
+    ),
+
+    "glm-4.5v-fp8": ChatOpenAI(
+        model="glm-v",
+        api_key=api_key,
+        base_url=nrp_endpoint,
+        temperature=0
+    ),
 }

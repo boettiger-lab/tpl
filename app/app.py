@@ -7,6 +7,7 @@ import ibis.selectors as s
 from ibis import _
 import ibis 
 import openai
+import pandas as pd
 
 st.set_page_config(layout="wide",
                    page_title="TPL Conservation Almanac",
@@ -82,6 +83,8 @@ with chatbot_container:
 
             '''
             Exploratory data queries:
+            - Which state senate districts have the highest percentage of protected areas?
+            - Which house legislative districts have the highest conservation investments?
             - Which states have the highest average cost per acre?
             '''
             

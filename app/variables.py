@@ -267,40 +267,24 @@ data_policy = {
 }
 
 llm_options = {
-     "kat-coder-pro": ChatOpenAI(
-        model="kwaipilot/kat-coder-pro:free",
+    "devstral-2512": ChatOpenAI(
+        model="mistralai/devstral-2512:free",
         api_key=openrouter_api,
         base_url=openrouter_endpoint,
         temperature=0,
         extra_body=data_policy
     ),
 
-    "llama-3.3-70b-instruct": ChatOpenAI(
-        model="meta-llama/llama-3.3-70b-instruct:free",
+    "trinity-mini": ChatOpenAI(
+        model="arcee-ai/trinity-mini:free",
         api_key=openrouter_api,
         base_url=openrouter_endpoint,
         temperature=0,
         extra_body=data_policy
     ),
-        
-    "gpt-oss-20b": ChatOpenAI(
-        model="openai/gpt-oss-20b:free",
-        api_key=openrouter_api,
-        base_url=openrouter_endpoint,
-        temperature=0,
-        extra_body=data_policy
-    ),
-    
-    "qwen3-coder": ChatOpenAI(
-        model="qwen/qwen3-coder:free",
-        api_key=openrouter_api,
-        base_url=openrouter_endpoint,
-        temperature=0,
-        extra_body=data_policy
-    ),  
-    
-    "dolphin-mistral-24b-venice-edition": ChatOpenAI(
-        model="cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+
+    "tng-r1t-chimera": ChatOpenAI(
+        model="tngtech/tng-r1t-chimera:free",
         api_key=openrouter_api,
         base_url=openrouter_endpoint,
         temperature=0,
@@ -314,7 +298,7 @@ llm_options = {
         temperature=0,
         extra_body=data_policy
     ),
-
+    
     "gemma-3-27b-it": ChatOpenAI(
         model="gemma3",
         api_key=api_key,

@@ -283,14 +283,6 @@ llm_options = {
         extra_body=data_policy
     ),
 
-    "tng-r1t-chimera": ChatOpenAI(
-        model="tngtech/tng-r1t-chimera:free",
-        api_key=openrouter_api,
-        base_url=openrouter_endpoint,
-        temperature=0,
-        extra_body=data_policy
-    ),
-
     "nemotron-nano-9b-v2": ChatOpenAI(
         model="nvidia/nemotron-nano-9b-v2:free",
         api_key=openrouter_api,
@@ -306,24 +298,4 @@ llm_options = {
         temperature=0
     ),
 
-    "gpt-oss-120b": ChatOpenAI(
-        model="gpt-oss",
-        api_key=api_key,
-        base_url=nrp_endpoint,
-        temperature=0
-    ),
-
-    "glm-4.6-gptq-int4-int8mix": ChatOpenAI(
-        model="glm-4.6",
-        api_key=api_key,
-        base_url=nrp_endpoint,
-        temperature=0
-    ),
-
-    "glm-4.5v-fp8": ChatOpenAI(
-        model="glm-v",
-        api_key=api_key,
-        base_url=nrp_endpoint,
-        temperature=0
-    ),
 }

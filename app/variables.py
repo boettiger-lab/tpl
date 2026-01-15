@@ -267,40 +267,16 @@ data_policy = {
 }
 
 llm_options = {
-     "kat-coder-pro": ChatOpenAI(
-        model="kwaipilot/kat-coder-pro:free",
+    "devstral-2512": ChatOpenAI(
+        model="mistralai/devstral-2512:free",
         api_key=openrouter_api,
         base_url=openrouter_endpoint,
         temperature=0,
         extra_body=data_policy
     ),
 
-    "llama-3.3-70b-instruct": ChatOpenAI(
-        model="meta-llama/llama-3.3-70b-instruct:free",
-        api_key=openrouter_api,
-        base_url=openrouter_endpoint,
-        temperature=0,
-        extra_body=data_policy
-    ),
-        
-    "gpt-oss-20b": ChatOpenAI(
-        model="openai/gpt-oss-20b:free",
-        api_key=openrouter_api,
-        base_url=openrouter_endpoint,
-        temperature=0,
-        extra_body=data_policy
-    ),
-    
-    "qwen3-coder": ChatOpenAI(
-        model="qwen/qwen3-coder:free",
-        api_key=openrouter_api,
-        base_url=openrouter_endpoint,
-        temperature=0,
-        extra_body=data_policy
-    ),  
-    
-    "dolphin-mistral-24b-venice-edition": ChatOpenAI(
-        model="cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+    "trinity-mini": ChatOpenAI(
+        model="arcee-ai/trinity-mini:free",
         api_key=openrouter_api,
         base_url=openrouter_endpoint,
         temperature=0,
@@ -314,7 +290,7 @@ llm_options = {
         temperature=0,
         extra_body=data_policy
     ),
-
+    
     "gemma-3-27b-it": ChatOpenAI(
         model="gemma3",
         api_key=api_key,
@@ -322,24 +298,4 @@ llm_options = {
         temperature=0
     ),
 
-    "gpt-oss-120b": ChatOpenAI(
-        model="gpt-oss",
-        api_key=api_key,
-        base_url=nrp_endpoint,
-        temperature=0
-    ),
-
-    "glm-4.6-gptq-int4-int8mix": ChatOpenAI(
-        model="glm-4.6",
-        api_key=api_key,
-        base_url=nrp_endpoint,
-        temperature=0
-    ),
-
-    "glm-4.5v-fp8": ChatOpenAI(
-        model="glm-v",
-        api_key=api_key,
-        base_url=nrp_endpoint,
-        temperature=0
-    ),
 }

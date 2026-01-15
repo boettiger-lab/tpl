@@ -302,7 +302,7 @@ with col2:
 
 st.divider()
 
-st.markdown('''
-## Data Sources
-PRIVATE DRAFT.  Developed at UC Berkeley. All data copyright to Trust for Public Land.  See <https://conservationalmanac.org/> for details.
-''')
+with open('app/footer.md', 'r') as file:
+    footer = file.read()
+st.markdown(footer)
+

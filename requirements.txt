@@ -13,7 +13,6 @@ langchain-openai==0.1.25
 leafmap==0.53.3
 lonboard==0.10.4
 minio==7.2.15
-shapely==2.0.4
 shiny==0.10.2
 SQLAlchemy==2.0.35
 streamlit==1.50.0

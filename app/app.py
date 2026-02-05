@@ -65,7 +65,7 @@ with st.sidebar:
 legend, position, bg_color, fontsize, shape_type, controls = get_legend(paint, leafmap_choice)
 # get all the ids that correspond to the filter
 gdf = filter_data(tpl_table, state_choice, county_choice, year_range)
-gdf_landvote = filter_data(landvote_table, state_choice, county_choice, year_range)
+gdf_landvote = filter_data(landvote_table, state_codes[state_choice], county_choice, year_range)
 unique_ids = gdf.select('fid').distinct().execute()['fid'].to_list()
 
 ##### Chatbot stuff 
@@ -290,6 +290,8 @@ with st.container():
     col3.metric(label=f"Total", value=f"${total_dollars:,}")    
 
 st.markdown('#')
+
+
 
 col1, col2 = st.columns(2)
 with col1:

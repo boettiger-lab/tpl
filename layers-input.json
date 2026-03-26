@@ -1,0 +1,212 @@
+{
+    "catalog": "https://s3-west.nrp-nautilus.io/public-data/stac/catalog.json",
+    "titiler_url": "https://titiler.nrp-nautilus.io",
+    "mcp_url": "https://duckdb-mcp.nrp-nautilus.io/mcp",
+    "view": {
+        "center": [-96, 38],
+        "zoom": 4
+    },
+    "welcome": {
+        "message": "Hi! I can help you explore land conservation and public investment data across the United States. Try asking:",
+        "examples": [
+            "Which states have the most protected acreage recorded in the Conservation Almanac?",
+            "Which programs and agencies have funded land conservation in Congressional District 16, and how much?",
+            "Which congressional districts have raised the most conservation funding through ballot measures?",
+            "How much has the Land and Water Conservation Fund invested nationally?",
+            "Show me conservation sites that overlap socially vulnerable communities using SVI."
+        ]
+    },
+    "collections": [
+        {
+            "collection_id": "landvote",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-tpl/landvote/stac-collection.json",
+            "assets": [
+                {
+                    "id": "landvote-pmtiles",
+                    "display_name": "Conservation Ballot Measures",
+                    "group": "Conservation Areas",
+                    "visible": false,
+                    "default_filter": ["all",
+                        ["!=", ["get", "jurisdiction"], "State"],
+                        [">=", ["get", "year"], 2010]
+                    ],
+                    "default_style": {
+                        "fill-color": ["match", ["get", "status"],
+                            "Pass",  "#1B5E20",
+                            "Pass*", "#2E7D32",
+                            "Fail",  "#C62828",
+                            "#9E9E9E"
+                        ],
+                        "fill-opacity": 0.5
+                    },
+                    "outline_style": {
+                        "line-color": "#424242",
+                        "line-width": 0.8
+                    },
+                    "tooltip_fields": ["municipal", "county", "state", "year", "status", "finance_mechanism", "conservation_funds_approved", "purpose"]
+                }
+            ]
+        },
+        {
+            "collection_id": "wetlands-global-unified",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-wetlands/stac-collection.json",
+            "assets": [
+                {
+                    "id": "glwd-main-class-cog",
+                    "display_name": "Wetland Type (GLWD)",
+                    "group": "Wetlands",
+                    "visible": false,
+                    "legend_type": "categorical"
+                }
+            ]
+        },
+        {
+            "collection_id": "irrecoverable-carbon",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-carbon/stac-collection.json",
+            "assets": [
+                {
+                    "id": "v2-irrecoverable-2024-cog",
+                    "display_name": "Irrecoverable Carbon (2024)",
+                    "group": "Carbon",
+                    "visible": false,
+                    "colormap": "reds",
+                    "rescale": "0,150"
+                }
+            ]
+        },
+        {
+            "collection_id": "svi-2022",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-social-vulnerability/2022/stac-collection.json",
+            "assets": [
+                {
+                    "id": "county-pmtiles",
+                    "display_name": "SVI (county)",
+                    "group": "Social Vulnerability",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": ["interpolate", ["linear"], ["get", "RPL_THEMES"],
+                            0,   "#1A9641",
+                            0.25, "#A6D96A",
+                            0.5,  "#FFFFBF",
+                            0.75, "#FDAE61",
+                            1,   "#D7191C"
+                        ],
+                        "fill-opacity": 0.7
+                    },
+                    "outline_style": {
+                        "line-color": "#555555",
+                        "line-width": 0.5
+                    },
+                    "tooltip_fields": ["COUNTY", "FIPS", "RPL_THEMES", "ST_ABBR"]
+                },
+                {
+                    "id": "tract-pmtiles",
+                    "display_name": "SVI (tract)",
+                    "group": "Social Vulnerability",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": ["interpolate", ["linear"], ["get", "RPL_THEMES"],
+                            0,   "#1A9641",
+                            0.25, "#A6D96A",
+                            0.5,  "#FFFFBF",
+                            0.75, "#FDAE61",
+                            1,   "#D7191C"
+                        ],
+                        "fill-opacity": 0.7
+                    },
+                    "outline_style": {
+                        "line-color": "#555555",
+                        "line-width": 0.5
+                    },
+                    "tooltip_fields": ["COUNTY", "FIPS", "RPL_THEMES", "ST_ABBR"]
+                }
+            ]
+        },
+        {
+            "collection_id": "census-2024-cd",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-census/census-2024/cd/stac-collection.json",
+            "assets": [
+                {
+                    "id": "cd",
+                    "display_name": "Congressional Districts",
+                    "group": "Political Boundaries",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": "#1565C0",
+                        "fill-opacity": 0.05
+                    },
+                    "outline_style": {
+                        "line-color": "#1565C0",
+                        "line-width": 1.5
+                    },
+                    "tooltip_fields": ["NAMELSAD", "GEOID", "STATEFP"]
+                }
+            ]
+        },
+        {
+            "collection_id": "census-2025-sldl",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-census/census-2025/sldl/stac-collection.json",
+            "assets": [
+                {
+                    "id": "sldl-pmtiles",
+                    "display_name": "State Assembly Districts",
+                    "group": "Political Boundaries",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": "#6A1B9A",
+                        "fill-opacity": 0.05
+                    },
+                    "outline_style": {
+                        "line-color": "#6A1B9A",
+                        "line-width": 1.5
+                    },
+                    "tooltip_fields": ["NAMELSAD", "GEOID", "SLDLST"]
+                }
+            ]
+        },
+        {
+            "collection_id": "census-2025-sldu",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-census/census-2025/sldu/stac-collection.json",
+            "assets": [
+                {
+                    "id": "sldu-pmtiles",
+                    "display_name": "State Senate Districts",
+                    "group": "Political Boundaries",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": "#BF360C",
+                        "fill-opacity": 0.05
+                    },
+                    "outline_style": {
+                        "line-color": "#BF360C",
+                        "line-width": 1.5
+                    },
+                    "tooltip_fields": ["NAMELSAD", "GEOID", "SLDUST"]
+                }
+            ]
+        },
+        {
+            "collection_id": "conservation-almanac-2024",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-tpl/stac-collection.json",
+            "assets": [
+                {
+                    "id": "almanac-pmtiles",
+                    "display_name": "TPL Conservation Almanac",
+                    "group": "Conservation Areas",
+                    "visible": true,
+                    "default_style": {
+                        "fill-color": ["match", ["get", "purchase_type"],
+                            "FSP", "#2E7D32",
+                            "ESM", "#1565C0",
+                            "FNE", "#6A1B9A",
+                            "OTH", "#E65100",
+                            "#9E9E9E"
+                        ],
+                        "fill-opacity": 0.6
+                    },
+                    "tooltip_fields": ["site", "owner", "owner_type", "manager", "access_type", "purchase_type", "acres", "amount", "program", "year", "state", "county"]
+                }
+            ]
+        }
+    ]
+}

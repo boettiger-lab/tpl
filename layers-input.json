@@ -9,8 +9,8 @@
     "welcome": {
         "message": "Hi! I can help you explore land conservation and public investment data across the United States. Try asking:",
         "examples": [
-            "Which states have the most protected acreage recorded in the Conservation Almanac?",
-            "Which programs and agencies have funded land conservation in Congressional District 16, and how much?",
+            "What ballot measures are shown on the map?",
+            "Which programs and agencies have funded land conservation in CA Congressional District 16, by $ or acres?",
             "Which congressional districts have raised the most conservation funding through ballot measures?",
             "How much has the Land and Water Conservation Fund invested nationally?",
             "Show me conservation sites that overlap socially vulnerable communities using SVI."
@@ -25,7 +25,7 @@
                     "id": "landvote-pmtiles",
                     "display_name": "Conservation Ballot Measures",
                     "group": "Conservation Areas",
-                    "visible": false,
+                    "visible": true,
                     "default_filter": ["all",
                         ["!=", ["get", "jurisdiction"], "State"],
                         [">=", ["get", "year"], 2010]

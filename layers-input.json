@@ -10,8 +10,8 @@
         "message": "Hi! I can help you explore land conservation and public investment data across the United States. Try asking:",
         "examples": [
             "Which states have the most protected acreage recorded in the Conservation Almanac?",
-            "Which programs and agencies have funded land conservation in Congressional District 16, and how much?",
-            "Which congressional districts have raised the most conservation funding through ballot measures?",
+            "Which programs and agencies have funded land conservation in CA Congressional District 16, and how much?",
+            "Which congressional districts have raised the most conservation funding through ballot measures? Show the last 10 years of ballot measures on the map.",
             "How much has the Land and Water Conservation Fund invested nationally?",
             "Show me conservation sites that overlap socially vulnerable communities using SVI."
         ]

@@ -27,29 +27,41 @@ ORDER BY amount DESC
 ```
 
 ```sql
--- Sponsor breakdown for all sites in a congressional district (via H3 join)
+-- Funding + acres by program for a congressional district (via H3 join)
 WITH cd_hex AS (
   SELECT DISTINCT h8, h0
   FROM read_parquet('s3://public-census/census-2024/cd/hex/**')
   WHERE NAMELSAD = 'Congressional District 16' AND STATEFP = '06'
 ),
-tpl AS (
-  SELECT t.tpl_id, t.site, t.program, t.amount, t.acres, t.year
+tpl_in_cd AS (
+  SELECT DISTINCT t.tpl_id, t.site, t.program, t.amount, t.acres, t.year
   FROM read_parquet('s3://public-tpl/conservation-almanac-2024/hex/h0=*/data_0.parquet') t
   JOIN cd_hex d ON t.h8 = d.h8 AND t.h0 = d.h0
+),
+site_acres AS (
+  SELECT tpl_id, MAX(acres) AS acres FROM tpl_in_cd GROUP BY tpl_id
 )
-SELECT program,
-  COUNT(DISTINCT tpl_id) as n_sites,
-  ROUND(SUM(amount)/1e6, 1) as total_funding_M
-FROM tpl
-WHERE program IS NOT NULL AND program NOT IN ('n/a', '')
-GROUP BY program
+SELECT t.program,
+  COUNT(DISTINCT t.tpl_id) AS n_sites,
+  ROUND(SUM(t.amount)/1e6, 1) AS total_funding_M,
+  ROUND(SUM(DISTINCT sa.acres), 1) AS total_acres
+FROM tpl_in_cd t
+JOIN site_acres sa ON t.tpl_id = sa.tpl_id
+WHERE t.program IS NOT NULL AND t.program NOT IN ('n/a', '')
+GROUP BY t.program
 ORDER BY total_funding_M DESC
 ```
 
 Key reminders:
-- `SUM(amount)` across all rows correctly totals funding — each row's `amount` is one sponsor's contribution
-- `SUM(acres)` double-counts — use `SUM(MAX(acres)) GROUP BY tpl_id` or aggregate acres separately
+- **Funding:** `SUM(amount)` across all rows correctly totals funding — each row's `amount` is one sponsor's contribution
+- **Acres:** `SUM(acres)` double-counts because acres is repeated on every funding row for the same site. Always deduplicate with a CTE first:
+  ```sql
+  WITH site_acres AS (
+    SELECT tpl_id, MAX(acres) AS acres FROM ... GROUP BY tpl_id
+  )
+  SELECT SUM(acres) AS total_acres FROM site_acres
+  ```
+  **Never write `SUM(MAX(acres))`** — nested aggregate functions are not valid SQL and will error.
 - A site with `amount = 0` or null may still be significant — it may be a donation or a transaction where only acreage was recorded
 
 You have access to two kinds of tools:
@@ -84,7 +96,7 @@ The DuckDB instance is pre-configured with:
 - "Most TPL projects" is ambiguous: the Conservation Almanac has **one row per funding transaction**, not one row per site. A single conservation site (`tpl_id`) shares the same geometry (`fid`) across multiple rows — one per funder. Ask the user whether they want:
   - **Distinct conservation sites** (`COUNT(DISTINCT tpl_id)`) — counts each physical area once regardless of how many funders
   - **Funding transactions** (`COUNT(*)`) — counts each grant/program separately
-  - **Total acres protected**: sum `MAX(acres)` per `tpl_id` — acres is repeated on every funding row for the same site, so summing directly double-counts
+  - **Total acres protected**: use a CTE to get `MAX(acres)` per `tpl_id` first, then `SUM` — acres is repeated on every funding row for the same site, so summing directly double-counts
   - **Total dollars**: `SUM(amount)` across all rows — each row's `amount` is the funding from one sponsor, so summing all rows gives the correct total
 
 - "Largest project" is ambiguous: largest by acres, by total funding, or by number of funders?
@@ -96,12 +108,20 @@ When writing SQL:
 - For partitioned datasets, use the `/**` wildcard path
 - H3 columns are typically `h3_index` or `h8`/`h10` at various resolutions
 - Always use `LIMIT` to keep results manageable
+- **Never nest aggregate functions** (e.g. `SUM(MAX(...))`) — DuckDB will reject these. Use a CTE to compute the inner aggregate first, then aggregate the CTE.
+- When querying for a district within a single state, add a `WHERE state = '...'` filter on the TPL data to reduce scan scope.
+- **Do not run `SELECT * ... LIMIT 2` to explore schemas.** Column names and types are already provided in the dataset catalog below. Use `get_dataset_details()` if you need coded values for a column.
 
 ### Example: Protected acreage by state
 
 ```sql
-SELECT state, SUM(acres) AS total_acres, COUNT(DISTINCT tpl_id) AS num_sites
-FROM read_parquet('s3://public-tpl/conservation-almanac-2024.parquet')
+WITH site_acres AS (
+  SELECT tpl_id, state, MAX(acres) AS acres
+  FROM read_parquet('s3://public-tpl/conservation-almanac-2024.parquet')
+  GROUP BY tpl_id, state
+)
+SELECT state, ROUND(SUM(acres), 0) AS total_acres, COUNT(*) AS num_sites
+FROM site_acres
 GROUP BY state
 ORDER BY total_acres DESC
 LIMIT 20

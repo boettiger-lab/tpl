@@ -207,6 +207,58 @@
                     "tooltip_fields": ["site", "owner", "owner_type", "manager", "access_type", "purchase_type", "acres", "amount", "program", "year", "state", "county"]
                 }
             ]
+        },
+        {
+            "collection_id": "pad-us-4.1-combined",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-padus/padus-4-1/combined/stac-collection.json",
+            "assets": [
+                {
+                    "id": "combined-pmtiles",
+                    "display_name": "Protected Areas (PAD-US)",
+                    "group": "Conservation Areas",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": ["match", ["get", "Own_Type"],
+                            "FED", "#1565C0",
+                            "STAT", "#2E7D32",
+                            "LOC", "#6A1B9A",
+                            "JNT", "#00838F",
+                            "DIST", "#EF6C00",
+                            "NGO", "#AD1457",
+                            "PVT", "#F9A825",
+                            "TRIB", "#D84315",
+                            "#9E9E9E"
+                        ],
+                        "fill-opacity": 0.5
+                    },
+                    "outline_style": {
+                        "line-color": "#424242",
+                        "line-width": 0.5
+                    },
+                    "tooltip_fields": ["Unit_Nm", "Own_Type", "Own_Name", "Mang_Name", "Des_Tp", "GAP_Sts", "IUCN_Cat", "GIS_Acres", "Pub_Access", "State_Nm", "Date_Est"]
+                }
+            ]
+        },
+        {
+            "collection_id": "census-2024-county",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-census/census-2024/county/stac-collection.json",
+            "assets": [
+                {
+                    "id": "county-pmtiles",
+                    "display_name": "County Boundaries",
+                    "group": "Political Boundaries",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": "#4E342E",
+                        "fill-opacity": 0.05
+                    },
+                    "outline_style": {
+                        "line-color": "#4E342E",
+                        "line-width": 1.0
+                    },
+                    "tooltip_fields": ["NAMELSAD", "GEOID", "STATEFP", "COUNTYFP"]
+                }
+            ]
         }
     ]
 }

@@ -7,11 +7,11 @@
         "zoom": 4
     },
     "welcome": {
-        "message": "Hi! I can help you explore land conservation and public investment data across the United States. Try asking:",
+        "message": "Hi! I can help you explore land conservation investment, ballot measure history, carbon data, and more across the United States. Try asking:",
         "examples": [
-            "What ballot measures are shown on the map?",
-            "Which programs and agencies have funded land conservation in CA Congressional District 16, by $ or acres?",
-            "Which congressional districts have raised the most conservation funding through ballot measures?",
+            "What conservation programs have funded land protection in Chester County, PA?",
+            "What is the pass rate for conservation ballot measures in Florida, by mechanism type?",
+            "Which counties in Pennsylvania have the most irrecoverable carbon?",
             "How much has the Land and Water Conservation Fund invested nationally?",
             "Show me conservation sites that overlap socially vulnerable communities using SVI."
         ]

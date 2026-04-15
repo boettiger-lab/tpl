@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tpl
+  namespace: biodiversity
   labels:
     app: tpl
 spec:

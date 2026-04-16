@@ -11,11 +11,11 @@
     "welcome": {
         "message": "Hi! I can help you explore land conservation investment, ballot measure history, carbon data, and more across the United States. Try asking:",
         "examples": [
-            "Austin has passed conservation bonds almost every election since 1992 — show those ballot measures in Travis County, TX and tell me which federal programs have leveraged local bond funds to protect land there.",
-            "Show conservation ballot measures in King County, Washington from 2007 to today. How has the total investment grown, and what new priorities like climate resilience and equity appeared in the 2025 measure?",
-            "Florida voters are among the most reliable in the country. Which counties passed conservation funding for watershed protection between 2020 and 2024? Show them on the map and rank by amount approved.",
-            "Colorado communities have passed over $750M in conservation funding since 2020. Show those ballot measures and highlight which counties — from Colorado Springs to Fort Collins to Durango — are driving the surge.",
-            "Monmouth County, NJ has approved over $500M for open space and farmland since 2017. Show those ballot measures alongside social vulnerability scores — are conservation investments reaching vulnerable coastal communities?"
+            "Which federal programs have matched Austin's conservation bond funds in Travis County, TX, and how many acres have been protected?",
+            "How has conservation investment grown in King County, WA from 2007 to the 2025 measure — and what new priorities appeared?",
+            "Which Florida counties passed conservation funding for watershed protection between 2020 and 2024, and how much did each approve?",
+            "Which Colorado counties are driving the conservation surge since 2020 — from Colorado Springs to Fort Collins to Durango?",
+            "Are Monmouth County, NJ's conservation investments reaching vulnerable coastal communities? Show ballot measures alongside social vulnerability scores."
         ]
     },
     "links": {

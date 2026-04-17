@@ -11,12 +11,12 @@
     "welcome": {
         "message": "Hi! I can help you explore land conservation investment, ballot measure history, carbon data, and more across the United States. Try asking:",
         "examples": [
-            "Where in Volusia County, Florida has conservation funding gone on the ground, and how have protection years and funding sources varied across the county?",
+            "What is the map showing me right now?",
+            "Compute the land cover composition of areas protected in the Conservation Almanac nationwide, and which states lead in protecting each cover type?",
+            "Which Texas congressional districts recieve the mose federal funding for land conservation? Show on map",
             "Which New Jersey municipalities have passed conservation ballot measures, and how does the pattern of successful measures vary across the state?",
-            "How does the mix of federal, state, and private funding for land conservation vary across Texas's congressional districts?",
-            "Who has funded land conservation in Boulder County, Colorado, and how do those locally-funded protected areas sit within the broader mosaic of federal and state lands?",
-            "What is the land cover composition of areas protected in the Conservation Almanac nationwide, and which states lead in protecting each cover type?"
-        ]
+            "Who has funded land conservation in Boulder County, Colorado? show areas on the map."
+                   ]
     },
     "links": {
         "github": "https://github.com/boettiger-lab/tpl",

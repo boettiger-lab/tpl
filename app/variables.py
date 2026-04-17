@@ -313,7 +313,6 @@ if openrouter_api is None:
 
 openrouter_endpoint="https://openrouter.ai/api/v1"
 nrp_endpoint="https://ellm.nrp-nautilus.io/v1"
-
 # don't use a provider that collects data
 data_policy = {
     "provider": {
@@ -322,35 +321,62 @@ data_policy = {
 }
 
 llm_options = {
-    "devstral-2512": ChatOpenAI(
-        model="mistralai/devstral-2512:free",
-        api_key=openrouter_api,
-        base_url=openrouter_endpoint,
+     "gemma-4-e4b-it": ChatOpenAI(
+        model="gemma-4-e4b",
+        api_key=api_key,
+        base_url=nrp_endpoint,
         temperature=0,
-        extra_body=data_policy
+        model_kwargs={
+            "extra_body": {"chat_template_kwargs": {"thinking": False}}
+        }
     ),
-
-    "trinity-mini": ChatOpenAI(
-        model="arcee-ai/trinity-mini:free",
-        api_key=openrouter_api,
-        base_url=openrouter_endpoint,
+    "olmo-3.1-32b": ChatOpenAI(
+        model="olmo",
+        api_key=api_key,
+        base_url=nrp_endpoint,
         temperature=0,
-        extra_body=data_policy
+        model_kwargs={
+            "extra_body": {"chat_template_kwargs": {"thinking": False}}
+        }
     ),
-
-    "nemotron-nano-9b-v2": ChatOpenAI(
-        model="nvidia/nemotron-nano-9b-v2:free",
-        api_key=openrouter_api,
-        base_url=openrouter_endpoint,
+    "gemma-4-31b-it": ChatOpenAI(
+        model="gemma",
+        api_key=api_key,
+        base_url=nrp_endpoint,
         temperature=0,
-        extra_body=data_policy
+        model_kwargs={
+            "extra_body": {"chat_template_kwargs": {"thinking": False}}
+        }
     ),
-    
-    "gemma-3-27b-it": ChatOpenAI(
-        model="gemma3",
+    "gpt-oss-120b": ChatOpenAI(
+        model="gpt-oss",
         api_key=api_key,
         base_url=nrp_endpoint,
         temperature=0
     ),
-
-}
+    "minimax-m2": ChatOpenAI(
+        model="minimax-m2",
+        api_key=api_key,
+        base_url=nrp_endpoint,
+        temperature=0,
+        model_kwargs={
+            "extra_body": {"chat_template_kwargs": {"thinking": False}}
+        }
+    ),
+    "kimi-k2.5": ChatOpenAI(
+        model="kimi",
+        api_key=api_key,
+        base_url=nrp_endpoint,
+        temperature=0,
+        model_kwargs={
+            "extra_body": {"chat_template_kwargs": {"thinking": False}}
+        }
+    ),
+     "dolphin-mistral-24b-venice-edition:free": ChatOpenAI(
+        model="cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+        api_key=openrouter_api,
+        base_url=openrouter_endpoint,
+        temperature=0,
+        extra_body=data_policy
+    ),   
+    }

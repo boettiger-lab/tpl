@@ -4,11 +4,10 @@ emoji: 🌳
 colorFrom: indigo
 colorTo: blue
 sdk: streamlit
-sdk_version: 1.45.1
+sdk_version: 1.50.0
 app_file: app/app.py
 pinned: false
-license: apache-2.0
----
+license: bsd
 ---
 
 # LLM Decision-Support Prototype using Trust for Public Land Data

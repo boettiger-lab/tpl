@@ -39,7 +39,7 @@ tpl_table = con.read_parquet(tpl_table_url)
 landvote_table = con.read_parquet(landvote_table_url)
 county_bounds = con.read_parquet(county_bounds_url)
 
-mobi_z8 = con.read_parquet(mobi_z8_url, table_name = 'mobi')
+# mobi_z8 = con.read_parquet(mobi_z8_url, table_name = 'mobi')
 svi_z8 = con.read_parquet(svi_z8_url,table_name = 'svi')
 carbon_z8 = con.read_parquet(carbon_z8_url, table_name = 'carbon')
 lower_chamber_z8 = con.read_parquet(lower_chamber_z8_url, table_name = 'lower_chamber')

@@ -6,10 +6,8 @@ geoarrow-pandas==0.1.1
 geoarrow-types==0.2.0
 git+https://github.com/boettiger-lab/cng-python
 ibis-framework[duckdb]==10.3.1
-langchain==0.2.17
-langchain-community==0.2.19
-langchain-core==0.2.43
-langchain-openai==0.1.25
+langchain-core==1.1.0
+langchain-openai==1.1.0
 leafmap==0.53.3
 lonboard==0.10.4
 minio==7.2.15

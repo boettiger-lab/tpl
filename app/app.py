@@ -110,7 +110,8 @@ prompt = ChatPromptTemplate.from_messages([
     ("human", "{input}")
 ]).partial(dialect="duckdb", conservation_almanac = tpl_z8.schema(),
            landvote = landvote_z8.schema(), carbon = carbon_z8.schema(),
-           svi = svi_z8.schema(), mobi = mobi_z8.schema(), 
+           svi = svi_z8.schema(), 
+           # mobi = mobi_z8.schema(), 
            lower_chamber = lower_chamber_z8.schema(), upper_chamber = upper_chamber_z8.schema())
 
 

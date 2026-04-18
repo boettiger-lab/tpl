@@ -20,11 +20,11 @@ key = st.secrets["MINIO_KEY"]
 secret = st.secrets["MINIO_SECRET"]
 client = Minio("minio.carlboettiger.info", key, secret)
 
-pmtiles = "https://minio.carlboettiger.info/public-tpl/conservation_almanac/tpl.pmtiles"
-tpl_z8_url = "https://minio.carlboettiger.info/public-tpl/conservation_almanac/z8/tpl_h3_z8.parquet"
-landvote_z8_url = "https://minio.carlboettiger.info/public-tpl/landvote/z8/landvote_z8.parquet"
-tpl_table_url = "https://minio.carlboettiger.info/public-tpl/conservation_almanac/tpl.parquet"
-landvote_table_url = "https://minio.carlboettiger.info/public-tpl/landvote/landvote_geom.parquet"
+pmtiles = "https://minio.carlboettiger.info/public-tpl-streamlit/nvme/public-tpl/conservation_almanac/tpl.pmtiles"
+tpl_z8_url = "https://minio.carlboettiger.info/public-tpl-streamlit/nvme/public-tpl/conservation_almanac/z8/tpl_h3_z8.parquet"
+landvote_z8_url = "https://minio.carlboettiger.info/public-tpl-streamlit/nvme/public-tpl/landvote/z8/landvote_z8.parquet"
+tpl_table_url = "https://minio.carlboettiger.info/public-tpl-streamlit/nvme/public-tpl/conservation_almanac/tpl.parquet"
+landvote_table_url = "https://minio.carlboettiger.info/public-tpl-streamlit/nvme/public-tpl/landvote/landvote_geom.parquet"
 county_bounds_url = "https://minio.carlboettiger.info/public-census/2024/county/2024_us_county.parquet"
 
 mobi_z8_url = "https://minio.carlboettiger.info/public-mobi/hex/all-richness-h8.parquet"

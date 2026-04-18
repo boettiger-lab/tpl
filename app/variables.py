@@ -313,7 +313,6 @@ if openrouter_api is None:
 
 openrouter_endpoint="https://openrouter.ai/api/v1"
 nrp_endpoint="https://ellm.nrp-nautilus.io/v1"
-
 # don't use a provider that collects data
 data_policy = {
     "provider": {

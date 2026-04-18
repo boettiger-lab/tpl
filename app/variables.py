@@ -28,7 +28,7 @@ landvote_table_url = "https://minio.carlboettiger.info/public-tpl-streamlit/nvme
 county_bounds_url = "https://minio.carlboettiger.info/public-census-streamlit/nvme/public-census/2024/county/2024_us_county.parquet"
 
 mobi_z8_url ="https://s3-west.nrp-nautilus.io/public-mobi/mobi-species-richness-all/hex/h0=*/data_0.parquet"
-svi_z8_url = "https://minio.carlboettiger.info/public-social-vulnerability/2022/SVI2022_US_tract_h3_z8.parquet"
+svi_z8_url = "https://minio.carlboettiger.info/public-social-vulnerability/2022-tracts-h3-z8.parquet"
 carbon_z8_url = "https://minio.carlboettiger.info/public-carbon/hex/us-tracts-vuln-total-carbon-2018-h8.parquet"
 lower_chamber_z8_url = "s3://public-census-streamlit/nvme/public-census/2024/sld/lower/z8/**"
 upper_chamber_z8_url = "s3://public-census-streamlit/nvme/public-census/2024/sld/upper/z8/**"

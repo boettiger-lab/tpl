@@ -133,7 +133,7 @@
             "collection_url": "https://s3-west.nrp-nautilus.io/public-census/census-2024/cd/stac-collection.json",
             "assets": [
                 {
-                    "id": "cd",
+                    "id": "cd-pmtiles",
                     "display_name": "Congressional Districts",
                     "group": "Political Boundaries",
                     "visible": false,

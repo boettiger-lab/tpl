@@ -18,14 +18,20 @@ When describing Conservation Almanac data, do not say "TPL-protected land" or im
 - "conservation investment in this district"
 - "funding from [program name]" when a specific program is known
 
-### Key pitfalls
+### Two collections joined by `tpl_id`
 
-**A single conservation site often has multiple sponsors.** The Almanac has one row per funding transaction: if a site received money from three programs, it appears as three rows sharing the same `tpl_id`. The `program` column names the funding program, and `amount` is that sponsor's contribution.
+The Almanac is split into two collections. Use both together for any funding question.
 
-- **Funding:** `SUM(amount)` across all rows correctly totals funding — each row's `amount` is one sponsor's contribution.
-- **Acres:** `SUM(acres)` double-counts because acres is repeated on every funding row for the same site. Always deduplicate first: `SELECT tpl_id, MAX(acres) AS acres ... GROUP BY tpl_id`, then `SUM` the result. **Never write `SUM(MAX(acres))`** — nested aggregates are invalid SQL.
-- **Counting sites:** Use `COUNT(DISTINCT tpl_id)` to count physical conservation areas.
-- A site with `amount = 0` or null may still be significant — it may be a donation or a transaction where only acreage was recorded.
+- **`conservation-almanac-2024-sites`** — one row per protected site. Geometry, acres, ownership, access, year, location. **No funding info.** `SUM(acres)` is safe here.
+- **`conservation-almanac-2024-funding`** — one row per (site, program, sponsor) funding transaction. Amount, program, sponsor, sponsor_type. **No geometry, no hex variant.** `SUM(amount)` is safe — no geographic repetition.
+
+Join on `tpl_id`. `get_dataset('conservation-almanac-2024-sites')` includes a worked Texas federal-funding join example.
+
+**Coded-value gotcha across the two collections.** `owner_type` on sites uses `PVT` and `TRIB`; `sponsor_type` on funding uses `PRIV` and `TRB`. Verify coded values from `get_dataset` before filtering.
+
+A transaction with `amount = 0` or null may still be significant — it may be a donation or a record where only acreage was captured.
+
+A legacy flat `conservation-almanac-2024` collection still exists for backwards compatibility. Prefer the split collections — on the flat collection `SUM(acres)` double-counts and you must dedupe by `tpl_id` first. Do not use the flat collection unless a user explicitly asks for a single-table view.
 
 ## About LandVote
 

@@ -192,11 +192,11 @@
             ]
         },
         {
-            "collection_id": "conservation-almanac-2024",
-            "collection_url": "https://s3-west.nrp-nautilus.io/public-tpl/stac-collection.json",
+            "collection_id": "conservation-almanac-2024-sites",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-tpl/conservation-almanac-2024-sites/stac-collection.json",
             "assets": [
                 {
-                    "id": "almanac-pmtiles",
+                    "id": "conservation-almanac-2024-sites-pmtiles",
                     "display_name": "TPL Conservation Almanac",
                     "group": "Conservation Areas",
                     "visible": true,
@@ -210,7 +210,7 @@
                         ],
                         "fill-opacity": 0.6
                     },
-                    "tooltip_fields": ["site", "owner", "owner_type", "manager", "access_type", "purchase_type", "acres", "amount", "program", "year", "state", "county"]
+                    "tooltip_fields": ["site", "owner", "owner_type", "manager", "access_type", "purchase_type", "acres", "year", "state", "county"]
                 }
             ]
         },

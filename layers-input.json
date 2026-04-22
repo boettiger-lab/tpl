@@ -215,6 +215,11 @@
             ]
         },
         {
+            "collection_id": "conservation-almanac-2024-funding",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-tpl/conservation-almanac-2024-funding/stac-collection.json",
+            "assets": []
+        },
+        {
             "collection_id": "pad-us-4.1-combined",
             "collection_url": "https://s3-west.nrp-nautilus.io/public-padus/padus-4-1/combined/stac-collection.json",
             "assets": [

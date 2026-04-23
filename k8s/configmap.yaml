@@ -15,37 +15,43 @@ data:
   config.template.json: |
     {
         "mcp_server_url": "${MCP_SERVER_URL}",
-        "llm_model": "minimax-m2",
+        "llm_model": "qwen3",
         "llm_models": [
+            {
+                "value": "nemotron",
+                "label": "DSE Nemotron",
+                "endpoint": "/api/llm",
+                "api_key": "set-by-nginx"
+            },
             {
                 "value": "glm-4.7",
                 "label": "NRP GLM-4.7",
                 "endpoint": "/api/llm",
-                "api_key": "unused"
+                "api_key": "set-by-nginx"
             },
             {
                 "value": "qwen3",
                 "label": "NRP Qwen3",
                 "endpoint": "/api/llm",
-                "api_key": "unused"
+                "api_key": "set-by-nginx"
             },
             {
                 "value": "gpt-oss",
                 "label": "NRP GPT-OSS 120B",
                 "endpoint": "/api/llm",
-                "api_key": "unused"
+                "api_key": "set-by-nginx"
             },
             {
                 "value": "kimi",
                 "label": "NRP Kimi K2.5",
                 "endpoint": "/api/llm",
-                "api_key": "unused"
+                "api_key": "set-by-nginx"
             },
             {
                 "value": "minimax-m2",
                 "label": "NRP MiniMax M2.5",
                 "endpoint": "/api/llm",
-                "api_key": "unused"
+                "api_key": "set-by-nginx"
             }
         ]
     }

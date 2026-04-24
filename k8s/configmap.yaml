@@ -36,6 +36,12 @@ data:
                 "api_key": "set-by-nginx"
             },
             {
+                "value": "qwen3-small",
+                "label": "NRP Qwen3 Small",
+                "endpoint": "/api/llm",
+                "api_key": "set-by-nginx"
+            },
+            {
                 "value": "gpt-oss",
                 "label": "NRP GPT-OSS 120B",
                 "endpoint": "/api/llm",

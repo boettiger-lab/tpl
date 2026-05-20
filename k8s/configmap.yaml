@@ -15,7 +15,7 @@ data:
   config.template.json: |
     {
         "mcp_server_url": "${MCP_SERVER_URL}",
-        "llm_model": "glm-5",
+        "llm_model": "minimax-m2",
         "llm_models": [
             {
                 "value": "nemotron",

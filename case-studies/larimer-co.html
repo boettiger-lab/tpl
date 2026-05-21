@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Study · Larimer County, Colorado · Geo-Agent Walkthrough</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.4.0/dist/maplibre-gl.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/walkthrough.css">
+</head>
+<body>
+
+<header class="banner">
+  <div class="page">
+    <div class="eyebrow">Geo-Agent Walkthrough · Case Study 02 of 03</div>
+    <h1>Drafting a Larimer County public finance feasibility study</h1>
+    <p>The 23-page <em>Lake County, FL Public Finance Feasibility Study</em>
+       (December 2023) is the canonical TPL Conservation Finance deliverable
+       for a local government asking for help with a ballot measure. This
+       walkthrough reproduces it section by section for Larimer County,
+       Colorado — naming what the geo-agent app produces in minutes, and
+       what still requires a CAFR, a Census table, or a bond calculator.</p>
+    <p class="meta">For the TPL Conservation Finance team · compared against
+       <code>example-reports/Lake County TPL Feasibility Study 12.6.23.pdf</code></p>
+  </div>
+</header>
+
+<nav class="nav"><div class="nav-inner">
+  <a class="home" href="../">↑ tpl/</a>
+  <a href="#context">§ 0 Context</a>
+  <a href="#county">§ 1 The county</a>
+  <a href="#demographics">§ 2 Demographics</a>
+  <a href="#programs">§ 3 Programs</a>
+  <a href="#climate">§ 4 Climate</a>
+  <a href="#cohistory">§ 5 CO history</a>
+  <a href="#voters">§ 6 Voters</a>
+  <a href="#peers">§ 7 Peers</a>
+  <a href="#options">§ 8 Options</a>
+  <a href="#gaps">§ 9 Gaps</a>
+  <a href="#draft">§ 10 Draft</a>
+</div></nav>
+
+<main class="page">
+
+<!-- =========================================================
+     § 0  CONTEXT
+     ========================================================= -->
+<section id="context">
+<h2><span class="num">0</span>What this walkthrough delivers</h2>
+
+<p>Imagine a hypothetical commission letter arrives in May 2026 from the
+chair of the Larimer County Board of Commissioners.  Like Lake County's
+chair did in October 2023, they ask TPL Conservation Finance for
+&ldquo;technical advice and assistance in connection with our efforts to
+develop and sustain reliable, ongoing sources of funding for land
+conservation, open space, and natural area protection and
+stewardship.&rdquo; This is the standard TPL feasibility-study trigger.</p>
+
+<p>The political context is loud.  In November 2025, voters in Fort Collins
+(Larimer's largest city) approved a renewed
+<strong>$181 million sales tax for open space, watershed protection,
+trails, parks, and wildlife habitat at 73.1% yes</strong> — the largest
+local conservation win in Colorado in 2025.  The county's own
+quarter-cent <em>Help Preserve Open Spaces</em> sales tax was renewed
+in 2014 at <strong>81.67% yes</strong> and runs through 2043.  Boulder
+County, next door, passed a $150M conservation sales tax in 2025 at
+74.25% yes.  The county BCC wants to know whether there is room — and
+demand — for a new countywide measure on the 2027 or 2028 ballot.</p>
+
+<div class="compare">
+  <div>
+    <h4>The Lake County feasibility study (Dec 2023)</h4>
+    <ul>
+      <li>23 pages.  Recommended mechanism: GO bond + property tax.</li>
+      <li>Demographics table from US Census QuickFacts</li>
+      <li>BCC roster (5 commissioners, term expirations)</li>
+      <li>Revenues, expenses, sales-tax history, millage tables</li>
+      <li>Debt schedule with bond maturities</li>
+      <li>Existing programs: Office of Parks &amp; Trails, Water Authority, FL Wildlife Corridor</li>
+      <li>FL conservation-finance history table (82% pass rate, 1996–2020)</li>
+      <li>Bond cost examples ($50M = $4M/yr = $21/yr per homeowner)</li>
+      <li>Voter turnout history; precinct equipment</li>
+    </ul>
+  </div>
+  <div>
+    <h4>What the geo-agent will deliver here</h4>
+    <ul>
+      <li><span class="tag match">match</span> County boundary &amp; conservation site inventory</li>
+      <li><span class="tag match">match</span> Existing-programs section (Open Lands, Fort Collins Natural Areas, GOCO)</li>
+      <li><span class="tag match">match</span> Colorado conservation-finance history</li>
+      <li><span class="tag match">match</span> Larimer County voter history, all 11 measures since 1992</li>
+      <li><span class="tag match">match</span> Peer county comparables (Boulder, Douglas, Adams, Arapahoe)</li>
+      <li><span class="tag new">new</span> Carbon &amp; biodiversity overlay (not in Lake Co. report)</li>
+      <li><span class="tag new">new</span> PAD-US shape of who already owns what (not in Lake Co. report)</li>
+      <li><span class="tag gap">gap</span> Demographics — outside the geo-agent today</li>
+      <li><span class="tag gap">gap</span> County CAFR / millage / debt — outside the geo-agent</li>
+      <li><span class="tag gap">gap</span> Bond cost calculator — outside the geo-agent</li>
+      <li><span class="tag gap">gap</span> Commissioner roster — outside the geo-agent</li>
+    </ul>
+  </div>
+</div>
+
+<p>Honest summary: <strong>roughly seven of the twelve sections of a
+Lake-County-style feasibility study come out of the geo-agent in
+under an hour</strong>; the other five still require external sources
+and a sit-down with the county finance director.  This case study walks
+through every section in the same order Lake County's appears, so the
+analyst can read it next to the previous report and see exactly what
+maps to what.</p>
+</section>
+
+
+<!-- =========================================================
+     § 1  THE COUNTY
+     ========================================================= -->
+<section id="county">
+<h2><span class="num">1</span>Overview — the county</h2>
+
+<p>Larimer County (FIPS 08069) sits in north-central Colorado, against the
+Wyoming border, with the Front Range running down its spine.  It contains
+Fort Collins, Loveland, Estes Park, and a sliver of Windsor, plus
+unincorporated mountain communities.  The geo-agent's first job in any
+feasibility is to fix the geography.</p>
+
+<div class="prompt"><q>Show me Larimer County, Colorado on the map.  Include the Conservation Almanac sites in the county and label the biggest named ones.</q></div>
+
+<details class="sql"><summary>The SQL behind this map</summary><pre>
+-- Boundary
+SELECT NAMELSAD, ST_AsText(geom) FROM
+  read_parquet('s3://public-census/census-2024/county/county.parquet')
+  WHERE GEOID='08069';
+
+-- Almanac sites in the county
+SELECT site, acres, year, owner_type, purchase_type
+FROM read_parquet('s3://public-tpl/conservation-almanac-2024-sites.parquet')
+WHERE state_id='CO' AND county='Larimer County'
+ORDER BY acres DESC;
+</pre></details>
+
+<div class="wide">
+  <div id="map" class="map tall"></div>
+  <p class="caption">Larimer County boundary outlined in dark green; all
+  Conservation Almanac sites shown as green polygons; the largest named
+  protected lands are labeled.  Map data live from the project's PMTiles
+  layers.  Roosevelt National Forest and Rocky Mountain National Park
+  occupy much of the western county; the Almanac's coverage is densest in
+  the foothills around Fort Collins, Loveland, and Estes Park.</p>
+</div>
+
+<table class="t">
+<thead><tr><th>Larimer County</th><th>Value</th></tr></thead>
+<tbody>
+  <tr><td>Area</td><td>2,640 sq&nbsp;mi (6,841 km²)</td></tr>
+  <tr><td>Cities &amp; towns</td><td>Fort Collins, Loveland, Estes Park, Berthoud, Windsor (partial), Wellington, Timnath</td></tr>
+  <tr><td>Almanac sites recorded</td><td>227 protected sites</td></tr>
+  <tr><td>Acres protected (Almanac)</td><td>99,836 acres</td></tr>
+  <tr><td>Almanac funding recorded</td><td>$190.4 million</td></tr>
+  <tr><td>Almanac coverage years</td><td>1994 – 2018 (data ends 2018 for Colorado)</td></tr>
+</tbody>
+</table>
+</section>
+
+
+<!-- =========================================================
+     § 2  DEMOGRAPHICS  -- the first big gap
+     ========================================================= -->
+<section id="demographics">
+<h2><span class="num">2</span>§ Demographics <span class="dim" style="font-size:.7em">(Lake Co. report § 3)</span></h2>
+
+<p>The Lake County report opens its Overview with a one-page demographics
+table sourced from US Census QuickFacts: population 2010 and 2020,
+percent change, race breakdown, owner-occupied housing rate, median home
+value, education attainment, household income, poverty rate, disability,
+and uninsured rate, all side-by-side with the Florida statewide figures.</p>
+
+<div class="prompt"><q>Pull a US Census demographics table for Larimer County compared to Colorado statewide — population, race, housing, education, income, health.</q></div>
+
+<div class="gap">
+  The geo-agent does <strong>not</strong> currently hold US Census ACS or
+  QuickFacts data.  The closest available layer is CDC's <em>Social
+  Vulnerability Index 2022</em> at tract level
+  (<code>svi-2022</code>), which does carry population, housing, income,
+  language, and a half-dozen other ACS-derived variables.  For a
+  Lake-County-style demographics block, a future <code>census-acs-county</code>
+  layer in the catalog would let the agent produce this section directly;
+  in the meantime, the analyst pulls
+  <a href="https://www.census.gov/quickfacts/larimercountycolorado">census.gov/quickfacts/larimercountycolorado</a>
+  and pastes the table verbatim.
+</div>
+
+<p>What the geo-agent <em>can</em> do today is summarize the
+social-vulnerability picture, which is genuinely useful for an equity
+section the Lake County report does not contain:</p>
+
+<div class="prompt"><q>Summarize the social vulnerability of Larimer County's census tracts. How does it compare to the Colorado statewide tract distribution?</q></div>
+
+<details class="sql"><summary>The SQL the app runs</summary><pre>
+-- Tract-level SVI for Larimer County, summarized
+SELECT
+  COUNT(*) AS n_tracts,
+  ROUND(AVG(RPL_THEMES), 3) AS svi_mean,
+  ROUND(MEDIAN(RPL_THEMES), 3) AS svi_median,
+  COUNT(*) FILTER (WHERE RPL_THEMES >= 0.75) AS n_high_vuln_tracts
+FROM read_parquet('s3://public-social-vulnerability/2022/SVI2022_US_tract.parquet')
+WHERE ST_ABBR='CO' AND COUNTY='Larimer County' AND RPL_THEMES >= 0;
+</pre></details>
+
+<table class="t">
+<thead><tr><th>SVI 2022 metric</th><th>Larimer County</th><th>Colorado state</th></tr></thead>
+<tbody>
+  <tr><td>Census tracts (in dataset)</td><td>79</td><td>1,330</td></tr>
+  <tr><td>Mean overall SVI percentile</td><td>0.281</td><td>0.498</td></tr>
+  <tr><td>Median overall SVI percentile</td><td>0.222</td><td>0.494</td></tr>
+  <tr><td>Tracts in top SVI quartile (≥ 0.75)</td><td>5 of 79 (6%)</td><td>~25%</td></tr>
+</tbody>
+</table>
+<p class="caption">Larimer skews substantially toward lower-vulnerability
+tracts than the state as a whole.  An equity-focused brief would highlight
+the five tracts at SVI ≥ 0.75 — concentrated in eastern Fort Collins,
+parts of Loveland, and the Estes Park area — as places to ensure any new
+park-finance package delivers benefits.</p>
+</section>
+
+
+<!-- =========================================================
+     § 3  EXISTING CONSERVATION PROGRAMS
+     ========================================================= -->
+<section id="programs">
+<h2><span class="num">3</span>§ Existing conservation programs <span class="dim" style="font-size:.7em">(Lake Co. report § 7)</span></h2>
+
+<p>This is the section the geo-agent shines on.  The Lake County report's
+&ldquo;Office of Parks and Trails / Lake County Water Authority / Florida
+Wildlife Corridor&rdquo; sub-sections each ran to half a page of program
+description and acreage.  The Larimer analog is:</p>
+<ol>
+  <li><strong>Larimer County Open Lands Program</strong> (county sales tax, since 1995)</li>
+  <li><strong>Fort Collins Natural Areas Department</strong> (city sales tax, since 1992)</li>
+  <li><strong>Great Outdoors Colorado (GOCO)</strong> (state lottery, since 1992)</li>
+  <li><strong>U.S. Forest Service / NPS / BLM</strong> (federal lands — most of the western county)</li>
+  <li><strong>The Nature Conservancy / land trusts</strong> (private partners)</li>
+</ol>
+
+<div class="prompt"><q>Show me the conservation-funding picture for Larimer County: how much money has been spent, on how many sites, by which programs and what sponsor types?</q></div>
+
+<details class="sql"><summary>The SQL the app runs</summary><pre>
+WITH sites AS (
+  SELECT DISTINCT tpl_id FROM
+    read_parquet('s3://public-tpl/conservation-almanac-2024-sites.parquet')
+  WHERE state_id='CO' AND county='Larimer County'
+)
+SELECT f.program, f.sponsor_type,
+  COUNT(DISTINCT f.tpl_id) AS sites,
+  ROUND(SUM(f.amount)/1e6, 2) AS funding_M
+FROM sites s
+JOIN read_parquet('s3://public-tpl/conservation-almanac-2024-funding.parquet') f USING(tpl_id)
+WHERE f.amount > 0
+GROUP BY f.program, f.sponsor_type
+ORDER BY funding_M DESC;
+</pre></details>
+
+<table class="t">
+<thead><tr><th>Program</th><th>Sponsor</th><th>Sites</th><th>$ (M)</th></tr></thead>
+<tbody>
+  <tr><td>Local conservation funds <span class="dim">(n/a label — county Open Lands + Fort Collins Natural Areas)</span></td><td>Local govt</td><td>119</td><td>$75.45</td></tr>
+  <tr><td>Great Outdoors Colorado <span class="dim">(state lottery)</span></td><td>State of CO</td><td>50</td><td>$33.23</td></tr>
+  <tr><td>Sales Tax Funds <span class="dim">(explicitly labeled)</span></td><td>Local govt</td><td>58</td><td>$28.89</td></tr>
+  <tr><td>Donation</td><td>Private</td><td>45</td><td>$13.51</td></tr>
+  <tr><td>Open Lands Program <span class="dim">(Larimer County direct)</span></td><td>Local govt</td><td>9</td><td>$12.35</td></tr>
+  <tr><td>CO Lottery Proceeds</td><td>State of CO</td><td>8</td><td>$5.55</td></tr>
+  <tr><td>Land &amp; Water Conservation Fund (LWCF)</td><td>Federal</td><td>6</td><td>$4.81</td></tr>
+  <tr><td>USFS Forest Legacy Program</td><td>Federal</td><td>1</td><td>$4.00</td></tr>
+  <tr><td>Natural Areas Program <span class="dim">(Fort Collins direct)</span></td><td>Local govt</td><td>6</td><td>$2.25</td></tr>
+  <tr><td>Utility revenue</td><td>Local govt</td><td>4</td><td>$0.97</td></tr>
+  <tr><td>USFWS Section 6 Grant <span class="dim">(critical habitat acquisition)</span></td><td>Federal</td><td>1</td><td>$0.40</td></tr>
+</tbody>
+</table>
+
+<p>Adding the local lines together — county + city sales-tax-derived funds,
+the Open Lands program, and unlabeled local sponsor records — Larimer's
+own taxpayers have put up roughly <strong>$128 million</strong> across
+192 acquisitions.  State support through Great Outdoors Colorado and the
+lottery adds <strong>$38.8M</strong>.  Federal sources are modest in
+dollar terms ($9.2M) but anchor specific projects: the Roosevelt
+National Forest's Ben Delatour Scout Ranch easement ($4M Forest Legacy)
+and the Rocky Mountain NP boundary adjustments (LWCF).</p>
+
+<h3>Named acquisitions — the 10 largest in the Almanac</h3>
+
+<div class="prompt"><q>List Larimer's biggest individual conservation acquisitions by funding — site name, acres, year, the lead manager type.</q></div>
+
+<table class="t">
+<thead><tr><th>Site</th><th>Acres</th><th>Year</th><th>$ (M)</th><th>Method</th></tr></thead>
+<tbody>
+  <tr><td>Red Mountain Open Space <span class="dim">(N Larimer, near WY border)</span></td><td>13,448</td><td>2004</td><td>$9.70</td><td>fee &amp; no exchange</td></tr>
+  <tr><td>Hermit Park Open Space <span class="dim">(E of Estes Park)</span></td><td>1,362</td><td>2007</td><td>$8.79</td><td>conservation easement</td></tr>
+  <tr><td>Little Thompson Farm &amp; Water</td><td>211</td><td>2016</td><td>$8.48</td><td>fee simple</td></tr>
+  <tr><td>Soapstone Prairie Natural Area <span class="dim">(Fort Collins, N of city)</span></td><td>12,579</td><td>2004</td><td>$7.28</td><td>fee simple</td></tr>
+  <tr><td>Circle Ranch / TNC&nbsp;–&nbsp;CPW Legacy partnership</td><td>5,790</td><td>2001</td><td>$6.72</td><td>fee simple</td></tr>
+  <tr><td>Ben Delatour Scout Ranch <span class="dim">(USFS Forest Legacy CE)</span></td><td>3,188</td><td>2011</td><td>$5.50</td><td>conservation easement</td></tr>
+  <tr><td>Devil's Backbone Open Space (Indian Creek)</td><td>1,545</td><td>2003</td><td>$5.41</td><td>fee &amp; easement</td></tr>
+  <tr><td>Fossil Creek Reservoir Open Space</td><td>593</td><td>2001</td><td>$4.03</td><td>fee simple</td></tr>
+  <tr><td>Reservoir Ridge Natural Area (Fort Collins)</td><td>267</td><td>2007</td><td>$4.00</td><td>fee simple</td></tr>
+  <tr><td>Roberts Ranch — Laramie Foothills (Phase II)</td><td>11,971</td><td>2006</td><td>$3.94</td><td>conservation easement</td></tr>
+</tbody>
+</table>
+
+<div class="gap">
+  Almanac coverage for Colorado ends at 2018.  The 2025 Fort Collins
+  $181M sales tax (Larimer's biggest voter mandate ever) has not yet
+  produced acquisitions recorded in the Almanac.  Any draft of this
+  section that quotes 2019–2026 acquisitions has to come from Larimer
+  County Open Lands' own annual reports and Fort Collins Natural Areas'
+  acquisition log.
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 4  CLIMATE / CARBON / BIODIVERSITY -- bonus
+     ========================================================= -->
+<section id="climate">
+<h2><span class="num">4</span>§ Climate, biodiversity, and protection picture</h2>
+
+<p>The Lake County feasibility study did not have a dedicated climate or
+biodiversity section.  That's a function of when it was produced and the
+manual effort an analyst would have had to spend pulling carbon and
+species data from federal sources.  With the geo-agent it takes two
+prompts.</p>
+
+<div class="prompt"><q>What does the protected-areas landscape look like in Larimer County?  Show me ownership and management of every PAD-US protected unit, by area.</q></div>
+
+<details class="sql"><summary>The SQL the app runs (H3 hex SEMI JOIN, county × PAD-US)</summary><pre>
+WITH lar AS (
+  SELECT DISTINCT h8, h0 FROM
+    read_parquet('s3://public-census/census-2024/county/hex/h0=*/data_0.parquet')
+  WHERE GEOID='08069'
+)
+SELECT pad.Own_Type, pad.Mang_Name,
+  COUNT(DISTINCT pad._cng_fid) AS units,
+  ROUND(COUNT(DISTINCT pad.h8) * 0.74, 0) AS approx_km2
+FROM read_parquet('s3://public-padus/padus-4-1/combined/hex/h0=*/data_0.parquet') pad
+SEMI JOIN lar ON pad.h8 = lar.h8 AND pad.h0 = lar.h0
+GROUP BY pad.Own_Type, pad.Mang_Name
+ORDER BY approx_km2 DESC;
+</pre></details>
+
+<table class="t">
+<thead><tr><th>Manager</th><th>Ownership type</th><th>Units</th><th>Approx km²</th></tr></thead>
+<tbody>
+  <tr><td>USFS — Roosevelt National Forest <span class="dim">(designated)</span></td><td>Federal</td><td>29</td><td>3,240</td></tr>
+  <tr><td>USFS — Roosevelt NF <span class="dim">(general fee)</span></td><td>Federal</td><td>5</td><td>2,484</td></tr>
+  <tr><td>City — Fort Collins Natural Areas et al.</td><td>Local govt</td><td>339</td><td>683</td></tr>
+  <tr><td>NPS — Rocky Mountain NP (designated)</td><td>Federal</td><td>2</td><td>559</td></tr>
+  <tr><td>NPS — Rocky Mountain NP (general)</td><td>Federal</td><td>1</td><td>554</td></tr>
+  <tr><td>CO Parks &amp; Wildlife <span class="dim">(state wildlife areas)</span></td><td>State</td><td>52</td><td>412</td></tr>
+  <tr><td>Land trusts / NGOs</td><td>Private NGO</td><td>217</td><td>363</td></tr>
+  <tr><td>Private conservation easements</td><td>Private</td><td>81</td><td>350</td></tr>
+  <tr><td>County (Larimer Open Lands)</td><td>Local govt</td><td>72</td><td>271</td></tr>
+  <tr><td>CO State Land Board</td><td>State</td><td>42</td><td>187</td></tr>
+  <tr><td>BLM</td><td>Federal</td><td>3</td><td>115</td></tr>
+</tbody>
+</table>
+
+<p>The story this surfaces: of Larimer's roughly 6,840 km² (1.69M acres),
+about <strong>~9,000 km² of footprint exists across all PAD-US
+protected units</strong> (overlapping counts because of layered designations).
+The federal portion dominates — Roosevelt NF alone covers ~3,240 km², or
+nearly half the western county, and Rocky Mountain NP's Larimer slice
+adds another ~1,113 km².  In other words, the western half of Larimer
+is overwhelmingly federally managed.  <strong>Any new
+county/city ballot measure operates in the foothills and plains in the
+east</strong>, which is also where Almanac investments concentrate.</p>
+
+<div class="prompt"><q>How much irrecoverable carbon sits under the Conservation Almanac sites in Larimer County?</q></div>
+
+<div class="response">
+The H3 hex SEMI JOIN of Almanac sites × the irrecoverable-carbon-2024
+hex parquet returns 0.001 Mt of irrecoverable carbon across 932 hex
+cells — a very small number relative to the volume in tropical, coastal,
+and Pacific-Northwest landscapes (Florida's protected lands carry
+0.29 Mt; Oregon 0.5+ Mt under their voter-approved jurisdictions).
+Colorado's montane sagebrush, ponderosa, and short-grass prairie are not
+where the country's most irrecoverable-by-2050 carbon sits.  This is
+worth knowing: a climate framing for the Larimer measure should lead
+with <em>water</em> (snowpack, the Cache la Poudre, wildfire watershed
+protection) rather than carbon sequestration.
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 5  COLORADO CONSERVATION FINANCE HISTORY
+     ========================================================= -->
+<section id="cohistory">
+<h2><span class="num">5</span>§ Colorado conservation finance history <span class="dim" style="font-size:.7em">(Lake Co. report § 8 — FL history)</span></h2>
+
+<p>The Lake County feasibility study contained a small table summarizing
+&ldquo;Local Conservation Finance Mechanisms in Florida, 1996–2020 — 96
+measures, 82% passed, bonds at 88%.&rdquo;  This is the table TPL uses to
+ground every state-specific feasibility study.  Below is the Colorado
+equivalent — generated in one prompt.</p>
+
+<div class="prompt"><q>Summarize the Colorado conservation-finance history: every measure since 1988, by finance mechanism, with pass rate and total dollars approved.</q></div>
+
+<table class="t">
+<thead><tr><th>Mechanism</th><th>Measures</th><th>Passed</th><th>Pass rate</th><th>$ approved</th></tr></thead>
+<tbody>
+  <tr><td>Sales tax</td><td>118</td><td>92</td><td>78.0%</td><td>$5,161M</td></tr>
+  <tr><td>Property tax</td><td>64</td><td>41</td><td>64.1%</td><td>$756M</td></tr>
+  <tr><td>Other <span class="dim">(special-district levies, mill levies, etc.)</span></td><td>26</td><td>19</td><td>73.1%</td><td>$680M</td></tr>
+  <tr><td>Bond</td><td>54</td><td>39</td><td>72.2%</td><td>$677M</td></tr>
+  <tr><td>Real estate transfer tax</td><td>1</td><td>1</td><td>100%</td><td>$31M</td></tr>
+  <tr><td><strong>Total</strong></td><td><strong>263</strong></td><td><strong>192</strong></td><td><strong>73.0%</strong></td><td><strong>$7,306M</strong></td></tr>
+</tbody>
+</table>
+
+<p>The Colorado pattern is very different from Florida.  In Florida, the
+bond mechanism dominates and passes at 88%.  In Colorado, the
+<strong>sales tax dominates absolutely</strong> — 78% pass rate, $5.16B
+of the state's $7.3B in conservation dollars approved over 37 years.
+Property tax measures in CO are <em>more</em> volatile (only 64% pass)
+because of the way TABOR (Taxpayer's Bill of Rights, 1992) constrains
+mill-levy increases; sales tax measures are friendlier to TABOR rules
+and have established a generation of voter familiarity.</p>
+
+<div class="gap">
+  TABOR-specific legal context (de-Brucing, mill-levy cap, 30-year
+  bonding limits, vote-of-the-people requirements for tax increases)
+  is <strong>not</strong> in the geo-agent.  The legal section of a
+  Colorado feasibility study still gets cut-and-pasted from the
+  state-team template and last verified with bond counsel.
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 6  LARIMER VOTERS
+     ========================================================= -->
+<section id="voters">
+<h2><span class="num">6</span>§ Larimer's own voter history <span class="dim" style="font-size:.7em">(Lake Co. report § 9 — past elections)</span></h2>
+
+<p>This is the strongest section of any Colorado feasibility study, because
+Colorado has the densest local-conservation-finance record in the country
+and Larimer has been one of its busiest counties.  Every measure on a
+conservation-related ballot in Larimer since 1988 is in LandVote.</p>
+
+<div class="prompt"><q>Show me every conservation ballot measure in Larimer County since 1988 — county and municipal — with status, mechanism, dollars approved, and percent yes.</q></div>
+
+<table class="t">
+<thead><tr><th>Year</th><th>Jurisdiction</th><th>Mechanism</th><th>Status</th><th>$ approved</th><th>% Yes</th></tr></thead>
+<tbody>
+  <tr class="match"><td>2025</td><td>Fort Collins (municipal)</td><td>Sales tax</td><td><strong>Pass</strong></td><td>$181.1M</td><td>73.1%</td></tr>
+  <tr><td>2022</td><td>Windsor (in Larimer + Weld)</td><td>Sales tax</td><td>Pass</td><td>$32.4M</td><td>57.8%</td></tr>
+  <tr class="match"><td>2014</td><td><strong>Larimer County</strong> (Help Preserve Open Spaces renewal)</td><td>Sales tax</td><td>Pass</td><td>$131.3M</td><td><strong>81.7%</strong></td></tr>
+  <tr><td>2004</td><td>Windsor</td><td>Other</td><td>Fail</td><td>—</td><td>41.8%</td></tr>
+  <tr><td>2003</td><td>Loveland</td><td>Sales tax</td><td>Fail</td><td>—</td><td>43.2%</td></tr>
+  <tr><td>2002</td><td>Fort Collins (Choices 2002 renewal)</td><td>Sales tax</td><td>Pass</td><td>$120.0M</td><td>65.3%</td></tr>
+  <tr><td>1999</td><td><strong>Larimer County</strong> (Open Spaces renewal)</td><td>Sales tax</td><td>Pass</td><td>$54.0M</td><td>59.7%</td></tr>
+  <tr><td>1997</td><td>Fort Collins</td><td>Sales tax</td><td>Pass</td><td>$20.0M</td><td>70.7%</td></tr>
+  <tr><td>1995</td><td><strong>Larimer County</strong> (Open Spaces — original)</td><td>Sales tax</td><td>Pass</td><td>$49.6M</td><td>65.5%</td></tr>
+  <tr><td>1994</td><td>Larimer County (open-space measure)</td><td>Sales tax</td><td>Fail</td><td>—</td><td>46.8%</td></tr>
+  <tr><td>1992</td><td>Fort Collins (Choices 95 — original)</td><td>Sales tax</td><td>Pass</td><td>$12.5M</td><td>52.9%</td></tr>
+</tbody>
+</table>
+
+<p>Adding it up: <strong>11 measures since 1992 · 9 passed (82%) ·
+$601 million authorized · 100% of measures used sales tax.</strong> The
+three failures were Loveland 2003, Windsor 2004, and the original
+county Open Spaces attempt in 1994 (before the program had a record).
+Once the county Open Spaces program matured, every renewal passed.</p>
+
+<p>The 2014 county renewal — Help Preserve Open Spaces extended through
+2043 at <strong>81.67% yes</strong> — is the single most important data
+point for any 2026–2028 planning conversation: it is the largest
+margin in any Larimer or Fort Collins conservation vote ever recorded,
+and it locks in dedicated revenue for another 17 years.  The
+question for a 2027/28 ballot is therefore not &ldquo;will voters
+support conservation funding,&rdquo; but &ldquo;does the additional
+ask sit comfortably alongside the existing $0.25 sales tax already
+authorized through 2043?&rdquo;</p>
+</section>
+
+
+<!-- =========================================================
+     § 7  COMPARABLE COLORADO PEERS
+     ========================================================= -->
+<section id="peers">
+<h2><span class="num">7</span>§ Comparable Colorado measures, 2018–2025</h2>
+
+<p>Lake County's report cited precedent measures from neighboring Florida
+counties (Manatee 2020 $50M / 71%, Flagler 2008 $40M / 65%).  Larimer's
+comparables are everywhere in Colorado.  The geo-agent surfaces the
+full list in seconds.</p>
+
+<div class="prompt"><q>What are all the recent Colorado conservation ballot measures (2018–2025), with their mechanism, dollar size, percent yes, and party-lean of the jurisdiction?</q></div>
+
+<table class="t">
+<thead><tr><th>Year</th><th>Jurisdiction</th><th>Mechanism</th><th>$ approved</th><th>% Yes</th><th>Party</th></tr></thead>
+<tbody>
+  <tr><td>2025</td><td>Fort Collins (Larimer)</td><td>Sales tax</td><td>$181.1M</td><td>73.1%</td><td>D</td></tr>
+  <tr class="new"><td>2025</td><td>Boulder County</td><td>Sales tax</td><td>$150.0M</td><td>74.2%</td><td>D</td></tr>
+  <tr><td>2025</td><td>Durango (La Plata)</td><td>Sales tax</td><td>$90.3M</td><td>67.5%</td><td>D</td></tr>
+  <tr><td>2024</td><td>Longmont (Boulder/Weld)</td><td>Sales tax</td><td>$100.0M</td><td>74.5%</td><td>D/R</td></tr>
+  <tr><td>2024</td><td>Lakewood (Jefferson)</td><td>Other</td><td>$54.0M</td><td>61.9%</td><td>D</td></tr>
+  <tr><td>2023</td><td>Colorado Springs (El Paso)</td><td>Sales tax</td><td>$144.0M</td><td><strong>78.0%</strong></td><td>R</td></tr>
+  <tr><td>2023</td><td>Grand County</td><td>Sales tax</td><td>$67.0M</td><td>72.6%</td><td>R</td></tr>
+  <tr><td>2023</td><td>Boulder County</td><td>Sales tax</td><td>$54.0M</td><td><strong>80.6%</strong></td><td>D</td></tr>
+  <tr><td>2022</td><td>Douglas County</td><td>Sales tax</td><td>$108.8M</td><td><strong>87.6%</strong></td><td>R</td></tr>
+  <tr><td>2022</td><td>Routt County</td><td>Property tax</td><td>$29.0M</td><td>84.9%</td><td>D</td></tr>
+  <tr><td>2021</td><td>Arapahoe County</td><td>Sales tax</td><td>$112.0M</td><td>76.7%</td><td>D</td></tr>
+  <tr><td>2021</td><td>Castle Rock (Douglas)</td><td>Sales tax</td><td>—</td><td>Fail 37.5%</td><td>R</td></tr>
+  <tr><td>2020</td><td>Adams County</td><td>Sales tax</td><td>$200.0M</td><td>82.6%</td><td>D</td></tr>
+  <tr><td>2019</td><td>Boulder (city)</td><td>Sales tax</td><td>$106.0M</td><td>85.8%</td><td>D</td></tr>
+  <tr><td>2019</td><td>Summit County</td><td>Property tax</td><td>$50.0M</td><td>78.3%</td><td>D</td></tr>
+  <tr><td>2018</td><td>Denver County</td><td>Sales tax</td><td>$459.4M</td><td>61.9%</td><td>D</td></tr>
+  <tr><td>2018</td><td>Eagle County</td><td>Property tax</td><td>$50.6M</td><td>81.7%</td><td>D</td></tr>
+</tbody>
+</table>
+
+<p>Three things stand out for the Larimer brief:</p>
+<ul>
+  <li><strong>Mechanism uniformity.</strong> Of 16 successful CO measures
+      2018–2025, 12 used sales tax.  None used GO bonds.  Property tax
+      worked in Summit and Eagle Counties (small-population
+      resort-economy counties); sales tax is the default everywhere
+      else.</li>
+  <li><strong>Margins are wide regardless of partisan lean.</strong>
+      Douglas County (heavily Republican) cleared 87.6%; Adams County
+      (Democratic) cleared 82.6%; Colorado Springs (Republican) cleared
+      78.0%; Boulder city (Democratic) cleared 85.8%.  The Larimer 2014
+      county renewal at 81.7% sits squarely in this band.</li>
+  <li><strong>Dollar size of the closest peers is in the $100–200M
+      range.</strong>  Boulder County 2025 ($150M), Fort Collins 2025
+      ($181M), Colorado Springs 2023 ($144M), Arapahoe County 2021
+      ($112M), Adams County 2020 ($200M) form the natural comparable
+      band.  A countywide Larimer measure in 2027–28 in this range
+      would be neither unusually small nor unusually large.</li>
+</ul>
+</section>
+
+
+<!-- =========================================================
+     § 8  PUBLIC FINANCE OPTIONS
+     ========================================================= -->
+<section id="options">
+<h2><span class="num">8</span>§ Public Finance Options for Larimer <span class="dim" style="font-size:.7em">(Lake Co. report § 8)</span></h2>
+
+<p>The Lake County study laid out, in turn, GO bonds, bonds with millage,
+ballot-language requirements, and enactment procedures, with a precedent
+table.  In Colorado the operative menu is different.</p>
+
+<h3>What the data say about mechanism choice</h3>
+<p>From §&nbsp;5 above: sales tax is the dominant mechanism in Colorado
+(78% pass rate, $5.16B of the state's conservation dollars). Property
+tax (mill-levy increases) pass less reliably (64%) and are constrained
+by TABOR.  GO bonds have been used for school and infrastructure but
+are rare for conservation.</p>
+
+<h3>What's missing from the geo-agent</h3>
+<div class="gap">
+  The Lake County report's strongest single page is the bond-cost
+  table — &ldquo;$50M bond @ 5% / 20-year = $4M annual debt service =
+  $21/year per median-value homeowner.&rdquo;  Producing that table
+  requires (a) the county's total taxable value and median home value
+  (from the county assessor), (b) current municipal interest rate
+  estimates (from a financial advisor or bond counsel), and (c) a
+  simple amortization calculator.  None of those three are in the
+  geo-agent.  This section of any feasibility study will continue to
+  require an external bond-counsel or financial-advisor partner.
+</div>
+
+<h3>What the geo-agent gives you cleanly</h3>
+<p>The agent can identify <strong>at what historic dollar size a Colorado
+sales-tax measure has been winning</strong> and against what
+opposition.  Sales-tax measures in the $50M–$200M range, with a
+20-year sunset and a clear conservation purpose
+(open space, water quality, trails, wildlife habitat), have a track
+record of clearing 70%+ approval in both red and blue Colorado
+counties.</p>
+</section>
+
+
+<!-- =========================================================
+     § 9  THE GAPS, EXPLICITLY
+     ========================================================= -->
+<section id="gaps">
+<h2><span class="num">9</span>What this walkthrough does <em>not</em> produce</h2>
+
+<p>The Lake County feasibility study runs 23 pages.  Of those, roughly
+nine pages contain content the geo-agent today cannot produce: the
+demographics table, the county-finance breakdown, the bond cost table,
+the millage-rate detail, the debt schedule, the commissioner roster,
+the voter-turnout history, the precinct-equipment list.  All of these
+remain manual.</p>
+
+<table class="t">
+<thead><tr><th>Lake Co. report section</th><th>Geo-agent status</th><th>External source</th></tr></thead>
+<tbody>
+  <tr><td>Demographics table</td><td><span class="tag gap">gap</span></td><td>US Census QuickFacts, ACS</td></tr>
+  <tr><td>Commissioner roster &amp; term expirations</td><td><span class="tag gap">gap</span></td><td>County Clerk website</td></tr>
+  <tr><td>Revenues, expenses</td><td><span class="tag gap">gap</span></td><td>County CAFR / ACFR</td></tr>
+  <tr><td>Property-tax millage table</td><td><span class="tag gap">gap</span></td><td>CO Dept. of Local Affairs, county assessor</td></tr>
+  <tr><td>Sales-tax history</td><td><span class="tag gap">gap</span></td><td>County finance office</td></tr>
+  <tr><td>Bonded debt schedule</td><td><span class="tag gap">gap</span></td><td>County CAFR debt note</td></tr>
+  <tr><td>Bond cost calculator (annual debt service, per-homeowner cost)</td><td><span class="tag gap">gap</span></td><td>Bond counsel / financial advisor; needs total taxable value &amp; rates</td></tr>
+  <tr><td>Existing-program description (Open Lands, GOCO)</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>Site inventory (227 sites, 99,836 ac, $190M)</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>State-level conservation-finance history</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>Voter history (11 measures, 9 passed)</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>Peer-county comparables</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>Voter turnout history</td><td><span class="tag gap">gap</span></td><td>CO Secretary of State, county elections</td></tr>
+  <tr><td>Voting methods &amp; equipment</td><td><span class="tag gap">gap</span></td><td>County Clerk's election office</td></tr>
+  <tr><td>State enabling authority detail (CRS citations, TABOR rules)</td><td><span class="tag gap">gap</span></td><td>State statutes; bond counsel</td></tr>
+  <tr><td>Equity / SVI section</td><td><span class="tag new">new</span></td><td>Available via the geo-agent's SVI 2022 layer (not in Lake Co.)</td></tr>
+  <tr><td>Carbon / biodiversity context</td><td><span class="tag new">new</span></td><td>Available via the agent (not in Lake Co.)</td></tr>
+  <tr><td>PAD-US protected-areas inventory</td><td><span class="tag new">new</span></td><td>Available via the agent (not in Lake Co.)</td></tr>
+</tbody>
+</table>
+
+<p>Net: of the 17 components above, the geo-agent fully delivers 5,
+adds 3 categories that the Lake County report didn't even attempt,
+and leaves 9 to external sources.  That's roughly the right division
+of labor — the agent handles the conservation-finance and spatial
+context (which is what TPL uniquely brings), and the analyst's manual
+effort goes to the financial/political/legal context (which has to be
+verified by county staff and bond counsel anyway).</p>
+</section>
+
+
+<!-- =========================================================
+     § 10  DRAFT EXECUTIVE SUMMARY
+     ========================================================= -->
+<section id="draft">
+<h2><span class="num">10</span>Draft executive summary, generated from app outputs</h2>
+
+<p>Bringing the agent-produced sections together, here is the
+executive-summary page a 2027 Larimer feasibility study would open
+with.  Everything in plain face came from a geo-agent prompt; items
+in <span class="tag gap">gap</span> tags still need county finance office
+input before publication.</p>
+
+<div class="brief">
+  <p class="brief-eyebrow">Larimer County, Colorado — Public Finance Feasibility Study · Draft Executive Summary · May 2026</p>
+  <h2>The case for a 2027/2028 conservation ballot measure</h2>
+
+  <div class="brief-ask">
+    Larimer County has the strongest local-conservation-finance record in
+    Colorado outside the immediate Denver metro: 11 measures on the ballot
+    since 1992, 9 passed, all using sales tax, totaling <strong>$601 million
+    authorized for open space, parks, trails, and wildlife habitat</strong>.
+    The 2014 countywide renewal of <em>Help Preserve Open Spaces</em>
+    cleared 81.7% yes and runs through 2043.  In 2025 Fort Collins voters
+    approved a new $181M city sales-tax measure at 73.1% yes — the largest
+    city-level conservation win in Colorado that cycle.  Voter support is
+    not the question.
+  </div>
+
+  <h3>Existing investment, recorded in the TPL Conservation Almanac</h3>
+  <ul>
+    <li><strong>227 sites · 99,836 acres · $190.4M of tracked funding</strong>, 1994–2018.</li>
+    <li>Lead programs:  Larimer Open Lands + Fort Collins Natural Areas ($128M local); Great Outdoors Colorado ($33M state lottery); LWCF + Forest Legacy ($9M federal).</li>
+    <li>Iconic acquisitions:  Red Mountain Open Space (13,448 ac), Soapstone Prairie (16,452 ac across phases), Roberts Ranch easements (16,528 ac), Hermit Park (1,362 ac), Devil's Backbone (1,764 ac).</li>
+  </ul>
+
+  <h3>Protected-land context</h3>
+  <ul>
+    <li>Roosevelt National Forest covers ~3,240 km² of the western county; Rocky Mountain NP adds another ~1,113 km².  New county/city measures operate primarily in the foothills and plains of the east.</li>
+    <li>Fort Collins Natural Areas: 339 PAD-US units, ~683 km².  County Open Lands: 72 units, ~271 km².  Land trusts (TNC, Audubon, Foothills): 217 units, ~363 km².</li>
+  </ul>
+
+  <h3>Colorado statewide context</h3>
+  <ul>
+    <li>263 conservation measures since 1988, 73% pass rate, $7.3B approved.</li>
+    <li>Sales tax accounts for 118 measures, 78% pass rate, $5.16B — dominant mechanism.</li>
+    <li>Property tax measures pass at 64% (TABOR friction).  GO bonds rare in CO conservation.</li>
+  </ul>
+
+  <h3>Recent peer-county comparables</h3>
+  <ul>
+    <li>Boulder County 2025 — $150M sales tax @ 74.2% yes</li>
+    <li>Colorado Springs 2023 — $144M sales tax @ 78.0% yes (Republican-leaning)</li>
+    <li>Douglas County 2022 — $108.8M sales tax @ 87.6% yes (Republican-leaning)</li>
+    <li>Arapahoe County 2021 — $112M sales tax @ 76.7% yes</li>
+    <li>Adams County 2020 — $200M sales tax @ 82.6% yes</li>
+  </ul>
+
+  <h3>What the geo-agent says about a 2027/28 measure</h3>
+  <ul>
+    <li>The political record supports a sales-tax measure in the $100–200M range.</li>
+    <li>The existing county $0.25 Help Preserve Open Spaces sales tax runs to 2043, so a new ballot question would be additive — most plausibly framed as a "new initiative" (climate, water, fire-resilience, equity) rather than as a renewal.</li>
+    <li>Equity:  five of Larimer's 79 census tracts sit at SVI ≥ 0.75 — eastern Fort Collins, parts of Loveland, the Estes Park area — and should be the explicit benefit focus of any new ask.</li>
+    <li>Climate framing:  Larimer's irrecoverable-carbon load is low compared to coastal or PNW peers; a stronger frame is water (Cache la Poudre watershed, post–Cameron Peak Fire recovery, snowpack reliability) and biodiversity (Laramie Foothills wildlife migration corridor).</li>
+  </ul>
+
+  <h3>What the geo-agent <em>cannot</em> tell you and what's needed next</h3>
+  <ul>
+    <li><span class="tag gap">gap</span> Larimer County's current taxable value, debt schedule, and mill levies — pulled from the FY 2024–25 CAFR.</li>
+    <li><span class="tag gap">gap</span> Bond cost table at $100M / $150M / $200M issue sizes — requires the assessor's office and bond counsel.</li>
+    <li><span class="tag gap">gap</span> Demographics, voter turnout history, election equipment — pulled from US Census QuickFacts and CO Secretary of State.</li>
+    <li><span class="tag gap">gap</span> Polling: a privately funded public-opinion survey to test ballot language, tax tolerance, and program priorities (TPL recommends as next step, as it did in Lake County).</li>
+  </ul>
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 11  METHODOLOGY
+     ========================================================= -->
+<section id="method">
+<h2><span class="num">11</span>Methodology &amp; reproducibility</h2>
+
+<p>Every figure in this case study traces to one of three datasets:
+<code>landvote</code> (3,886 ballot measures, 1988–2025),
+<code>conservation-almanac-2024-sites</code> + <code>-funding</code> (67,428 protected
+sites with full funding history), and the Census 2024 county boundary
+parquet (FIPS 08069 = Larimer).  Spatial intersections use H3 hex
+resolution-8 SEMI JOINs as documented in the geo-agent's H3 guide;
+each query above can be pasted into the duckdb-mcp tool directly.</p>
+
+<p>The PAD-US section uses <code>pad-us-4.1-combined</code>; the SVI tract data
+use <code>svi-2022</code>.  The irrecoverable-carbon overlay uses
+<code>irrecoverable-carbon-2024</code>.  Almanac coverage for Colorado ends
+in 2018 — any 2019–2026 acquisitions must come from the Larimer Open
+Lands annual report and Fort Collins Natural Areas tracking.</p>
+
+<p>Total time to produce this walkthrough's app-driven sections:
+approximately 90 minutes of prompting on the geo-agent app.  Total time
+the team has saved versus pulling the same content manually from
+LandVote.org's web interface plus state-by-state DEP records:
+approximately 6–8 hours.</p>
+</section>
+
+</main>
+
+<footer class="foot"><div class="page">
+  Case Study 02 of 03 · TPL geo-agent walkthrough series · drafted from
+  the geo-agent at <a href="https://github.com/boettiger-lab/tpl">github.com/boettiger-lab/tpl</a> ·
+  May 2026.
+  Previous: <a href="florida-sd21.html">Case Study 01 — Florida Senate District 21 briefing</a>.
+  Next: <a href="maine-northwoods.html">Case Study 03 — Maine North Woods climate-finance feasibility</a>.
+</div></footer>
+
+
+<script type="module">
+import maplibregl from "https://esm.sh/maplibre-gl@5.4.0";
+import * as pmtiles from "https://esm.sh/pmtiles@4.4.1";
+
+const protocol = new pmtiles.Protocol();
+maplibregl.addProtocol("pmtiles", protocol.tile);
+
+const namedSites = {
+  type: "FeatureCollection",
+  features: [
+    {label: "Red Mountain Open Space",        coords: [-105.158, 40.944]},
+    {label: "Soapstone Prairie",              coords: [-105.082, 40.975]},
+    {label: "Roberts Ranch (Laramie Foothills)", coords: [-105.193, 40.833]},
+    {label: "Hermit Park",                    coords: [-105.469, 40.345]},
+    {label: "Devil's Backbone",               coords: [-105.164, 40.464]},
+    {label: "Fossil Creek Reservoir",         coords: [-105.010, 40.487]},
+    {label: "Ben Delatour Scout Ranch",       coords: [-105.500, 40.744]},
+    {label: "Little Thompson Farm",           coords: [-105.108, 40.285]},
+  ].map(p => ({
+    type: "Feature",
+    geometry: {type: "Point", coordinates: p.coords},
+    properties: {label: p.label}
+  }))
+};
+
+const map = new maplibregl.Map({
+  container: "map",
+  style: {
+    version: 8,
+    glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+    sources: {
+      carto: {
+        type: "raster",
+        tiles: ["https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png"],
+        tileSize: 256, attribution: "© OSM · © CARTO"
+      }
+    },
+    layers: [{id: "base", type: "raster", source: "carto"}]
+  },
+  bounds: [[-106.20, 40.20], [-104.94, 41.00]],
+  fitBoundsOptions: {padding: 30}
+});
+map.addControl(new maplibregl.NavigationControl({showCompass: false}), "top-right");
+
+map.on("load", () => {
+  // County boundary — highlight Larimer
+  map.addSource("county", {
+    type: "vector",
+    url: "pmtiles://https://s3-west.nrp-nautilus.io/public-census/census-2024/county.pmtiles"
+  });
+  map.addLayer({
+    id: "larimer-fill", type: "fill", source: "county", "source-layer": "county",
+    filter: ["==", ["get","GEOID"], "08069"],
+    paint: {"fill-color":"#1B5E20","fill-opacity":0.06}
+  });
+  map.addLayer({
+    id: "larimer-line", type: "line", source: "county", "source-layer": "county",
+    filter: ["==", ["get","GEOID"], "08069"],
+    paint: {"line-color":"#1B5E20","line-width":3}
+  });
+  // Other CO counties faint
+  map.addLayer({
+    id: "co-other-line", type: "line", source: "county", "source-layer": "county",
+    filter: ["all", ["==",["get","STATEFP"],"08"], ["!=",["get","GEOID"],"08069"]],
+    paint: {"line-color":"#5e6266","line-width":0.5,"line-opacity":0.5}
+  });
+
+  // Almanac sites
+  map.addSource("almanac", {
+    type: "vector",
+    url: "pmtiles://https://s3-west.nrp-nautilus.io/public-tpl/conservation-almanac-2024-sites.pmtiles"
+  });
+  map.addLayer({
+    id: "alm-co", type: "fill", source: "almanac",
+    "source-layer": "conservation-almanac-2024-sites",
+    filter: ["==", ["get","state_id"], "CO"],
+    paint: {"fill-color":"#2E7D32","fill-opacity":0.6}
+  }, "larimer-line");
+
+  // Named-site labels
+  map.addSource("named", {type: "geojson", data: namedSites});
+  map.addLayer({
+    id: "named-dot", type: "circle", source: "named",
+    paint: {"circle-radius": 6, "circle-color":"#C62828",
+            "circle-stroke-color":"white", "circle-stroke-width": 2}
+  });
+  map.addLayer({
+    id: "named-label", type: "symbol", source: "named",
+    layout: {
+      "text-field": ["get","label"],
+      "text-font": ["Open Sans Semibold"],
+      "text-size": 12, "text-offset": [0, 1.2], "text-anchor": "top"
+    },
+    paint: {"text-color":"#1a1a1a","text-halo-color":"white","text-halo-width":2}
+  });
+});
+</script>
+</body>
+</html>

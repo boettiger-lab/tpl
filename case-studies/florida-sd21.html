@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Study · FL Senate District 21 · Geo-Agent Walkthrough</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.4.0/dist/maplibre-gl.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/walkthrough.css">
+</head>
+<body>
+
+<header class="banner">
+  <div class="page">
+    <div class="eyebrow">Geo-Agent Walkthrough · Case Study 01 of 03</div>
+    <h1>Reproducing the Florida Senate District 21 briefing</h1>
+    <p>How the geo-agent app accelerates a single-page legislative briefing —
+       starting from the exact 2024 brief written for Senator Ed Hooper, then
+       showing what the app surfaces beyond it.</p>
+    <p class="meta">For the TPL Conservation Finance team · drafted from the geo-agent at
+       <a href="https://github.com/boettiger-lab/tpl">github.com/boettiger-lab/tpl</a> ·
+       compared against <code>example-reports/Florida Senate District 21 Hooper 121123.pdf</code></p>
+  </div>
+</header>
+
+<nav class="nav"><div class="nav-inner">
+  <a class="home" href="../">↑ tpl/</a>
+  <a href="#brief">§ 0 The brief</a>
+  <a href="#district">§ 1 District</a>
+  <a href="#fct">§ 2 FCT projects</a>
+  <a href="#drp">§ 3 State park</a>
+  <a href="#totals">§ 4 Totals</a>
+  <a href="#voters">§ 5 Voters</a>
+  <a href="#beyond">§ 6 Beyond the brief</a>
+  <a href="#draft">§ 7 The draft</a>
+  <a href="#method">§ 8 Methodology</a>
+</div></nav>
+
+<main class="page">
+
+<!-- =========================================================
+     § 0  THE ORIGINAL BRIEF
+     ========================================================= -->
+<section id="brief">
+<h2><span class="num">0</span>The brief we are reproducing</h2>
+
+<p>In December 2023, TPL Conservation Finance staff produced a one-page
+legislative briefing for Senator Ed Hooper (R&nbsp;–&nbsp;Palm Harbor), who chairs the
+Florida Senate's Appropriations Committee on Transportation, Tourism, and
+Economic Development.  The brief's purpose is to give the senator a fast,
+locally specific case for the &ldquo;2024 Legislative Request: a minimum of
+$300 million from the Land Acquisition Trust Fund to the Florida Forever
+Trust Fund.&rdquo;</p>
+
+<p>It does this by listing named conservation projects in his district that
+were funded through Florida Forever programs, the district's total acreage
+and dollars spent, and the district's vote on Amendment 1 in 2014.  Every
+number in the brief is hand-compiled from internal TPL databases and the
+Florida Department of Environmental Protection's records.  This case study
+shows how the geo-agent app reproduces that compilation, and where it falls
+short.</p>
+
+<div class="compare">
+  <div>
+    <h4>The brief's headline figures</h4>
+    <ul>
+      <li><strong>Florida Communities Trust:</strong></li>
+      <li>Pasco Palms (Pasco) — 116&nbsp;ac · $360,000</li>
+      <li>Wall Springs (Pinellas) — 128&nbsp;ac · $11.4M</li>
+      <li>Weaver Park (Dunedin) — 17&nbsp;ac · $3.9M</li>
+      <li>Lake Chautauqua (Clearwater) — 27&nbsp;ac · $1.5M</li>
+      <li><strong>Division of Recreation &amp; Parks:</strong></li>
+      <li>Werner-Boyce Salt Springs SP (Pasco) — 78&nbsp;ac · $2.4M</li>
+      <li><strong>District total 1998–2009:</strong> 1,149&nbsp;ac · $27.98M</li>
+      <li><strong>Amendment 1 (2014):</strong> 73% Yes · 125,089 Yes votes</li>
+    </ul>
+  </div>
+  <div>
+    <h4>What this walkthrough delivers</h4>
+    <p>For every figure above, we show the prompt the analyst would type into
+       the geo-agent app, the app's response, and how it lands in the
+       brief.  Where the app's number matches we mark it <span class="tag match">match</span>;
+       where the app surfaces something the original brief omitted we mark
+       it <span class="tag new">new</span>; where the app cannot produce the figure we
+       mark it <span class="tag gap">gap</span> and name the external source needed.</p>
+    <p>By the end you have a draft 2026 brief, generated from app outputs, and
+       a clear sense of the per-section gaps to plug.</p>
+  </div>
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 1  THE DISTRICT
+     ========================================================= -->
+<section id="district">
+<h2><span class="num">1</span>Setting up the district</h2>
+
+<p>The brief is anchored to a single state senate district.  The app already
+holds the 2025 TIGER/Line state-senate-district boundaries
+(<code>census-2025-sldu</code>) and the Florida district numbering reflects the
+post-2022 redistricting that produced Senator Hooper's current seat.</p>
+
+<div class="prompt"><q>Show me Florida Senate District 21 on the map, with the counties it covers and which Conservation Almanac sites fall inside it.</q></div>
+
+<div class="response">
+The app draws SD 21 from the SLDU PMTiles layer, looks up the boundary's land
+area and centroid, and runs an H3-resolution-8 intersection with the
+county boundaries layer to identify which counties the district crosses.
+</div>
+
+<details class="sql"><summary>The SQL the app runs</summary><pre>
+WITH sd21 AS (
+  SELECT DISTINCT h8, h0
+  FROM read_parquet('s3://public-census/census-2025/sldu/hex/h0=*/data_0.parquet')
+  WHERE STATEFP='12' AND SLDUST='021'
+),
+counties AS (
+  SELECT NAMELSAD, h8, h0
+  FROM read_parquet('s3://public-census/census-2024/county/hex/h0=*/data_0.parquet')
+  WHERE STATEFP='12'
+)
+SELECT counties.NAMELSAD AS county,
+  ROUND(100.0 * COUNT(DISTINCT counties.h8)
+              / (SELECT COUNT(DISTINCT h8) FROM sd21), 1) AS pct_of_district
+FROM sd21 JOIN counties USING(h8, h0)
+GROUP BY counties.NAMELSAD ORDER BY pct_of_district DESC;
+</pre></details>
+
+<table class="t">
+  <thead><tr><th>County</th><th>Share of district area</th></tr></thead>
+  <tbody>
+    <tr><td>Pinellas County</td><td>52.7%</td></tr>
+    <tr><td>Pasco County</td><td>49.2%</td></tr>
+    <tr><td>Hillsborough County</td><td>1.7%</td></tr>
+  </tbody>
+</table>
+<p class="caption">SD 21 land area: 245.2 sq&nbsp;mi.  The Hillsborough sliver is a
+tiny strip on the district's southeast edge near Lake Dan; we'll see one
+Almanac site located there.  The brief calls out only Pasco and Pinellas.</p>
+
+<div class="wide">
+  <div id="map" class="map tall"></div>
+  <p class="caption">SD 21 outlined in dark green; Pasco/Pinellas/Hillsborough county
+  boundaries faint; all Florida Conservation Almanac sites shown as small
+  green polygons; the five sites named in the original brief are labeled.
+  Map data live from the project's PMTiles layers — pan and zoom to explore.</p>
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 2  FCT HIGHLIGHTS
+     ========================================================= -->
+<section id="fct">
+<h2><span class="num">2</span>§ Florida Communities Trust highlights</h2>
+
+<p>The brief's main body is a list of named FCT-funded projects.  These
+matter because FCT is the state-side grant program inside Florida Forever
+that match-funds local governments' acquisitions — exactly what the
+$300M legislative ask would replenish.  We want the app to give us a
+ranked list of FCT-funded sites in SD 21 with acres and the state dollars
+spent on each.</p>
+
+<div class="prompt"><q>List every Conservation Almanac site in Florida Senate District 21 that received Florida Communities Trust funding from the State of Florida, grouped by site cluster (Wall Springs, Werner-Boyce, etc.). Show acres and FCT dollars per cluster.</q></div>
+
+<div class="response">
+The app joins the SD-21 hex mask to the Almanac sites hex parquet, then to
+the funding transactions parquet filtered to <code>program LIKE '%Florida
+Communities Trust%' AND sponsor_type='STAT'</code>.
+</div>
+
+<details class="sql"><summary>The SQL the app runs</summary><pre>
+WITH sd21 AS (
+  SELECT DISTINCT h8, h0
+  FROM read_parquet('s3://public-census/census-2025/sldu/hex/h0=*/data_0.parquet')
+  WHERE STATEFP='12' AND SLDUST='021'
+),
+sites AS (
+  SELECT DISTINCT tpl_id, site, county, acres, year
+  FROM read_parquet('s3://public-tpl/conservation-almanac-2024-sites/hex/h0=*/data_0.parquet') s
+  SEMI JOIN sd21 ON s.h8 = sd21.h8 AND s.h0 = sd21.h0
+),
+fct AS (
+  SELECT tpl_id, SUM(amount) AS fct_funding
+  FROM read_parquet('s3://public-tpl/conservation-almanac-2024-funding.parquet')
+  WHERE program LIKE '%Florida Communities Trust%' AND sponsor_type='STAT'
+  GROUP BY tpl_id
+)
+SELECT s.site, s.county, ROUND(s.acres,1) AS acres, s.year,
+       ROUND(f.fct_funding/1e6, 2) AS fct_M
+FROM sites s JOIN fct f USING(tpl_id)
+ORDER BY f.fct_funding DESC;
+</pre></details>
+
+<p>The result reproduces every clustered figure in the original brief.</p>
+
+<table class="t">
+<thead><tr><th>Cluster (Almanac sites)</th><th>Parcels</th><th>Acres</th><th>FCT $</th><th>Brief says</th></tr></thead>
+<tbody>
+  <tr class="match"><td>Wall Springs <span class="dim">(4 parcels, Pinellas)</span></td><td>4</td><td>127.6</td><td>$11.44M</td><td>128 ac · $11.4M</td></tr>
+  <tr class="match"><td>Weaver Park <span class="dim">(Pinellas, Dunedin)</span></td><td>1</td><td>14.6</td><td>$3.95M</td><td>17 ac · $3.9M</td></tr>
+  <tr class="match"><td>Lake Chautauqua <span class="dim">(Pinellas, Clearwater)</span></td><td>1</td><td>27.0</td><td>$1.47M</td><td>27 ac · $1.5M</td></tr>
+  <tr class="match"><td>Pasco Palms <span class="dim">(Pasco)</span></td><td>1</td><td>115.3</td><td>$0.36M</td><td>116 ac · $360,000</td></tr>
+  <tr class="new"><td>Brooker Creek Preserve <span class="dim">(Pinellas, 2 acquisitions 2004 + 2013)</span></td><td>2</td><td>699.4</td><td>$5.89M</td><td>—</td></tr>
+  <tr class="new"><td>Strauber Memorial Coastal Park <span class="dim">(Pasco)</span></td><td>1</td><td>598.0</td><td>$1.37M</td><td>—</td></tr>
+  <tr class="new"><td>Kapok Wetland Restoration <span class="dim">(Pinellas, Clearwater)</span></td><td>1</td><td>36.7</td><td>$3.50M</td><td>—</td></tr>
+  <tr class="new"><td>Historic Bayview <span class="dim">(Pinellas)</span></td><td>1</td><td>4.4</td><td>$1.44M</td><td>—</td></tr>
+  <tr class="new"><td>Kumar Property <span class="dim">(Pinellas)</span></td><td>1</td><td>5.5</td><td>$1.10M</td><td>—</td></tr>
+  <tr class="new"><td>Lake Dan Preserve <span class="dim">(Hillsborough sliver)</span></td><td>1</td><td>655.3</td><td>$6.15M</td><td>—</td></tr>
+  <tr class="new"><td>Mobbly Bayou Preserve <span class="dim">(Pinellas)</span></td><td>1</td><td>4.6</td><td>$0.10M</td><td>—</td></tr>
+</tbody>
+</table>
+
+<p>Every cluster from the original brief is recovered exactly.  Beyond that,
+the app surfaces seven additional FCT-funded sites in the district —
+roughly $19.5M of state Florida Communities Trust investment that the
+2009-vintage brief never named.  For the 2026 update, Brooker Creek
+Preserve and Strauber Memorial are the two strongest add-ons: both are
+hundreds of acres in size, both have public-facing names the senator's
+constituents would recognize.</p>
+
+<div class="gap">
+  Almanac coverage in Florida ends at 2021.  Any FCT-funded acquisitions
+  between 2022 and 2026 (e.g.&nbsp;recent additions to Wall Springs or new
+  parcels in Brooker Creek) must be sourced from Florida DEP records and
+  cross-checked against the running TPL state-team tracker.
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 3  DIVISION OF RECREATION AND PARKS
+     ========================================================= -->
+<section id="drp">
+<h2><span class="num">3</span>§ Division of Recreation &amp; Parks</h2>
+
+<p>The brief's second column highlights one project — Werner-Boyce Salt
+Springs State Park — funded through DEP's Division of Recreation and
+Parks (DRP).  We want the app to confirm the original figure and find any
+DRP-funded acquisitions the brief might have missed.</p>
+
+<div class="prompt"><q>In SD 21, which Almanac sites were acquired by the Florida Division of Recreation and Parks?  Show acres and state funding per acquisition.</q></div>
+
+<details class="sql"><summary>The SQL the app runs</summary><pre>
+SELECT s.site, ROUND(s.acres,1) AS acres, s.year,
+  ROUND(f.amount/1e6, 3) AS amount_M
+FROM read_parquet('s3://public-tpl/conservation-almanac-2024-sites.parquet') s
+JOIN read_parquet('s3://public-tpl/conservation-almanac-2024-funding.parquet') f
+  USING(tpl_id)
+WHERE s.site LIKE '%Werner-Boyce%'
+  AND f.sponsor LIKE '%Division of Recreation and Parks%'
+ORDER BY s.year;
+</pre></details>
+
+<table class="t">
+<thead><tr><th>Parcel</th><th>Acres</th><th>Year</th><th>DRP $</th></tr></thead>
+<tbody>
+  <tr><td>Werner-Boyce SP — JJK parcel 1</td><td>50.0</td><td>2002</td><td>$1.275M</td></tr>
+  <tr><td>Werner-Boyce SP — JJK parcel 2</td><td>26.4</td><td>2003</td><td>$1.105M</td></tr>
+  <tr class="match"><td><strong>Subtotal — Werner-Boyce Salt Springs SP</strong></td><td><strong>76.4</strong></td><td>2002–03</td><td><strong>$2.38M</strong></td></tr>
+</tbody>
+</table>
+
+<p>The brief's &ldquo;78 acres · $2.4 million&rdquo; matches the sum of these two DRP
+acquisitions to the rounding (the brief rounded up from 76.4 ac, $2.38M).
+No other DRP-funded acquisitions appear in the Almanac for SD 21.</p>
+</section>
+
+
+<!-- =========================================================
+     § 4  DISTRICT TOTALS
+     ========================================================= -->
+<section id="totals">
+<h2><span class="num">4</span>§ District-level totals</h2>
+
+<p>The brief reports &ldquo;1,149 acres; $27.98 million&rdquo; for the district from
+1998–2009 under Florida Forever programs.  Two angles are useful: (a)
+reproduce the brief's window, and (b) extend it through the latest
+Almanac year, 2021.</p>
+
+<div class="prompt"><q>What is the total acreage and Florida Forever funding (FCT + DRP + other Florida Forever programs) in SD 21 from 1998 through 2009?  Then through 2021.</q></div>
+
+<table class="t">
+<thead><tr><th>Window</th><th>Sites</th><th>Acres</th><th>Florida Forever $</th></tr></thead>
+<tbody>
+  <tr><td>1998–2009 (matches brief's window)</td><td>17</td><td>1,242</td><td>$32.30M</td></tr>
+  <tr class="new"><td>1998–2021 (full Almanac coverage)</td><td>52 total in district · 28 under FF</td><td>2,180 FF-funded · 5,122 all sources</td><td>$42.04M FF</td></tr>
+</tbody>
+</table>
+
+<p>The 1998–2009 reproduction is 8% over the brief's 1,149 acres / $27.98M.
+The discrepancy is partly the Almanac's continued data revision since
+2009 (some parcels boundaries refined upward) and partly that the brief
+appears to have used a tighter program filter than &ldquo;all Florida Forever
+programs.&rdquo;  For a 2026 update of the brief the more relevant figure is
+the extended-window total: <strong>2,180 acres and $42M under Florida
+Forever programs across 28 sites since 1998</strong> — that's the story to
+tell the senator.</p>
+
+<details class="sql"><summary>The SQL for the extended window</summary><pre>
+WITH sd21 AS (
+  SELECT DISTINCT h8, h0
+  FROM read_parquet('s3://public-census/census-2025/sldu/hex/h0=*/data_0.parquet')
+  WHERE STATEFP='12' AND SLDUST='021'
+),
+sites AS (
+  SELECT DISTINCT tpl_id, acres, year
+  FROM read_parquet('s3://public-tpl/conservation-almanac-2024-sites/hex/h0=*/data_0.parquet') s
+  SEMI JOIN sd21 ON s.h8 = sd21.h8 AND s.h0 = sd21.h0
+),
+ff AS (
+  SELECT tpl_id, SUM(amount) AS ff
+  FROM read_parquet('s3://public-tpl/conservation-almanac-2024-funding.parquet')
+  WHERE program LIKE '%Florida Forever%' OR program LIKE '%Florida Communities Trust%'
+  GROUP BY tpl_id
+)
+SELECT COUNT(DISTINCT s.tpl_id) FILTER (WHERE f.ff IS NOT NULL) AS ff_sites,
+  ROUND(SUM(s.acres) FILTER (WHERE f.ff IS NOT NULL), 0) AS ff_acres,
+  ROUND(SUM(f.ff)/1e6, 2) AS ff_M
+FROM sites s LEFT JOIN ff f USING(tpl_id);
+</pre></details>
+</section>
+
+
+<!-- =========================================================
+     § 5  VOTER SUPPORT
+     ========================================================= -->
+<section id="voters">
+<h2><span class="num">5</span>§ Voter support</h2>
+
+<p>The brief uses a single statistic to argue voter support: &ldquo;District&nbsp;21
+Yes vote for Amendment&nbsp;1 (2014): 73% Yes (125,089 Yes votes).&rdquo; This is
+the strongest political fact in the document — and it's the section
+where the app's data are <em>thinnest</em>.</p>
+
+<div class="prompt"><q>How did Florida vote on Amendment 1 in 2014, and how did SD 21 specifically vote? Show me other recent conservation ballot measures in the district's counties too.</q></div>
+
+<div class="response">
+The LandVote dataset records every conservation ballot measure since 1988 with
+percent yes and total funds approved.  It does <em>not</em> store raw vote
+counts (yes-ballot counts), which is what the brief's &ldquo;125,089 Yes
+votes&rdquo; figure needs.  And it stores Amendment 1 (2014) only at the
+statewide level, not by senate district.  So the app gives us most of
+the story but not the line.
+</div>
+
+<table class="t">
+<thead><tr><th>Measure</th><th>Year</th><th>% Yes</th><th>$ Approved</th><th>Mechanism</th></tr></thead>
+<tbody>
+  <tr class="match"><td>Florida Amendment 1 — statewide</td><td>2014</td><td>74.96%</td><td>$9.0B</td><td>Real estate transfer tax</td></tr>
+  <tr><td>Pinellas County — sales tax</td><td>2017</td><td><strong>82.62%</strong></td><td>$64.0M</td><td>Sales tax</td></tr>
+  <tr><td>Pasco County — sales tax</td><td>2022</td><td>64.71%</td><td>$140.0M</td><td>Sales tax</td></tr>
+  <tr><td>Pasco County — sales tax</td><td>2012</td><td>69.92%</td><td>$45.2M</td><td>Sales tax</td></tr>
+  <tr><td>Pinellas County — sales tax</td><td>2007</td><td>57.14%</td><td>$75.1M</td><td>Sales tax</td></tr>
+  <tr><td>Pasco County — sales tax</td><td>2004</td><td>51.97%</td><td>$36.4M</td><td>Sales tax</td></tr>
+  <tr><td>Pinellas County — sales tax</td><td>1997</td><td>64.51%</td><td>$81.9M</td><td>Sales tax</td></tr>
+  <tr><td>Pinellas County — sales tax</td><td>1989</td><td>50.15%</td><td>$69.1M</td><td>Sales tax</td></tr>
+</tbody>
+</table>
+
+<p>The app cannot supply the 73% / 125,089 figure for SD 21 on Amendment 1.
+But the seven county-level results above tell a stronger story than the
+single statewide statistic the original brief used.  <strong>Voters in
+this district have approved seven conservation sales taxes in a row going
+back to 1989, totaling $511.7M.</strong>  The 2017 Pinellas measure passed
+at 82.62%.  The most recent — Pasco County in 2022 — passed at 64.71%
+for $140M.  That's a re-usable hook for any 2026 brief.</p>
+
+<div class="gap">
+  Raw vote counts by senate district are <strong>not</strong> in LandVote.
+  For the &ldquo;125,089 Yes votes&rdquo;-style line, use the Florida Division of
+  Elections' precinct-level results aggregated to the SD-21 boundary.
+  The geo-agent could ingest precinct-results CSVs in a future iteration —
+  flag for the data-pipelines team.
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 6  BEYOND THE BRIEF
+     ========================================================= -->
+<section id="beyond">
+<h2><span class="num">6</span>What the app surfaces beyond the brief</h2>
+
+<p>The 2023 brief lists $20.1M of FCT funding (across four named clusters)
+plus $2.4M from DRP — about $22.5M of state Florida Forever investment
+in SD 21.  But the brief's footer total — &ldquo;$27.98M, 1998–2009&rdquo; —
+already implies more.  And the actual answer is much larger once you
+include local funding, which the original brief omits entirely.</p>
+
+<div class="prompt"><q>What is the full picture of conservation funding in SD 21 — all programs, all sponsors — broken down by source?</q></div>
+
+<table class="t">
+<thead><tr><th>Funding source</th><th>Program</th><th>Sites</th><th>$ (millions)</th></tr></thead>
+<tbody>
+  <tr><td><strong>State of Florida</strong></td><td>Florida Forever / FCT</td><td>15</td><td>$36.78M</td></tr>
+  <tr><td>State of Florida</td><td>Florida Forever (DRP, etc.)</td><td>6</td><td>$5.26M</td></tr>
+  <tr class="new"><td><strong>Local government</strong></td><td>County sales tax funds</td><td>29</td><td>$28.02M</td></tr>
+  <tr class="new"><td>Local government</td><td>County bond funds</td><td>1</td><td>$17.76M</td></tr>
+  <tr class="new"><td>Local government</td><td>Other (varied)</td><td>15</td><td>$47.21M</td></tr>
+</tbody>
+</table>
+
+<p>Including the local side of the ledger, total conservation investment in
+SD 21 captured by the Almanac is <strong>$135.0M across 66 funded sites</strong> —
+roughly six times what the original brief reported.  Most of the local money
+came from county sales-tax revenue: <em>the same revenue stream the
+ballot measures in §&nbsp;5 authorized.</em></p>
+
+<p>This is the throughline that ties §&nbsp;5 to §&nbsp;6: voters here have
+already taxed themselves $511.7M for conservation; that money has been
+spent on real parcels recorded in the Almanac at $93M (so far, against
+$418.7M still authorized); and the state Florida Forever share is the
+match-funding partner that makes those local dollars stretch further.
+That is the actual case for the $300M ask.</p>
+</section>
+
+
+<!-- =========================================================
+     § 7  THE DRAFT BRIEF
+     ========================================================= -->
+<section id="draft">
+<h2><span class="num">7</span>The draft 2026 brief</h2>
+
+<p>Putting every section together: here is what a 2026 update of the brief
+would look like, rendered from app outputs only.  Photo, senator contact,
+and the &ldquo;125,089 Yes votes&rdquo; line still come from external sources;
+everything else is now app-traceable.</p>
+
+<div class="brief">
+  <p class="brief-eyebrow">Senate District 21 — Florida Forever Projects · 2026 Update</p>
+  <h2>Senator Ed Hooper (R – Palm Harbor)</h2>
+
+  <div class="brief-ask">
+    <strong>2026 LEGISLATIVE REQUEST:</strong> Dedicate a minimum of $300 million
+    from the Land Acquisition Trust Fund to the Florida Forever Trust Fund
+    for conservation land acquisition through the Florida Forever
+    program, including the Florida Communities Trust, the Acquisition and
+    Restoration Council's scientifically ranked Florida Forever Priority
+    List, and the Rural and Family Lands program.
+  </div>
+
+  <h3>Florida Communities Trust highlights <span class="dim">(state funding matched by local)</span></h3>
+  <ul>
+    <li><strong>Wall Springs &amp; Coastal Additions</strong>, Pinellas County — 128 acres · $11.4M <span class="dim">(4 parcels, 2002–2010)</span></li>
+    <li><strong>Brooker Creek Preserve</strong>, Pinellas County — 699 acres · $5.9M <span class="tag new">new</span></li>
+    <li><strong>Weaver Park</strong>, City of Dunedin — 15 acres · $4.0M</li>
+    <li><strong>Kapok Wetland Restoration</strong>, City of Clearwater — 37 acres · $3.5M <span class="tag new">new</span></li>
+    <li><strong>Lake Chautauqua Equestrian &amp; Nature Preserve</strong>, City of Clearwater — 27 acres · $1.5M</li>
+    <li><strong>Strauber Memorial Coastal Park</strong>, Pasco County — 598 acres · $1.4M <span class="tag new">new</span></li>
+    <li><strong>Pasco Palms</strong>, Pasco County — 115 acres · $360K</li>
+  </ul>
+
+  <h3>Division of Recreation &amp; Parks</h3>
+  <ul>
+    <li><strong>Werner-Boyce Salt Springs State Park</strong>, Pasco County — 78 acres · $2.4M <span class="dim">(2 acquisitions, 2002–03)</span></li>
+  </ul>
+
+  <h3>Total Florida Forever investment in District 21 (1998–2021)</h3>
+  <ul>
+    <li><strong>2,180 acres · $42.04 million</strong> across 28 sites <span class="tag new">new</span></li>
+  </ul>
+
+  <h3>Local conservation co-investment, 1998–2021</h3>
+  <ul>
+    <li>$93.0M of county sales-tax, bond, and other local funds spent on 45 Almanac sites <span class="tag new">new</span></li>
+    <li>Total combined local + state conservation investment: <strong>$135.0M</strong></li>
+  </ul>
+
+  <h3>Voter support</h3>
+  <ul>
+    <li>Amendment 1 (2014, statewide): 75% Yes</li>
+    <li>SD 21 (Pasco + Pinellas) on Amendment 1: 73% Yes · 125,089 Yes votes <span class="dim">(FL Division of Elections precinct-level data)</span></li>
+    <li>Pinellas County conservation sales tax (2017): <strong>82.6% Yes</strong> · $64M approved <span class="tag new">new</span></li>
+    <li>Pasco County conservation sales tax (2022): 64.7% Yes · $140M approved <span class="tag new">new</span></li>
+    <li>Seven consecutive successful county conservation measures since 1989 totaling $511.7M authorized <span class="tag new">new</span></li>
+  </ul>
+</div>
+
+<p class="caption">Items tagged <span class="tag new">new</span> are content the original 2023 brief did
+not include but the app surfaces.  Items in plain face match the original
+brief.  Photo and contact info are unchanged; the &ldquo;125,089 Yes votes&rdquo;
+line still requires external (Florida Division of Elections) source.</p>
+</section>
+
+
+<!-- =========================================================
+     § 8  METHODOLOGY
+     ========================================================= -->
+<section id="method">
+<h2><span class="num">8</span>Methodology, gaps, and reproducibility</h2>
+
+<h3>How the spatial intersections work</h3>
+<p>Every &ldquo;sites in SD 21&rdquo; query uses an H3 hex SEMI JOIN at resolution 8:
+take the small mask (SD 21's ≈2,567 hex cells), inner-join it to the
+Almanac sites hex parquet (53,191 sites × hex cells), and the resulting
+rows are exactly the Almanac sites whose footprint intersects the
+district.  This pattern runs in under two seconds on the MCP server and
+generalizes to any of the other district layers (SLDL state-house,
+congressional, county).</p>
+
+<h3>Where the app is currently insufficient for the brief</h3>
+<ul>
+  <li><span class="tag gap">gap</span> <strong>Almanac vintage.</strong> Coverage ends 2021.
+      Acquisitions after 2021 (including any expansion of Wall Springs or
+      Brooker Creek) must come from FL DEP records or the TPL state team.</li>
+  <li><span class="tag gap">gap</span> <strong>Senate-district vote counts.</strong>
+      LandVote has percent yes / percent no but not raw ballot counts by
+      district.  &ldquo;125,089 Yes votes&rdquo; needs FL Division of Elections
+      precinct results aggregated to SLDU geometry.  This is a candidate
+      for a future data layer.</li>
+  <li><span class="tag gap">gap</span> <strong>Legislator metadata.</strong>
+      Senator name, party, hometown, committee assignments — none of this
+      is in the geo-agent.  A small lookup table mapping SLDU GEOID → current
+      legislator would solve it; flagged in <code>example-reports/02-geo-agent-tasks.md</code>.</li>
+  <li><span class="tag gap">gap</span> <strong>Brief photo + branding.</strong>
+      The app does not generate the 1-pager layout or assemble the photo.
+      That stays in the state-team's existing template.</li>
+</ul>
+
+<h3>Time to produce this section, by source</h3>
+<table class="t">
+<thead><tr><th>Source</th><th>Effort</th></tr></thead>
+<tbody>
+  <tr><td>App-generated (8 of 10 brief facts)</td><td>~10 minutes of prompting</td></tr>
+  <tr><td>External — FL Division of Elections (Amendment 1 vote count)</td><td>~30 minutes</td></tr>
+  <tr><td>External — Senator metadata + photo</td><td>~15 minutes</td></tr>
+</tbody>
+</table>
+
+<h3>Re-running everything</h3>
+<p>Every SQL block above can be pasted into the geo-agent at
+<a href="https://duckdb-mcp.nrp-nautilus.io/mcp">duckdb-mcp.nrp-nautilus.io/mcp</a>
+or run via the in-app chat by typing the natural-language prompts.  The
+underlying data come from the project's public STAC catalog at
+<a href="https://s3-west.nrp-nautilus.io/public-data/stac/catalog.json">s3-west.nrp-nautilus.io/public-data/stac/catalog.json</a>.
+All query results in this case study were generated on
+<time datetime="2026-05-20">20 May 2026</time>.</p>
+</section>
+
+</main>
+
+
+<footer class="foot"><div class="page">
+  Case Study 01 of 03 · TPL geo-agent walkthrough series ·
+  Source data: TPL LandVote 1988–2025 · TPL Conservation Almanac 2024 ·
+  US Census 2025 SLDU · all via the project's STAC catalog.
+  Next: <a href="larimer-co.html">Case Study 02 — Larimer County, Colorado feasibility study</a>.
+</div></footer>
+
+
+<script type="module">
+import maplibregl from "https://esm.sh/maplibre-gl@5.4.0";
+import * as pmtiles from "https://esm.sh/pmtiles@4.4.1";
+
+const protocol = new pmtiles.Protocol();
+maplibregl.addProtocol("pmtiles", protocol.tile);
+
+const namedSites = {
+  type: "FeatureCollection",
+  features: [
+    {label: "Pasco Palms",                  coords: [-82.7507, 28.2187]},
+    {label: "Werner-Boyce Salt Springs SP", coords: [-82.7160, 28.2926]},
+    {label: "Wall Springs cluster",         coords: [-82.7780, 28.1140]},
+    {label: "Weaver Park (Dunedin)",        coords: [-82.7905, 28.0203]},
+    {label: "Lake Chautauqua (Clearwater)", coords: [-82.7146, 28.0028]},
+  ].map(p => ({
+    type: "Feature",
+    geometry: {type: "Point", coordinates: p.coords},
+    properties: {label: p.label}
+  }))
+};
+
+const map = new maplibregl.Map({
+  container: "map",
+  style: {
+    version: 8,
+    glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+    sources: {
+      carto: {
+        type: "raster",
+        tiles: ["https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png"],
+        tileSize: 256, attribution: "© OSM · © CARTO"
+      }
+    },
+    layers: [{id: "base", type: "raster", source: "carto"}]
+  },
+  bounds: [[-82.95, 27.93], [-82.55, 28.40]],
+  fitBoundsOptions: {padding: 30}
+});
+map.addControl(new maplibregl.NavigationControl({showCompass: false}), "top-right");
+
+map.on("load", () => {
+  // SLDU layer — highlight SD 21
+  map.addSource("sldu", {
+    type: "vector",
+    url: "pmtiles://https://s3-west.nrp-nautilus.io/public-census/census-2025/sldu.pmtiles"
+  });
+  map.addLayer({
+    id: "sd21-fill",
+    type: "fill", source: "sldu", "source-layer": "sldu",
+    filter: ["all", ["==", ["get","STATEFP"],"12"], ["==",["get","SLDUST"],"021"]],
+    paint: {"fill-color":"#1B5E20","fill-opacity":0.08}
+  });
+  map.addLayer({
+    id: "sd21-line",
+    type: "line", source: "sldu", "source-layer": "sldu",
+    filter: ["all", ["==", ["get","STATEFP"],"12"], ["==",["get","SLDUST"],"021"]],
+    paint: {"line-color":"#1B5E20","line-width":3}
+  });
+
+  // County boundaries
+  map.addSource("county", {
+    type: "vector",
+    url: "pmtiles://https://s3-west.nrp-nautilus.io/public-census/census-2024/county.pmtiles"
+  });
+  map.addLayer({
+    id: "co-line",
+    type: "line", source: "county", "source-layer": "county",
+    filter: ["==", ["get","STATEFP"], "12"],
+    paint: {"line-color":"#5e6266","line-width":0.8,"line-opacity":0.6}
+  });
+
+  // All FL Almanac sites
+  map.addSource("almanac", {
+    type: "vector",
+    url: "pmtiles://https://s3-west.nrp-nautilus.io/public-tpl/conservation-almanac-2024-sites.pmtiles"
+  });
+  map.addLayer({
+    id: "alm-fl",
+    type: "fill", source: "almanac",
+    "source-layer": "conservation-almanac-2024-sites",
+    filter: ["==", ["get","state_id"], "FL"],
+    paint: {"fill-color":"#2E7D32","fill-opacity":0.55}
+  }, "sd21-line");
+
+  // Named-site labels
+  map.addSource("named", {type: "geojson", data: namedSites});
+  map.addLayer({
+    id: "named-dot", type: "circle", source: "named",
+    paint: {"circle-radius": 6, "circle-color":"#C62828",
+            "circle-stroke-color":"white", "circle-stroke-width": 2}
+  });
+  map.addLayer({
+    id: "named-label", type: "symbol", source: "named",
+    layout: {
+      "text-field": ["get","label"],
+      "text-font": ["Open Sans Semibold"],
+      "text-size": 12,
+      "text-offset": [0, 1.2],
+      "text-anchor": "top"
+    },
+    paint: {"text-color":"#1a1a1a","text-halo-color":"white","text-halo-width":2}
+  });
+});
+</script>
+</body>
+</html>

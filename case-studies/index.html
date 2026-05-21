@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geo-Agent Walkthrough — Case Study Series</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/walkthrough.css">
+<style>
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+          gap: 1.5rem; margin: 2.5rem 0 4rem; }
+  .card { border: 1px solid var(--tpl-rule); border-radius: 8px; padding: 1.5rem 1.6rem;
+          background: var(--tpl-bg); transition: box-shadow .15s, transform .15s; }
+  .card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.07); transform: translateY(-2px); }
+  .card h3 { margin: 0 0 .4rem; font-size: 1.4rem; color: var(--tpl-ink); }
+  .card h3 a { color: inherit; text-decoration: none; }
+  .card .place { color: var(--tpl-muted); font-size: .9rem;
+                 text-transform: uppercase; letter-spacing: .08em;
+                 margin: 0 0 .8rem; font-weight: 600; }
+  .card p { margin: .4rem 0; font-size: .98rem; }
+  .card .stats { margin: 1rem 0 0; padding-top: .8rem;
+                 border-top: 1px solid var(--tpl-rule);
+                 display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
+                 font-size: .82rem; color: var(--tpl-muted); }
+  .card .stats b { color: var(--tpl-green); font-size: 1.1rem; display: block; }
+</style>
+</head>
+<body>
+
+<header class="banner">
+  <div class="page">
+    <div class="eyebrow">Trust for Public Land · Conservation Finance Department</div>
+    <h1>Geo-agent walkthrough — three case studies</h1>
+    <p>How the geo-agent app accelerates each of TPL's three Conservation
+       Finance report types, demonstrated end-to-end on a specific place.
+       Read these alongside the originals in <code>example-reports/</code>;
+       every claim ties to an app prompt.</p>
+  </div>
+</header>
+
+<main class="page">
+
+<div class="grid">
+  <div class="card">
+    <p class="place">Case 01 · Legislative brief</p>
+    <h3><a href="florida-sd21.html">Florida Senate District 21 — Senator Hooper</a></h3>
+    <p>Reproduces the December 2023 1-page briefing on Florida Forever
+       projects in Pasco and Pinellas Counties — every named site, every
+       dollar figure — then surfaces seven FCT-funded sites the original
+       brief omitted.</p>
+    <div class="stats">
+      <div><b>~80%</b>of brief reproduced</div>
+      <div><b>$11.4M</b>Wall Springs match: exact</div>
+      <div><b>+7 sites</b>added beyond original</div>
+      <div><b>$511.7M</b>local voter mandate surfaced</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="place">Case 02 · Local feasibility study</p>
+    <h3><a href="larimer-co.html">Larimer County, Colorado feasibility</a></h3>
+    <p>Parallel to the 2023 Lake County, FL Public Finance Feasibility
+       Study.  Drafts the conservation-context half of a 23-page report
+       for Larimer — 227 sites, $190M, full ballot history — and lists
+       which sections still need the county CAFR and bond counsel.</p>
+    <div class="stats">
+      <div><b>7 of 12</b>sections covered</div>
+      <div><b>$601M</b>Larimer voter mandate</div>
+      <div><b>81.7%</b>2014 county renewal Yes</div>
+      <div><b>~90 min</b>app prompting time</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="place">Case 03 · Regional climate finance</p>
+    <h3><a href="maine-northwoods.html">Maine North Woods climate-finance feasibility</a></h3>
+    <p>Parallel to the 2019 Mississippi Headwaters Climate &amp;
+       Conservation Finance Feasibility.  Drafts the first 15 pages
+       of an 81-page study: 4-county region, 1M acres protected,
+       12.6 Mt accessible carbon, 93% Maine bond pass rate.</p>
+    <div class="stats">
+      <div><b>~20%</b>of report covered</div>
+      <div><b>12.6 Mt</b>regional manageable carbon</div>
+      <div><b>0 measures</b>in 4 NW counties — ever</div>
+      <div><b>2026/28</b>natural next-bond cycle</div>
+    </div>
+  </div>
+</div>
+
+<h2 style="border:none; padding-top:0;">What the series demonstrates</h2>
+<p>Across the three deliverables the geo-agent's contribution ratio
+declines from ~80% (legislative brief) to ~50% (local feasibility) to
+~20% (regional climate-finance study).  That's the right shape: the
+agent's payoff is highest where the spatial intersection IS the
+deliverable, and lowest where the deliverable is mostly legal mechanism
+analysis.</p>
+
+<p>The series intentionally walks every prompt — natural-language input
+in green callouts, the SQL the app runs in expandable disclosures, the
+gaps where external sources are still needed in orange callouts.  The
+analyst who reads through all three should know exactly which sections
+of their next report to type into the app first, and which to start
+with their bond counsel.</p>
+
+<h3>Reading order</h3>
+<ol>
+  <li><a href="florida-sd21.html">Case 01 — Florida Senate District 21</a>
+      sets the format conventions and shows the highest-leverage
+      use case (a 1-pager that the agent essentially generates).</li>
+  <li><a href="larimer-co.html">Case 02 — Larimer County, CO</a>
+      shows mid-scale: a multi-section feasibility study where the
+      agent reliably handles the conservation context and the analyst
+      handles the financial/governance/legal context.</li>
+  <li><a href="maine-northwoods.html">Case 03 — Maine North Woods</a>
+      shows the upper limit: a 50+ page mechanism-by-mechanism study
+      where the agent's role is the spatial-data backbone of the
+      first quarter.</li>
+</ol>
+
+<footer class="foot" style="margin-top:5rem">
+  <p>Drafted from the geo-agent at
+     <a href="https://github.com/boettiger-lab/tpl">github.com/boettiger-lab/tpl</a>;
+     all data from the public STAC catalog at
+     <a href="https://s3-west.nrp-nautilus.io/public-data/stac/catalog.json">s3-west.nrp-nautilus.io/public-data/stac/catalog.json</a>.
+     May 2026.</p>
+  <p>Compared against:
+     <code>example-reports/Florida Senate District 21 Hooper 121123.pdf</code> ·
+     <code>example-reports/Lake County TPL Feasibility Study 12.6.23.pdf</code> ·
+     <code>example-reports/Mississippi Headwaters Climate and Conservation Finance Feasibility FINAL.pdf</code>
+  </p>
+</footer>
+
+</main>
+
+</body>
+</html>

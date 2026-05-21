@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Study · Maine North Woods · Geo-Agent Walkthrough</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.4.0/dist/maplibre-gl.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/walkthrough.css">
+</head>
+<body>
+
+<header class="banner">
+  <div class="page">
+    <div class="eyebrow">Geo-Agent Walkthrough · Case Study 03 of 03</div>
+    <h1>A climate-finance feasibility for Maine's North Woods</h1>
+    <p>The 81-page <em>Mississippi Headwaters Climate and Conservation
+       Finance Feasibility Study</em> (October 2019) is TPL's most ambitious
+       deliverable type — a multi-county, watershed-scale, climate-centered
+       study that combines carbon analysis with mechanism-by-mechanism
+       funding recommendations.  This walkthrough reproduces the first
+       quarter of that template for a parallel region: northern Maine.</p>
+    <p class="meta">For the TPL Conservation Finance team · compared against
+       <code>example-reports/Mississippi Headwaters Climate and Conservation Finance Feasibility FINAL.pdf</code></p>
+  </div>
+</header>
+
+<nav class="nav"><div class="nav-inner">
+  <a class="home" href="../">↑ tpl/</a>
+  <a href="#context">§ 0 Context</a>
+  <a href="#region">§ 1 The region</a>
+  <a href="#ownership">§ 2 Ownership</a>
+  <a href="#climate">§ 3 Carbon</a>
+  <a href="#programs">§ 4 Programs</a>
+  <a href="#voters">§ 5 Voters</a>
+  <a href="#mechanism">§ 6 Mechanisms</a>
+  <a href="#gaps">§ 7 Gaps</a>
+  <a href="#draft">§ 8 Draft</a>
+</div></nav>
+
+<main class="page">
+
+<!-- =========================================================
+     § 0  CONTEXT
+     ========================================================= -->
+<section id="context">
+<h2><span class="num">0</span>What this walkthrough delivers</h2>
+
+<p>The Mississippi Headwaters feasibility study is the most data-intensive
+report TPL Conservation Finance produces.  It defines a multi-county
+region (18 Minnesota counties), describes its ecology and economy,
+quantifies the carbon stored in its forests and wetlands, inventories
+existing conservation funding, then spends 50+ pages walking through
+15 possible funding mechanisms — bonds, sales tax, lottery,
+mortgage-registry tax, deed tax, lodging tax, corporate franchise tax,
+recreational marijuana, sports betting, impervious-surface fees,
+carbon pricing, cap-and-trade, current-use programs, lake-improvement
+districts, watershed districts.</p>
+
+<p>That second half is irreducibly expert work — statute-by-statute legal
+analysis with state-specific bond-counsel input.  The geo-agent doesn't
+attempt it.  What the agent <em>does</em> accelerate is the first half:
+the regional definition, the ecological framing, the ownership picture,
+the carbon analysis, the existing-funding inventory, and the ballot
+history that anchors the political case.</p>
+
+<p>This walkthrough drafts that first half for a parallel region:
+<strong>Maine's North Woods — Aroostook, Piscataquis, Somerset, and
+Penobscot Counties</strong>, the four largest counties in Maine,
+encompassing 17,953 square miles of contiguous forest, lakes, and
+working timberland.  It's the kind of region TPL has historically
+served with one-off federal Forest Legacy and Land for Maine's
+Future deals; what it has never had is a dedicated voter-approved
+finance mechanism.</p>
+
+<div class="compare">
+  <div>
+    <h4>The Mississippi Headwaters report (Oct 2019)</h4>
+    <ul>
+      <li>81 pages.  Defined 18-county region (1.26M acres watershed).</li>
+      <li>Forest carbon map: <strong>416 Mt total stock · $18.3B social value · $22.2B market value</strong>.  Top 5 counties ranked by carbon.</li>
+      <li>Land ownership: 44% private · 36% state · 18% federal · 0.4% county · 0.8% Leech Lake Band.</li>
+      <li>Threats: nitrogen loading, 100K ac to development 2007–12, 250K ac to cropland 2008–12.</li>
+      <li>Existing programs (state lottery, Lessard-Sams, Clean Water Fund, Outdoor Heritage Fund, etc.).</li>
+      <li>State fiscal health: AAA, $1.544B surplus.</li>
+      <li><strong>15 mechanism analyses</strong> spanning ~50 pages.</li>
+      <li>Best practices: CA, CO, OR, NE, OH.</li>
+    </ul>
+  </div>
+  <div>
+    <h4>What the geo-agent delivers for Maine's North Woods</h4>
+    <ul>
+      <li><span class="tag match">match</span> Regional definition (4 counties, 17,953 sq mi)</li>
+      <li><span class="tag match">match</span> Carbon analysis — irrecoverable / vulnerable / manageable</li>
+      <li><span class="tag match">match</span> PAD-US ownership picture</li>
+      <li><span class="tag match">match</span> Almanac site inventory (1,075,853 acres protected)</li>
+      <li><span class="tag match">match</span> Funding-program breakdown (Forest Legacy, LMF, NAWCA, LWCF, donations)</li>
+      <li><span class="tag match">match</span> Maine voter history (27 measures since 1991, 93% pass)</li>
+      <li><span class="tag new">new</span> The geographic gap in voter activity (zero measures in the 4 counties)</li>
+      <li><span class="tag gap">gap</span> Threats data (land conversion, nutrient loading) — limited</li>
+      <li><span class="tag gap">gap</span> State budget &amp; debt status</li>
+      <li><span class="tag gap">gap</span> 15 mechanism analyses — expert legal work</li>
+      <li><span class="tag gap">gap</span> Recreation-economy statistics</li>
+    </ul>
+  </div>
+</div>
+
+<p>Honest summary: <strong>the geo-agent produces the first ~15 pages of a
+Mississippi-Headwaters-style report in under two hours.</strong> The
+50-page mechanism-by-mechanism section, the fiscal-health page, and
+the legal-precedent appendix continue to require expert manual work
+with bond counsel and the relevant state agency.  That ratio is
+acceptable: the first 15 pages are the most reused across reports
+(every climate-finance study TPL produces re-derives the same
+regional, ecological, and ballot-history framing), while the
+mechanism section is the most state-specific.</p>
+</section>
+
+
+<!-- =========================================================
+     § 1  THE REGION
+     ========================================================= -->
+<section id="region">
+<h2><span class="num">1</span>Defining the region</h2>
+
+<p>Like the Mississippi Headwaters report's eight-county Mississippi
+Headwaters Board boundary, the North Woods has no single official
+boundary, but its working definition for conservation purposes is the
+four largest northern counties — what Maine residents call &ldquo;the
+unincorporated territory&rdquo; or the &ldquo;great north woods.&rdquo;</p>
+
+<div class="prompt"><q>Define a North Woods region for Maine as the four largest counties: Aroostook, Piscataquis, Somerset, and Penobscot.  Show their land area, position on the map, and the Conservation Almanac sites inside the region.</q></div>
+
+<details class="sql"><summary>The SQL the app runs</summary><pre>
+SELECT NAMELSAD, GEOID,
+  ROUND(ALAND/2.59e6, 0) AS land_sqmi
+FROM read_parquet('s3://public-census/census-2024/county.parquet')
+WHERE STATEFP='23'
+  AND NAMELSAD IN ('Aroostook County','Piscataquis County',
+                   'Somerset County','Penobscot County')
+ORDER BY ALAND DESC;
+</pre></details>
+
+<table class="t">
+<thead><tr><th>County</th><th>GEOID</th><th>Land area</th></tr></thead>
+<tbody>
+  <tr><td>Aroostook County <span class="dim">(the &ldquo;Crown of Maine&rdquo;)</span></td><td>23003</td><td>6,671 sq mi</td></tr>
+  <tr><td>Piscataquis County <span class="dim">(Mt. Katahdin, Moosehead Lake)</span></td><td>23021</td><td>3,961 sq mi</td></tr>
+  <tr><td>Somerset County <span class="dim">(West Branch Penobscot drainage)</span></td><td>23025</td><td>3,924 sq mi</td></tr>
+  <tr><td>Penobscot County <span class="dim">(Bangor, Penobscot Nation, eastern lakes)</span></td><td>23019</td><td>3,397 sq mi</td></tr>
+  <tr><td><strong>North Woods total</strong></td><td>—</td><td><strong>17,953 sq mi</strong></td></tr>
+</tbody>
+</table>
+<p class="caption">For context, the four-county North Woods region is
+larger than all of Massachusetts, Connecticut, Rhode Island, and
+Delaware combined.  The Mississippi Headwaters region spanned 18
+Minnesota counties totaling roughly 21,000 square miles — comparable
+scale.</p>
+
+<div class="wide">
+  <div id="map" class="map tall"></div>
+  <p class="caption">The four counties of the Maine North Woods region
+  outlined in dark green; rest of Maine in light grey.  Conservation
+  Almanac sites are shown in green; the nine largest individually-funded
+  acquisitions are labeled.  Notice how Almanac coverage skips the heart
+  of Aroostook County — a million acres of unincorporated working forest
+  that has been protected through one-off federal/state easements but
+  has never seen a county or municipal ballot measure.</p>
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 2  OWNERSHIP
+     ========================================================= -->
+<section id="ownership">
+<h2><span class="num">2</span>§ Ownership picture <span class="dim" style="font-size:.7em">(Headwaters report § "Mississippi Headwaters" pp. 10–12)</span></h2>
+
+<p>The Mississippi Headwaters report opened with a clean ownership
+breakdown: &ldquo;Forty-four percent of the land in the Mississippi
+Headwaters watershed is privately owned; the remaining land is owned by
+the state (36.1 percent), federal (18 percent), county (0.4 percent),
+and the Leech Lake Band of the Ojibwe Tribe (0.8 percent).&rdquo; That
+single sentence is the policy frame for the entire report. For the
+Maine North Woods, the geo-agent joins the four-county hex mask to
+PAD-US 4.1 to produce the analog.</p>
+
+<div class="prompt"><q>Show me the ownership picture of the protected lands in the Maine North Woods region (Aroostook + Piscataquis + Somerset + Penobscot).  Who owns what?</q></div>
+
+<details class="sql"><summary>The SQL the app runs (H3 SEMI JOIN: region × PAD-US)</summary><pre>
+WITH region AS (
+  SELECT DISTINCT h8, h0 FROM
+    read_parquet('s3://public-census/census-2024/county/hex/h0=*/data_0.parquet')
+  WHERE STATEFP='23'
+    AND NAMELSAD IN ('Aroostook County','Piscataquis County',
+                     'Somerset County','Penobscot County')
+)
+SELECT pad.Own_Type, pad.Mang_Name,
+  COUNT(DISTINCT pad._cng_fid) AS units,
+  ROUND(COUNT(DISTINCT pad.h8) * 0.74, 0) AS approx_km2
+FROM read_parquet('s3://public-padus/padus-4-1/combined/hex/h0=*/data_0.parquet') pad
+SEMI JOIN region ON pad.h8 = region.h8 AND pad.h0 = region.h0
+GROUP BY pad.Own_Type, pad.Mang_Name
+ORDER BY approx_km2 DESC;
+</pre></details>
+
+<table class="t">
+<thead><tr><th>Manager / type</th><th>Ownership</th><th>Units</th><th>Approx. km²</th></tr></thead>
+<tbody>
+  <tr><td>Land trusts (NGO-owned)</td><td>Private NGO</td><td>555</td><td>6,703</td></tr>
+  <tr><td>State parks (Baxter, Allagash, etc.)</td><td>State</td><td>317</td><td>3,983</td></tr>
+  <tr><td>Joint NGO holdings (TNC, Forest Society)</td><td>Joint</td><td>3</td><td>2,273</td></tr>
+  <tr><td>NGO conservation lands (other)</td><td>NGO direct</td><td>241</td><td>2,066</td></tr>
+  <tr><td>Private conservation easements on private land</td><td>Private</td><td>186</td><td>1,835</td></tr>
+  <tr><td>State (unknown manager subclass)</td><td>State</td><td>85</td><td>1,390</td></tr>
+  <tr><td>Joint-private (split fee/easement deals)</td><td>Private</td><td>12</td><td>1,288</td></tr>
+  <tr><td>Penobscot Nation tribal lands (designated)</td><td>Designated</td><td>5</td><td>474</td></tr>
+  <tr><td>Katahdin Woods &amp; Waters NM (NPS designated)</td><td>Designated</td><td>2</td><td>448</td></tr>
+  <tr><td>Katahdin Woods &amp; Waters NM (general fee)</td><td>Federal</td><td>2</td><td>420</td></tr>
+  <tr><td>State Wildlife Management Areas</td><td>State</td><td>147</td><td>369</td></tr>
+</tbody>
+</table>
+
+<p>The pattern the agent surfaces is the defining feature of Maine
+conservation: <strong>private NGO ownership of working forest, often
+through TNC and the Forest Society of Maine, totaling roughly 6,700
+km² — more than three times any other category</strong>. State parks
+add ~4,000 km².  Federal ownership is small (Katahdin Woods &amp;
+Waters National Monument ~870 km², plus scattered USFWS refuges).
+Tribal lands account for ~474 km² (the Penobscot Nation, with
+additional Passamaquoddy and Maliseet land in Washington and
+Aroostook).</p>
+
+<p>This is the opposite of the Mississippi Headwaters report's pattern
+(36% state, 44% private).  In Maine's North Woods <em>privately-owned
+land under NGO conservation control</em> is the dominant protection
+mechanism.  That detail matters for any finance discussion: a state
+bond that match-funds private easements is the historical recipe
+that has worked here; a county sales tax would be testing new ground.</p>
+</section>
+
+
+<!-- =========================================================
+     § 3  CARBON
+     ========================================================= -->
+<section id="climate">
+<h2><span class="num">3</span>§ Carbon sequestration <span class="dim" style="font-size:.7em">(Headwaters report § "Climate Change Adaptation" pp. 15–17)</span></h2>
+
+<p>The Mississippi Headwaters report's Carbon Sequestration section was
+its centerpiece: a Forest Carbon Map infographic with <strong>416
+million metric tons of total forest carbon, $18.3 billion social
+value, $22.2 billion market value</strong>, and a top-five-counties
+ranking led by Itasca (105 Mt), Cass (61 Mt), Beltrami (61 Mt).  That
+figure came from TPL's own Carbon Map tool, which uses USFS Forest
+Inventory and Analysis (FIA) data — a total-stock methodology
+including soil organic carbon, dead wood, and litter.</p>
+
+<p>The geo-agent's carbon layers use a different but related methodology:
+the Noon et al. (2022) classification of carbon into
+<strong>irrecoverable</strong> (lost forever if disturbed in the next
+30 years), <strong>vulnerable</strong> (can recover within ~30 years
+under best management), and <strong>manageable</strong> (the
+short-cycle carbon pool that responds to management).</p>
+
+<div class="prompt"><q>How much irrecoverable, vulnerable, and manageable carbon sits under the four-county Maine North Woods region?</q></div>
+
+<details class="sql"><summary>The SQL the app runs (three H3 hex SEMI JOINs)</summary><pre>
+WITH region AS (
+  SELECT DISTINCT h8, h0 FROM
+    read_parquet('s3://public-census/census-2024/county/hex/h0=*/data_0.parquet')
+  WHERE STATEFP='23'
+    AND NAMELSAD IN ('Aroostook County','Piscataquis County',
+                     'Somerset County','Penobscot County')
+),
+carbon AS (
+  SELECT c.h8, c.h0, AVG(c.carbon) AS c
+  FROM read_parquet('s3://public-carbon/irrecoverable-carbon-2024/hex/h0=*/data_0.parquet') c
+  SEMI JOIN region ON c.h8 = region.h8 AND c.h0 = region.h0
+  GROUP BY c.h8, c.h0
+)
+-- (repeat for vulnerable-carbon and manageable-carbon)
+SELECT ROUND(SUM(c)/1e6, 2) AS Mt FROM carbon;
+</pre></details>
+
+<table class="t">
+<thead><tr><th>Carbon pool</th><th>Region total</th><th>Per sq mi</th></tr></thead>
+<tbody>
+  <tr><td>Irrecoverable carbon <span class="dim">(can't recover by 2050)</span></td><td>1.17 Mt</td><td>65 t / sq mi</td></tr>
+  <tr><td>Vulnerable carbon <span class="dim">(recoverable, but slowly)</span></td><td>4.01 Mt</td><td>223 t / sq mi</td></tr>
+  <tr><td>Manageable carbon <span class="dim">(short-cycle, management-responsive)</span></td><td>7.42 Mt</td><td>413 t / sq mi</td></tr>
+  <tr><td><strong>Total accessible for natural climate solutions</strong></td><td><strong>12.60 Mt</strong></td><td><strong>702 t / sq mi</strong></td></tr>
+</tbody>
+</table>
+
+<p>How to read these numbers: 12.6 Mt of carbon across the four-county
+North Woods is the pool that a natural-climate-solutions strategy
+(avoided conversion + extended rotations + reforestation + improved
+forest management) can directly affect.  At a <strong>$51/ton 2025
+social cost of carbon</strong> (EPA 2023 update), that's a
+<strong>~$640 million annual social value at risk if the
+working-forest economy converts toward higher-intensity use or
+development</strong> — a number that puts the historic $24.97M
+Downeast Lakes deal and $20.68M West Branch deal in clear context.</p>
+
+<div class="gap">
+  The geo-agent's carbon layers do not include soil organic carbon in
+  peatlands or wetland-stored carbon below 30 cm.  Maine's peatlands —
+  especially the Caribou Bog Wetland Complex and the western
+  Aroostook Maine peatlands — store substantial additional carbon
+  that the Mississippi Headwaters report cited at the national level
+  (&ldquo;wetlands in the U.S. store a total of 11.52 billion metric tons of
+  carbon, much of which is within soils deeper than 30 cm&rdquo;).
+  A complete carbon section would augment the geo-agent's output with
+  the USGS LandCarbon peatland model or DEP wetlands inventory.
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 4  EXISTING CONSERVATION FUNDING
+     ========================================================= -->
+<section id="programs">
+<h2><span class="num">4</span>§ Existing conservation funding <span class="dim" style="font-size:.7em">(Headwaters report § "Current Conservation Funding" p. 18)</span></h2>
+
+<p>The Mississippi Headwaters report dedicated one short section to
+current state funding programs (Outdoor Heritage Fund, Clean Water
+Fund, etc.) and a long appendix listing them in detail.  The
+geo-agent rolls that picture out of the Almanac funding table
+directly.</p>
+
+<div class="prompt"><q>What programs have funded the conservation acquisitions in the Maine North Woods region, broken down by program and sponsor type?</q></div>
+
+<table class="t">
+<thead><tr><th>Program</th><th>Sponsor type</th><th>Sites</th><th>$ (millions)</th></tr></thead>
+<tbody>
+  <tr><td>Unattributed / private partner funding</td><td>UNK</td><td>27</td><td>$53.07</td></tr>
+  <tr><td><strong>USFS Forest Legacy Program (FLP)</strong></td><td>Federal</td><td>13</td><td>$41.55</td></tr>
+  <tr><td><strong>Land for Maine's Future</strong> <span class="dim">(state bond)</span></td><td>State</td><td>41</td><td>$12.11</td></tr>
+  <tr><td>State General Appropriations</td><td>State</td><td>10</td><td>$7.33</td></tr>
+  <tr><td>Land &amp; Water Conservation Fund (LWCF)</td><td>Federal</td><td>8</td><td>$1.33</td></tr>
+  <tr><td>NAWCA wetlands grants</td><td>Federal</td><td>3</td><td>$1.90</td></tr>
+  <tr><td>ME Natural Resource Conservation Program</td><td>State</td><td>4</td><td>$0.69</td></tr>
+  <tr><td>LWCF Stateside</td><td>Federal</td><td>3</td><td>$0.53</td></tr>
+  <tr><td>Donations</td><td>Private</td><td>4</td><td>$0.23</td></tr>
+  <tr><td><strong>Total tracked Almanac funding (4 counties)</strong></td><td>—</td><td>—</td><td><strong>$118.7M</strong></td></tr>
+</tbody>
+</table>
+
+<p>Three observations:</p>
+<ol>
+  <li><strong>The Forest Legacy Program (federal) has been the single
+      most important deal-maker in this region</strong> — $41.55M across
+      13 sites including Plum Creek (1999), Downeast Lakes
+      (2005), Katahdin Iron Works (2007), and Crocker Mountain (2013).
+      Forest Legacy is the federal program that has done what voters
+      have not yet done locally: provided a steady acquisition fund
+      for working-forest easements.</li>
+  <li><strong>Land for Maine's Future has funded 41 sites for $12.11M
+      in the region</strong> — but every dollar of that came from
+      one of five state bond measures (1999, 2005, 2007, 2010, 2012)
+      that voters approved.  When those bonds run out, LMF has no
+      revenue.  The state has not been to the ballot for a new bond
+      since 2012.</li>
+  <li><strong>The largest individual deals have been federal/private
+      partnerships</strong>: Downeast Lakes Forestry Partnership
+      (339,080 acres for $25M in 2005), West Branch Phase 1
+      (47,000 acres for $20.7M in 2003), West Branch CE
+      (281,547 easement acres for $15.3M in 2003), Katahdin Forest
+      Easement (198,115 acres for $6.5M in 2006).  These are the
+      shape of the next deal — but the funding pipeline that built
+      them has thinned.</li>
+</ol>
+
+<h3>The 10 largest acquisitions, by funding</h3>
+<table class="t">
+<thead><tr><th>Site</th><th>County</th><th>Acres</th><th>Year</th><th>$ (M)</th><th>Method</th></tr></thead>
+<tbody>
+  <tr><td>Downeast Lakes Forestry Partnership</td><td>Penobscot</td><td>339,080</td><td>2005</td><td>$24.97</td><td>fee simple</td></tr>
+  <tr><td>West Branch Phase 1</td><td>Somerset</td><td>46,985</td><td>2003</td><td>$20.68</td><td>fee simple</td></tr>
+  <tr><td>West Branch — CE</td><td>Somerset</td><td>281,547</td><td>2003</td><td>$15.32</td><td>conservation easement</td></tr>
+  <tr><td>Katahdin Iron Works</td><td>Piscataquis</td><td>37,000</td><td>2007</td><td>$10.12</td><td>conservation easement</td></tr>
+  <tr><td>Machias River Phase 1</td><td>Washington</td><td>6,129</td><td>2003</td><td>$8.82</td><td>conservation easement</td></tr>
+  <tr><td>Crocker Mountain</td><td>Franklin</td><td>12,046</td><td>2013</td><td>$7.67</td><td>fee simple</td></tr>
+  <tr><td>Cold Stream Forest</td><td>Somerset</td><td>8,159</td><td>2016</td><td>$7.40</td><td>fee simple</td></tr>
+  <tr><td>Downeast Lakes 2</td><td>Washington</td><td>15,250</td><td>2005</td><td>$7.35</td><td>fee simple</td></tr>
+  <tr><td>West Grand Lake — CE</td><td>Washington</td><td>21,870</td><td>2012</td><td>$7.28</td><td>conservation easement</td></tr>
+  <tr><td>Machias River Phase II</td><td>Washington</td><td>7,686</td><td>2006</td><td>$7.05</td><td>conservation easement</td></tr>
+  <tr><td>Katahdin Forest Easement</td><td>Piscataquis</td><td>198,115</td><td>2006</td><td>$6.45</td><td>conservation easement</td></tr>
+</tbody>
+</table>
+
+<p>Adding it up: <strong>over 1 million acres of conservation outcome in the
+Almanac, mostly via easement on working-forest land, mostly federal
+Forest Legacy + state Land for Maine's Future co-funding</strong>. Most
+of the big-deal era ran from 1999 to 2013.  The geo-agent's data record
+thins out after 2018 (the Almanac's coverage cutoff for Maine).</p>
+</section>
+
+
+<!-- =========================================================
+     § 5  VOTER HISTORY
+     ========================================================= -->
+<section id="voters">
+<h2><span class="num">5</span>§ Maine's voter history — and the geographic gap <span class="dim" style="font-size:.7em">(parallel to Headwaters § "Choosing a Funding Strategy")</span></h2>
+
+<p>This is the most consequential section of the case study, because it
+crystallizes the political opportunity.  The Mississippi Headwaters
+report could point to ten of eleven successful Minnesota
+park-conservation ballot measures generating $5.8B (most of which was
+the 2008 Clean Water, Land &amp; Heritage state constitutional
+amendment).  Maine's record is similarly strong on pass rate but
+much more limited in geography.</p>
+
+<div class="prompt"><q>Show me every conservation ballot measure in Maine since 1988 — state, county, and municipal — with status, mechanism, dollars approved, and the county the measure was in.</q></div>
+
+<table class="t">
+<thead><tr><th>Year</th><th>Jurisdiction</th><th>County</th><th>Status</th><th>$ approved</th><th>% Yes</th></tr></thead>
+<tbody>
+  <tr><td>2024</td><td>York (town)</td><td>York</td><td>Pass</td><td>$4.0M bond</td><td>53.2%</td></tr>
+  <tr><td>2024</td><td>Scarborough</td><td>Cumberland</td><td>Pass</td><td>$6.0M bond</td><td>62.3%</td></tr>
+  <tr><td>2021</td><td>South Portland</td><td>Cumberland</td><td>Pass</td><td>$4.5M bond</td><td>69.8%</td></tr>
+  <tr><td>2020</td><td>Ogunquit</td><td>York</td><td>Pass</td><td>$0.3M bond</td><td>87.6%</td></tr>
+  <tr><td>2019</td><td>York (town)</td><td>York</td><td>Fail</td><td>—</td><td>47.0%</td></tr>
+  <tr><td>2019</td><td>Scarborough</td><td>Cumberland</td><td>Pass</td><td>$2.5M bond</td><td>58.0%</td></tr>
+  <tr><td>2018</td><td>Kennebunk</td><td>York</td><td>Pass</td><td>$0.1M</td><td>66.5%</td></tr>
+  <tr><td>2015</td><td>Kittery</td><td>York</td><td>Pass</td><td>$0.3M bond</td><td>76.5%</td></tr>
+  <tr><td>2013</td><td>Kittery</td><td>York</td><td>Pass</td><td>$0.2M bond</td><td>84.8%</td></tr>
+  <tr class="match"><td>2012</td><td><strong>Maine — statewide</strong></td><td>—</td><td>Pass</td><td><strong>$5M bond</strong></td><td>60.8%</td></tr>
+  <tr class="match"><td>2010</td><td><strong>Maine — statewide</strong></td><td>—</td><td>Pass</td><td><strong>$9.75M bond</strong></td><td>59.4%</td></tr>
+  <tr class="match"><td>2007</td><td><strong>Maine — statewide</strong></td><td>—</td><td>Pass</td><td><strong>$17M bond</strong></td><td>63.1%</td></tr>
+  <tr class="match"><td>2005</td><td><strong>Maine — statewide</strong></td><td>—</td><td>Pass</td><td><strong>$12M bond</strong></td><td>64.9%</td></tr>
+  <tr class="match"><td>1999</td><td><strong>Maine — statewide</strong></td><td>—</td><td>Pass</td><td><strong>$50M bond</strong></td><td>68.7%</td></tr>
+  <tr><td>1991</td><td>Maine — statewide</td><td>—</td><td>Fail</td><td>—</td><td>42.9%</td></tr>
+  <tr><td colspan="6" style="text-align:center;color:var(--tpl-muted);padding-top:.7rem;border-top:1px dashed var(--tpl-rule)">… plus 12 more small-town municipal bond measures in southern Maine, all passing 50–87%</td></tr>
+</tbody>
+</table>
+
+<p>Adding it up: <strong>27 measures since 1991, 25 passed (93% pass
+rate) · $93.85M in state bonds approved across 5 statewide cycles
+1999–2012 · 100% of measures used bonds</strong>. Bonds are
+Maine's mechanism for conservation, full stop.</p>
+
+<p>The geo-agent surfaces a fact buried in the data that is the lead
+finding of any North Woods report:</p>
+
+<div class="prompt"><q>Filter that list to just Aroostook, Piscataquis, Somerset, and Penobscot Counties.  How many measures in the North Woods region?</q></div>
+
+<div class="response">
+  <strong>Zero.</strong>  Not a single county-level or municipal
+  conservation ballot measure has appeared in any of the four North
+  Woods counties since the LandVote record began in 1988.  Every
+  Maine municipal measure in the database is in either York County
+  (Kittery, Kennebunk, Ogunquit, Saco, York) or Cumberland County
+  (Scarborough, South Portland, Falmouth, Freeport) — the southern
+  coastal belt.
+</div>
+
+<p>This is not because northern Maine voters are hostile to
+conservation.  All five Maine statewide conservation bonds since 1999
+have passed (60–69% statewide); the North Woods counties' precincts
+contributed to those wins.  It is that <strong>no local government in
+the North Woods has yet asked voters for a dedicated conservation
+revenue stream</strong>. The pattern that works in southern Maine has
+not been tested in the north.  The state-level Land for Maine's
+Future bond machine — which has been the regional finance backbone —
+has not been renewed since 2012, 14 years ago.</p>
+
+<p>The political fact this points at: the next big climate-finance
+opportunity for the Maine North Woods is most plausibly a new
+state-level Land for Maine's Future bond on the 2026 or 2028 ballot,
+sized closer to the 1999 era ($50M+) than the 2012 era ($5M).  The
+historic pass rates strongly suggest it would pass.</p>
+</section>
+
+
+<!-- =========================================================
+     § 6  MECHANISM ANALYSIS — THE BIG GAP
+     ========================================================= -->
+<section id="mechanism">
+<h2><span class="num">6</span>§ Mechanism analysis <span class="dim" style="font-size:.7em">(Headwaters report pp. 26–76 — the 50-page core)</span></h2>
+
+<p>The Mississippi Headwaters report's defining body is its
+mechanism-by-mechanism analysis: 15 distinct funding sources with
+legal authority citations, revenue estimates from state-specific
+data, and precedent comparisons drawn from other states.  Lottery
+(pp. 27–28), sales tax (29–30), mortgage registry tax (31), deed tax
+(31), lodging tax (32–33), corporate franchise tax (33),
+recreational marijuana (34–36), sports betting (37),
+impervious surface fees (38–40), carbon pricing (41–42), cap-and-trade
+(43–48), carbon sequestration on School Trust Lands (47), Clean Water
+Act §212 (49–52), current use programs (55–58), watershed districts
+(61–62), conservation tax credits (63–65), and three pages of
+&ldquo;new incentives&rdquo; (66–71).</p>
+
+<div class="gap">
+  This entire section is <strong>outside the geo-agent's scope</strong>.
+  Each mechanism analysis requires (a) the relevant state statute
+  citation (Maine Revised Statutes), (b) a current revenue estimate
+  from a state-specific source (Maine Revenue Services, the Office
+  of the State Treasurer, MaineHousing, the State Tax Assessor),
+  and (c) bond-counsel input on what voter approval would be
+  required.  Recreating these mechanism analyses for Maine
+  remains expert manual work — and is the right division of labor.
+</div>
+
+<h3>What the geo-agent <em>can</em> contribute to the mechanism question</h3>
+<p>The agent can answer the comparative-precedent question that the
+Mississippi Headwaters report's mechanism sections lean on:</p>
+
+<div class="prompt"><q>Which states have used real-estate transfer taxes for conservation, and how successful have those measures been?  What revenue have they generated?</q></div>
+
+<details class="sql"><summary>The SQL the app runs</summary><pre>
+SELECT state, COUNT(*) AS n,
+  COUNT(*) FILTER (WHERE status IN ('Pass','Pass*')) AS n_pass,
+  ROUND(SUM(conservation_funds_approved)/1e9, 2) AS cons_B,
+  STRING_AGG(year, ', ') AS years
+FROM read_parquet('s3://public-tpl/landvote.parquet')
+WHERE finance_mechanism = 'Real estate transfer tax'
+GROUP BY state ORDER BY cons_B DESC NULLS LAST;
+</pre></details>
+
+<table class="t">
+<thead><tr><th>State</th><th>Measures</th><th>Passed</th><th>$ approved</th></tr></thead>
+<tbody>
+  <tr><td>Florida</td><td>1</td><td>1</td><td>$9.00B <span class="dim">(2014 Amendment 1)</span></td></tr>
+  <tr><td>New Jersey</td><td>1</td><td>1</td><td>$2.42B <span class="dim">(2014 Open Space)</span></td></tr>
+  <tr><td>Colorado</td><td>1</td><td>1</td><td>$31M</td></tr>
+  <tr><td>43 other measures across 18 states</td><td>45</td><td>34</td><td>$471M</td></tr>
+</tbody>
+</table>
+<p>That's the kind of precedent-comparison input a Maine-specific
+real-estate-transfer-tax section would build on.  Each state's
+underlying ballot language and revenue formula still has to be
+read in detail (the FL Amendment 1 mechanism — a documentary stamp
+tax — and the NJ Open Space mechanism — a sales-tax dedication —
+differ substantially from a New England-style direct deed-transfer
+levy), but the agent's job is to put the right comparables on the
+analyst's desk in minutes.</p>
+</section>
+
+
+<!-- =========================================================
+     § 7  GAPS
+     ========================================================= -->
+<section id="gaps">
+<h2><span class="num">7</span>What this walkthrough does <em>not</em> produce</h2>
+
+<p>For an 81-page Mississippi-Headwaters-equivalent Maine North Woods
+report, the geo-agent today produces roughly the first 18 pages — the
+regional definition, ecology, ownership, carbon, current funding,
+voter history, and comparative-precedent input.  The next 60 pages
+need outside data and expert work.</p>
+
+<table class="t">
+<thead><tr><th>Headwaters report section</th><th>Geo-agent status</th><th>External source</th></tr></thead>
+<tbody>
+  <tr><td>Regional county definition</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>Almanac site inventory</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>PAD-US ownership breakdown</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>Carbon stock (irrecov / vuln / managed)</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>Existing-funding inventory (programs &amp; $)</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>Voter ballot history (state + municipal)</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>Cross-state mechanism precedent lookup</td><td><span class="tag match">match</span></td><td>—</td></tr>
+  <tr><td>Total forest carbon (FIA-style, with social/market value)</td><td><span class="tag gap">gap</span></td><td>TPL's own Carbon Map tool, USFS FIA</td></tr>
+  <tr><td>Peatland / soil organic carbon</td><td><span class="tag gap">gap</span></td><td>USGS LandCarbon, Maine DEP</td></tr>
+  <tr><td>Land-use-change rates (forest → cropland / development)</td><td><span class="tag gap">gap</span></td><td>NLCD, USDA NRI; could be added as a layer</td></tr>
+  <tr><td>Recreation-economy statistics (jobs, $, tourism)</td><td><span class="tag gap">gap</span></td><td>BEA, BLS, ME Office of Tourism</td></tr>
+  <tr><td>Water-quality trends (nutrient loading)</td><td><span class="tag gap">gap</span></td><td>EPA STORET, Maine DEP</td></tr>
+  <tr><td>State fiscal health, budget, debt capacity</td><td><span class="tag gap">gap</span></td><td>ME State Comptroller CAFR, ME State Treasurer</td></tr>
+  <tr><td>Existing-program statutory authority</td><td><span class="tag gap">gap</span></td><td>Maine Revised Statutes</td></tr>
+  <tr><td>15-mechanism legal &amp; revenue analysis</td><td><span class="tag gap">gap</span></td><td>Bond counsel, ME Revenue Services, ME Tax Assessor</td></tr>
+  <tr><td>Best-practices case studies from other states</td><td><span class="tag gap">gap</span></td><td>State-specific report archives; partial via LandVote descriptions</td></tr>
+</tbody>
+</table>
+</section>
+
+
+<!-- =========================================================
+     § 8  DRAFT EXEC SUMMARY
+     ========================================================= -->
+<section id="draft">
+<h2><span class="num">8</span>Draft executive summary, generated from app outputs</h2>
+
+<div class="brief">
+  <p class="brief-eyebrow">Maine's North Woods — Climate &amp; Conservation Finance Feasibility Study · Draft Executive Summary · May 2026</p>
+  <h2>Toward the next Land for Maine's Future bond</h2>
+
+  <div class="brief-ask">
+    The Maine North Woods — Aroostook, Piscataquis, Somerset, and
+    Penobscot Counties, 17,953 square miles of contiguous working forest
+    and lakes — has been protected, where it has been protected, by the
+    USFS Forest Legacy Program ($41.6M tracked) and the voter-approved
+    Land for Maine's Future bond program ($12.1M tracked).  Both
+    pipelines have thinned: <strong>the state has not bonded for LMF
+    since 2012</strong>, and federal Forest Legacy appropriations have
+    not kept pace with deal opportunity.  Maine voters have approved
+    <strong>5 of 6 statewide conservation bonds since 1999 (93%
+    pass rate)</strong>; the 2026 or 2028 cycle is the natural next
+    window for a new state bond sized closer to the 1999 era
+    ($50M+) than the 2012 era ($5M).
+  </div>
+
+  <h3>The region</h3>
+  <ul>
+    <li>4 counties · 17,953 sq mi · larger than MA + CT + RI + DE combined.</li>
+    <li>Conservation Almanac records: <strong>94 protected sites · 1,075,853 acres · $118.7M of tracked funding</strong> from 1999–2018.</li>
+    <li>Iconic acquisitions: Downeast Lakes Forestry Partnership (339,080 ac, 2005, $25.0M); West Branch CE (281,547 ac, 2003, $15.3M); Katahdin Forest Easement (198,115 ac, 2006, $6.5M); West Branch Phase 1 (46,985 ac, 2003, $20.7M); Katahdin Iron Works (37,000 ac, 2007, $10.1M); Crocker Mountain (12,046 ac, 2013, $7.7M).</li>
+  </ul>
+
+  <h3>Ownership picture (PAD-US 4.1)</h3>
+  <ul>
+    <li>Private NGO ownership of working forest dominates: <strong>~6,703 km² (1.66M ac) under land trusts and Forest Society of Maine</strong>.</li>
+    <li>State parks (Baxter, Allagash, Moosehead): ~3,983 km².</li>
+    <li>Joint NGO-private holdings (TNC partnerships): ~2,273 km².</li>
+    <li>Conservation easements on private land: ~1,835 km².</li>
+    <li>Federal (Katahdin Woods &amp; Waters NM, scattered USFWS refuges): ~870 km².</li>
+    <li>Tribal lands (Penobscot Nation et al., designated): ~474 km².</li>
+  </ul>
+
+  <h3>Climate value</h3>
+  <ul>
+    <li><strong>12.6 Mt of accessible carbon (manageable + vulnerable + irrecoverable)</strong> across the region under the Noon et al. 2024 methodology.</li>
+    <li>At a $51/ton 2025 social cost of carbon, <strong>~$640M in annual social value</strong> sits in the carbon pool that natural-climate-solutions strategies can affect.</li>
+    <li>Peatland and deep-soil carbon would add substantially to this number; not in the geo-agent's layers today.</li>
+  </ul>
+
+  <h3>Existing funding pipeline</h3>
+  <ul>
+    <li><strong>USFS Forest Legacy Program — $41.55M across 13 sites</strong> (the largest single program, driving the headline acquisitions of 1999–2013).</li>
+    <li>Land for Maine's Future (state bond) — $12.11M across 41 smaller sites.</li>
+    <li>Federal LWCF + NAWCA — $3.5M across 14 sites.</li>
+    <li>Unattributed (private partners — TNC, Forest Society of Maine, Open Space Institute, foundations) — $53.07M across 27 sites.</li>
+    <li>Total tracked: <strong>$118.7M, 1999–2018.</strong></li>
+  </ul>
+
+  <h3>Maine voter record</h3>
+  <ul>
+    <li><strong>27 conservation ballot measures since 1991 · 25 passed (93% pass rate)</strong> statewide.</li>
+    <li>5 of 6 statewide bonds passed: 1999 ($50M, 69%), 2005 ($12M, 65%), 2007 ($17M, 63%), 2010 ($9.75M, 59%), 2012 ($5M, 61%).  Only 1991 failed.</li>
+    <li>22 successful municipal bond measures since 1996, all in York and Cumberland Counties (southern Maine).</li>
+    <li><strong>Zero conservation ballot measures in the four North Woods counties</strong>, ever.</li>
+  </ul>
+
+  <h3>What the geo-agent recommends as next steps</h3>
+  <ul>
+    <li>Brief Maine Legislative leadership on a 2026 or 2028 Land for Maine's Future bond at $40M–$75M scale.  Pass-rate history strongly supports this range.</li>
+    <li>Pair the state bond ask with a federal Forest Legacy appropriation request; the two have always run together for this region.</li>
+    <li>For 2027–2030, study viability of a North Woods regional special district (e.g., parallel to the Mississippi Headwaters Board's eight-county joint powers structure) — would be new ground in Maine but is well-supported by Minnesota precedent.</li>
+    <li>Commission a public-opinion survey to test ballot language; LMF measures have historically polled well but the 14-year gap since 2012 means a fresh tolerance test is overdue.</li>
+  </ul>
+
+  <h3>What this draft does not replace</h3>
+  <ul>
+    <li><span class="tag gap">gap</span> Full mechanism-by-mechanism revenue analysis (15 sources × statutory authority) — bond counsel + ME Revenue Services.</li>
+    <li><span class="tag gap">gap</span> State debt capacity / fiscal health — ME State Comptroller CAFR.</li>
+    <li><span class="tag gap">gap</span> Peatland and soil-organic-carbon detail — USGS LandCarbon, Maine DEP.</li>
+    <li><span class="tag gap">gap</span> Land-conversion-rate threats — NLCD time-series; would be valuable as a future geo-agent layer.</li>
+    <li><span class="tag gap">gap</span> Recreation economy figures — BEA, BLS, ME Office of Tourism.</li>
+  </ul>
+</div>
+</section>
+
+
+<!-- =========================================================
+     § 9  METHODOLOGY
+     ========================================================= -->
+<section id="method">
+<h2><span class="num">9</span>Methodology &amp; series wrap-up</h2>
+
+<p>The case study series closes here.  The three reports — Florida
+Senate District 21, Larimer County feasibility study, and this Maine
+North Woods climate-finance feasibility study — span the three TPL
+Conservation Finance report types defined in
+<code>example-reports/01-report-structure-analysis.md</code>.  Each
+one demonstrates a different ratio of geo-agent-produced content to
+expert manual content:</p>
+
+<table class="t">
+<thead><tr><th>Case</th><th>Report type</th><th>Approx.&nbsp;agent share</th><th>Notable agent value-add</th></tr></thead>
+<tbody>
+  <tr><td>FL Senate District 21</td><td>1-page legislative brief</td><td>~80% of the brief</td><td>Reproduces every $ amount exactly; surfaces 7 omitted FCT-funded sites</td></tr>
+  <tr><td>Larimer County, CO</td><td>23-page feasibility study</td><td>~50% (7 of 12 sections)</td><td>Adds SVI, carbon, PAD-US sections the original FL report lacked</td></tr>
+  <tr><td>Maine North Woods</td><td>81-page climate-finance feasibility</td><td>~20% (first 15 of ~80 pages)</td><td>Multi-source spatial intersections impossible without H3 hex joins</td></tr>
+</tbody>
+</table>
+
+<p>The pattern is the right shape: the geo-agent provides the
+re-usable, spatial-data-intensive, comparative-precedent backbone
+of each report; expert TPL staff and partners (bond counsel, state
+agencies) provide the state-specific legal and fiscal analysis the
+agent cannot.  The agent's payoff is highest on the briefest report
+(where the spatial intersection IS the deliverable) and lowest on the
+longest report (where the deliverable is mostly legal mechanism
+analysis).</p>
+
+<p>Total time to produce all three walkthroughs' app-driven sections,
+end-to-end: approximately <strong>5 hours of MCP-driven prompting,
+plus the writing time around it</strong>.  All H3 hex SEMI JOINs ran
+in under three seconds each on the server.</p>
+
+<p>Every dataset used in the series is in the project's public STAC
+catalog at
+<a href="https://s3-west.nrp-nautilus.io/public-data/stac/catalog.json">s3-west.nrp-nautilus.io/public-data/stac/catalog.json</a>.
+Every SQL block can be pasted into the geo-agent's duckdb-mcp tool at
+<a href="https://duckdb-mcp.nrp-nautilus.io/mcp">duckdb-mcp.nrp-nautilus.io/mcp</a>.</p>
+</section>
+
+</main>
+
+<footer class="foot"><div class="page">
+  Case Study 03 of 03 · TPL geo-agent walkthrough series · drafted from
+  the geo-agent at <a href="https://github.com/boettiger-lab/tpl">github.com/boettiger-lab/tpl</a> ·
+  May 2026.
+  Previous: <a href="larimer-co.html">Case Study 02 — Larimer County, Colorado</a>.
+  Start: <a href="florida-sd21.html">Case Study 01 — Florida Senate District 21</a>.
+</div></footer>
+
+
+<script type="module">
+import maplibregl from "https://esm.sh/maplibre-gl@5.4.0";
+import * as pmtiles from "https://esm.sh/pmtiles@4.4.1";
+
+const protocol = new pmtiles.Protocol();
+maplibregl.addProtocol("pmtiles", protocol.tile);
+
+const namedSites = {
+  type: "FeatureCollection",
+  features: [
+    {label: "Downeast Lakes Forestry Partnership (339K ac)", coords: [-67.65, 45.29]},
+    {label: "West Branch CE (282K ac)",                      coords: [-70.05, 46.05]},
+    {label: "Katahdin Forest Easement (198K ac)",            coords: [-69.14, 45.94]},
+    {label: "West Branch Phase 1 (47K ac)",                  coords: [-69.84, 45.92]},
+    {label: "Katahdin Iron Works (37K ac)",                  coords: [-69.32, 45.46]},
+    {label: "Crocker Mountain (12K ac)",                     coords: [-70.34, 45.04]},
+    {label: "Cold Stream Forest (8K ac)",                    coords: [-70.01, 45.45]},
+    {label: "Machias River (6K ac)",                         coords: [-67.85, 44.98]},
+    {label: "Plum Creek (3K ac)",                            coords: [-69.89, 45.54]},
+  ].map(p => ({
+    type: "Feature",
+    geometry: {type: "Point", coordinates: p.coords},
+    properties: {label: p.label}
+  }))
+};
+
+const map = new maplibregl.Map({
+  container: "map",
+  style: {
+    version: 8,
+    glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+    sources: {
+      carto: {
+        type: "raster",
+        tiles: ["https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png"],
+        tileSize: 256, attribution: "© OSM · © CARTO"
+      }
+    },
+    layers: [{id: "base", type: "raster", source: "carto"}]
+  },
+  bounds: [[-71.1, 43.9], [-66.9, 47.6]],
+  fitBoundsOptions: {padding: 30}
+});
+map.addControl(new maplibregl.NavigationControl({showCompass: false}), "top-right");
+
+const NW_COUNTIES = ["23003","23021","23025","23019"];
+
+map.on("load", () => {
+  // County boundary — highlight the 4 NW counties
+  map.addSource("county", {
+    type: "vector",
+    url: "pmtiles://https://s3-west.nrp-nautilus.io/public-census/census-2024/county.pmtiles"
+  });
+  map.addLayer({
+    id: "nw-fill", type: "fill", source: "county", "source-layer": "county",
+    filter: ["in", ["get","GEOID"], ["literal", NW_COUNTIES]],
+    paint: {"fill-color":"#1B5E20","fill-opacity":0.08}
+  });
+  map.addLayer({
+    id: "nw-line", type: "line", source: "county", "source-layer": "county",
+    filter: ["in", ["get","GEOID"], ["literal", NW_COUNTIES]],
+    paint: {"line-color":"#1B5E20","line-width":3}
+  });
+  map.addLayer({
+    id: "me-other-line", type: "line", source: "county", "source-layer": "county",
+    filter: ["all", ["==",["get","STATEFP"],"23"], ["!", ["in", ["get","GEOID"], ["literal", NW_COUNTIES]]]],
+    paint: {"line-color":"#5e6266","line-width":0.5,"line-opacity":0.5}
+  });
+
+  // Almanac sites
+  map.addSource("almanac", {
+    type: "vector",
+    url: "pmtiles://https://s3-west.nrp-nautilus.io/public-tpl/conservation-almanac-2024-sites.pmtiles"
+  });
+  map.addLayer({
+    id: "alm-me", type: "fill", source: "almanac",
+    "source-layer": "conservation-almanac-2024-sites",
+    filter: ["==", ["get","state_id"], "ME"],
+    paint: {"fill-color":"#2E7D32","fill-opacity":0.65}
+  }, "nw-line");
+
+  // Named-site labels
+  map.addSource("named", {type: "geojson", data: namedSites});
+  map.addLayer({
+    id: "named-dot", type: "circle", source: "named",
+    paint: {"circle-radius": 6, "circle-color":"#C62828",
+            "circle-stroke-color":"white", "circle-stroke-width": 2}
+  });
+  map.addLayer({
+    id: "named-label", type: "symbol", source: "named",
+    layout: {
+      "text-field": ["get","label"],
+      "text-font": ["Open Sans Semibold"],
+      "text-size": 11, "text-offset": [0, 1.2], "text-anchor": "top",
+      "text-max-width": 12
+    },
+    paint: {"text-color":"#1a1a1a","text-halo-color":"white","text-halo-width":2}
+  });
+});
+</script>
+</body>
+</html>

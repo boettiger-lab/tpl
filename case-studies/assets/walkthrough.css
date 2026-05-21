@@ -1,0 +1,273 @@
+/* Case-study walkthrough — long-form scrolling page.
+   Designed for the TPL Conservation Finance team. Light, print-friendly. */
+
+:root {
+  --tpl-green:    #1B5E20;
+  --tpl-green-2:  #2E7D32;
+  --tpl-green-3:  #66BB6A;
+  --tpl-green-bg: #f0f7f1;
+  --tpl-red:      #C62828;
+  --tpl-blue:     #1565C0;
+  --tpl-orange:   #E65100;
+  --tpl-purple:   #6A1B9A;
+  --tpl-ink:      #1a1a1a;
+  --tpl-muted:    #5e6266;
+  --tpl-rule:     #d8dde2;
+  --tpl-tint:     #f7f9fb;
+  --tpl-bg:       #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; padding: 0;
+  font-family: "Inter", "Helvetica Neue", system-ui, sans-serif;
+  color: var(--tpl-ink);
+  background: var(--tpl-bg);
+  line-height: 1.55;
+  font-size: 17px;
+}
+
+/* Layout: centered column + occasional wide breakouts */
+.page { max-width: 1180px; margin: 0 auto; padding: 0 2.5rem; }
+.wide { max-width: 1380px; margin: 2rem auto; padding: 0 2.5rem; }
+
+/* Banner */
+.banner {
+  background: var(--tpl-green);
+  color: white;
+  padding: 3rem 0 2.4rem;
+  margin-bottom: 2rem;
+}
+.banner .eyebrow {
+  text-transform: uppercase; letter-spacing: .25em;
+  font-size: .85rem; font-weight: 600; opacity: .8; margin-bottom: 1rem;
+}
+.banner h1 {
+  font-size: 2.8rem; line-height: 1.05; font-weight: 800;
+  letter-spacing: -0.015em; margin: 0 0 1rem;
+}
+.banner p { font-size: 1.15rem; opacity: .92; max-width: 60ch; margin: .4rem 0; }
+.banner .meta { font-size: .9rem; opacity: .75; margin-top: 1.5rem; }
+.banner a { color: white; text-decoration: underline; }
+.banner code, .banner .meta code {
+  background: rgba(255,255,255,.12); color: white;
+  padding: .1rem .35rem; border-radius: 3px;
+  font-family: "Fira Mono", "SF Mono", Menlo, monospace;
+  font-size: .82em;
+}
+
+/* Navigation */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--tpl-rule);
+  padding: .8rem 2.5rem;
+  font-size: .85rem;
+}
+.nav-inner { max-width: 1180px; margin: 0 auto; display: flex; gap: 1.4rem; flex-wrap: wrap; align-items: center; }
+.nav a { color: var(--tpl-muted); text-decoration: none; }
+.nav a:hover { color: var(--tpl-green); }
+.nav .home { font-weight: 700; color: var(--tpl-ink); }
+
+/* Headings */
+h2 {
+  font-size: 1.9rem; line-height: 1.1; font-weight: 700;
+  margin: 3.5rem 0 .4rem; letter-spacing: -0.01em;
+  border-top: 4px solid var(--tpl-green);
+  padding-top: 1.4rem;
+}
+h2 .num {
+  color: var(--tpl-green); font-weight: 800;
+  margin-right: .6rem; font-variant-numeric: tabular-nums;
+}
+h3 { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 .5rem; }
+h4 { font-size: 1rem; font-weight: 600; color: var(--tpl-muted);
+     text-transform: uppercase; letter-spacing: .1em; margin: 1.6rem 0 .5rem; }
+.subtitle { color: var(--tpl-muted); font-size: 1.05rem; margin: 0 0 1.6rem; }
+
+p { margin: .9rem 0; }
+p code, li code { background: #f3f5f7; padding: .12rem .35rem; border-radius: 3px;
+                  font-size: .9em; }
+
+ul, ol { padding-left: 1.5rem; }
+li { margin: .35rem 0; }
+
+a { color: var(--tpl-green); }
+
+/* Prompt box — the canonical "type this into the app" callout */
+.prompt {
+  background: var(--tpl-green-bg);
+  border-left: 4px solid var(--tpl-green);
+  border-radius: 6px;
+  padding: 1.1rem 1.3rem;
+  margin: 1.4rem 0;
+  font-size: 1.05rem;
+  position: relative;
+}
+.prompt::before {
+  content: "▶ Type in the app";
+  display: block;
+  font-size: .78rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--tpl-green);
+  margin-bottom: .55rem;
+}
+.prompt q {
+  font-style: italic; color: var(--tpl-ink); display: block;
+  font-size: 1.08rem; line-height: 1.45;
+  quotes: """ """;
+}
+
+/* Response box — what the app returns */
+.response {
+  background: var(--tpl-tint);
+  border-left: 4px solid var(--tpl-muted);
+  border-radius: 6px;
+  padding: 1rem 1.3rem;
+  margin: 1.2rem 0;
+  font-size: 1rem;
+}
+.response::before {
+  content: "↳ The app replies";
+  display: block;
+  font-size: .78rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--tpl-muted);
+  margin-bottom: .55rem;
+}
+
+/* Gap / caveat box */
+.gap {
+  background: #fff7f0;
+  border-left: 4px solid var(--tpl-orange);
+  border-radius: 6px;
+  padding: .9rem 1.2rem;
+  margin: 1.2rem 0;
+  font-size: .96rem;
+}
+.gap:not(.tag)::before {
+  content: "⚠ Where the app doesn't suffice";
+  display: block;
+  font-size: .78rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--tpl-orange);
+  margin-bottom: .4rem;
+}
+
+/* Tables */
+table.t {
+  width: 100%; border-collapse: collapse;
+  font-size: .95rem; margin: 1rem 0 1.4rem;
+}
+table.t th, table.t td {
+  padding: .55rem .8rem;
+  border-bottom: 1px solid var(--tpl-rule);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+table.t th:first-child, table.t td:first-child { text-align: left; }
+table.t thead th {
+  color: var(--tpl-muted); font-weight: 600;
+  text-transform: uppercase; letter-spacing: .07em;
+  font-size: .78rem;
+  border-bottom: 2px solid var(--tpl-ink);
+}
+table.t tbody tr.match { background: #f0f7f1; font-weight: 600; }
+table.t tbody tr.match td:first-child::before {
+  content: "✓ "; color: var(--tpl-green); font-weight: 800;
+}
+table.t tbody tr.new td:first-child::before {
+  content: "+ "; color: var(--tpl-blue); font-weight: 800;
+}
+
+/* Side-by-side comparison */
+.compare {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem;
+  margin: 1.4rem 0;
+}
+.compare > div {
+  border: 1px solid var(--tpl-rule);
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  background: var(--tpl-bg);
+}
+.compare h4 { margin-top: 0; }
+
+/* Map */
+.map {
+  height: 520px; width: 100%;
+  border: 1px solid var(--tpl-rule); border-radius: 6px;
+  margin: 1rem 0 .4rem;
+}
+.map.tall { height: 620px; }
+.caption {
+  font-size: .85rem; color: var(--tpl-muted);
+  margin: 0 0 1.4rem; line-height: 1.45;
+}
+
+/* SQL disclosure */
+details.sql {
+  margin: .8rem 0 1.4rem; font-size: .9rem;
+  border: 1px solid var(--tpl-rule); border-radius: 6px;
+  background: var(--tpl-tint); padding: 0;
+}
+details.sql summary {
+  cursor: pointer; padding: .6rem 1rem; color: var(--tpl-muted);
+  font-weight: 600; font-size: .85rem; letter-spacing: .04em;
+  list-style: none;
+}
+details.sql summary::before { content: "▶  "; }
+details.sql[open] summary::before { content: "▼  "; }
+details.sql pre {
+  margin: 0; padding: 0 1.1rem 1rem; overflow-x: auto;
+  font-family: "Fira Mono", "SF Mono", Menlo, monospace;
+  font-size: .82rem; line-height: 1.45;
+  color: var(--tpl-ink);
+  background: transparent;
+}
+
+/* The draft brief at the end — styled to evoke the original 1-pager */
+.brief {
+  background: var(--tpl-bg);
+  border: 1px solid var(--tpl-rule);
+  padding: 2.5rem 3rem;
+  margin: 2rem 0;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  font-size: 1rem;
+}
+.brief h2 {
+  border: none; padding: 0; margin: 0 0 .2rem; font-size: 1.8rem;
+  color: var(--tpl-ink);
+}
+.brief .brief-eyebrow {
+  font-weight: 700; font-size: .95rem;
+  letter-spacing: .04em; color: var(--tpl-ink);
+  margin: 0 0 1rem;
+}
+.brief .brief-ask {
+  background: #f0f7f1; border-left: 4px solid var(--tpl-green);
+  padding: 1rem 1.2rem; margin: 1.2rem 0; font-size: 1rem;
+}
+.brief h3 {
+  color: var(--tpl-green); border: none; margin: 1.6rem 0 .5rem;
+  font-size: 1.05rem; font-weight: 700;
+}
+.brief ul { margin: .3rem 0 1.4rem; padding-left: 1.5rem; }
+.brief li { margin: .2rem 0; }
+
+/* Misc */
+.kicker { color: var(--tpl-green); font-weight: 700; }
+.dim { color: var(--tpl-muted); }
+.tag {
+  display: inline-block; padding: .12rem .55rem; border-radius: 3px;
+  font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.tag.match { background: #e6f3e8; color: var(--tpl-green); }
+.tag.new   { background: #e3f2fd; color: var(--tpl-blue); }
+.tag.gap   { background: #fff3e0; color: var(--tpl-orange); }
+
+footer.foot {
+  margin-top: 5rem; padding: 2rem 0 4rem;
+  border-top: 1px solid var(--tpl-rule);
+  color: var(--tpl-muted); font-size: .85rem;
+}

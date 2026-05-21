@@ -251,6 +251,48 @@
             ]
         },
         {
+            "collection_id": "usfws-critical-habitat-final",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-usfws/critical-habitat/final/stac-collection.json",
+            "assets": [
+                {
+                    "id": "final-pmtiles",
+                    "display_name": "Critical Habitat — Final (USFWS)",
+                    "group": "Conservation Areas",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": "#00695C",
+                        "fill-opacity": 0.4
+                    },
+                    "outline_style": {
+                        "line-color": "#004D40",
+                        "line-width": 0.5
+                    },
+                    "tooltip_fields": ["comname", "sciname", "unitname", "status", "listing_st", "pubdate"]
+                }
+            ]
+        },
+        {
+            "collection_id": "usfws-critical-habitat-proposed",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-usfws/critical-habitat/proposed/stac-collection.json",
+            "assets": [
+                {
+                    "id": "proposed-pmtiles",
+                    "display_name": "Critical Habitat — Proposed (USFWS)",
+                    "group": "Conservation Areas",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": "#EF6C00",
+                        "fill-opacity": 0.4
+                    },
+                    "outline_style": {
+                        "line-color": "#BF360C",
+                        "line-width": 0.5
+                    },
+                    "tooltip_fields": ["comname", "sciname", "unitname", "status", "listing_st", "pubdate"]
+                }
+            ]
+        },
+        {
             "collection_id": "cgls-lc100-2019",
             "collection_url": "https://s3-west.nrp-nautilus.io/public-land-cover/cgls-lc100-2019/stac-collection.json",
             "assets": [

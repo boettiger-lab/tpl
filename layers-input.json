@@ -67,6 +67,34 @@
             ]
         },
         {
+            "collection_id": "epa-sab-v3-cws",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-epa-water/epa-sab-v3/cws/stac-collection.json",
+            "assets": [
+                {
+                    "id": "sab-cws-pmtiles",
+                    "display_name": "Community Water System Service Areas (EPA)",
+                    "group": "Water Utilities",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": ["match", ["get", "Pop_Cat_5"],
+                            "<=500",          "#E3F2FD",
+                            "501-3,300",      "#90CAF9",
+                            "3,301-10,000",   "#42A5F5",
+                            "10,001-100,000", "#1976D2",
+                            ">100,000",       "#0D47A1",
+                            "#9E9E9E"
+                        ],
+                        "fill-opacity": 0.5
+                    },
+                    "outline_style": {
+                        "line-color": "#0D47A1",
+                        "line-width": 0.4
+                    },
+                    "tooltip_fields": ["PWS_Name", "PWSID", "Primacy_Agency", "Pop_Cat_5", "Population_Served_Count", "Service_Area_Type", "Model_Method"]
+                }
+            ]
+        },
+        {
             "collection_id": "irrecoverable-carbon",
             "collection_url": "https://s3-west.nrp-nautilus.io/public-carbon/stac-collection.json",
             "assets": [

@@ -20,6 +20,7 @@
     },
     "links": {
         "github": "https://github.com/boettiger-lab/tpl",
+        "docs": "/docs.html",
         "carbon": true
     },
     "collections": [

@@ -370,6 +370,34 @@
                     "tooltip_fields": ["NAMELSAD", "GEOID", "STATEFP", "COUNTYFP"]
                 }
             ]
+        },
+        {
+            "collection_id": "usgs-fires-2021-combined",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-fire/usgs-fires-2021/combined/stac-collection.json",
+            "assets": [
+                {
+                    "id": "combined-pmtiles",
+                    "display_name": "Wildfire Perimeters (USGS, 1878–2021)",
+                    "group": "Wildfires",
+                    "visible": false,
+                    "default_filter": ["==", ["get", "Assigned_Fire_Type"], "Wildfire"],
+                    "default_style": {
+                        "fill-color": ["interpolate", ["linear"], ["get", "Fire_Year"],
+                            1900, "#FFF59D",
+                            1960, "#FFB74D",
+                            1990, "#E64A19",
+                            2010, "#B71C1C",
+                            2021, "#4A148C"
+                        ],
+                        "fill-opacity": 0.55
+                    },
+                    "outline_style": {
+                        "line-color": "#3E2723",
+                        "line-width": 0.3
+                    },
+                    "tooltip_fields": ["Listed_Fire_Names", "Fire_Year", "Assigned_Fire_Type", "GIS_Acres", "Listed_Fire_Causes", "Source_Datasets"]
+                }
+            ]
         }
     ]
 }

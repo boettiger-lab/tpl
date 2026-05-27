@@ -3,6 +3,11 @@
     "titiler_url": "https://titiler.nrp-nautilus.io",
     "mcp_url": "https://duckdb-mcp.nrp-nautilus.io/mcp",
     "auto_approve": true,
+    "sidebar": {
+        "enabled": true,
+        "default_width": 460,
+        "title": "TPL Data Assistant"
+    },
     "view": {
         "center": [-96, 38],
         "zoom": 4,

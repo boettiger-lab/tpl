@@ -372,6 +372,39 @@
             ]
         },
         {
+            "collection_id": "federal-trails-2026",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-trails/federal-trails-2026/stac-collection.json",
+            "assets": [
+                {
+                    "id": "federal-trails-2026-pmtiles",
+                    "display_name": "Federal Trails (USFS + NPS + BLM)",
+                    "group": "Trails",
+                    "visible": false,
+                    "layer_type": "line",
+                    "default_style": {
+                        "line-color": ["match", ["get", "nts_designation"],
+                            "PCT",  "#1565C0",
+                            "AT",   "#2E7D32",
+                            "CDT",  "#E65100",
+                            "NCT",  "#6A1B9A",
+                            ["PNT", "ANT", "FNST", "IANST", "NTNST", "PHT", "NST"], "#AD1457",
+                            ["ANZA", "INHT", "PENHT", "OSNHT"], "#5D4037",
+                            "NRT",  "#00838F",
+                            "#9E9E9E"
+                        ],
+                        "line-width": ["match", ["get", "nts_designation"],
+                            ["PCT", "AT", "CDT", "NCT", "PNT", "ANT", "FNST", "IANST", "NTNST", "PHT", "NST"], 2.2,
+                            ["ANZA", "INHT", "PENHT", "OSNHT"], 1.8,
+                            "NRT", 1.2,
+                            0.6
+                        ],
+                        "line-opacity": 0.85
+                    },
+                    "tooltip_fields": ["trail_name", "admin_agency", "admin_unit", "nts_designation", "length_miles", "trail_type"]
+                }
+            ]
+        },
+        {
             "collection_id": "usgs-fires-2021-combined",
             "collection_url": "https://s3-west.nrp-nautilus.io/public-fire/usgs-fires-2021/combined/stac-collection.json",
             "assets": [

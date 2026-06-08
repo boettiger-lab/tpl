@@ -341,7 +341,7 @@
         },
         {
             "collection_id": "ghs-pop-2020",
-            "collection_url": "https://s3-west.nrp-nautilus.io/public-high-seas/ghs-pop-2020/stac-collection.json",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-population/ghs-pop-2020/stac-collection.json",
             "assets": [
                 {
                     "id": "ghs-pop-2020-cog",

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Case Study · Larimer County, Colorado · Geo-Agent Walkthrough</title>
+<title>Case Study · Larimer County, Colorado · GLEN Walkthrough</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.4.0/dist/maplibre-gl.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/walkthrough.css">
@@ -12,13 +12,13 @@
 
 <header class="banner">
   <div class="page">
-    <div class="eyebrow">Geo-Agent Walkthrough · Case Study 02 of 03</div>
+    <div class="eyebrow">GLEN Walkthrough · Case Study 02 of 03</div>
     <h1>Drafting a Larimer County public finance feasibility study</h1>
     <p>The 23-page <em>Lake County, FL Public Finance Feasibility Study</em>
        (December 2023) is the canonical TPL Conservation Finance deliverable
        for a local government asking for help with a ballot measure. This
        walkthrough reproduces it section by section for Larimer County,
-       Colorado — naming what the geo-agent app produces in minutes, and
+       Colorado — naming what the GLEN app produces in minutes, and
        what still requires a CAFR, a Census table, or a bond calculator.</p>
     <p class="meta">For the TPL Conservation Finance team · compared against
        <code>example-reports/Lake County TPL Feasibility Study 12.6.23.pdf</code></p>
@@ -83,7 +83,7 @@ demand — for a new countywide measure on the 2027 or 2028 ballot.</p>
     </ul>
   </div>
   <div>
-    <h4>What the geo-agent will deliver here</h4>
+    <h4>What the GLEN will deliver here</h4>
     <ul>
       <li><span class="tag match">match</span> County boundary &amp; conservation site inventory</li>
       <li><span class="tag match">match</span> Existing-programs section (Open Lands, Fort Collins Natural Areas, GOCO)</li>
@@ -92,16 +92,16 @@ demand — for a new countywide measure on the 2027 or 2028 ballot.</p>
       <li><span class="tag match">match</span> Peer county comparables (Boulder, Douglas, Adams, Arapahoe)</li>
       <li><span class="tag new">new</span> Carbon &amp; biodiversity overlay (not in Lake Co. report)</li>
       <li><span class="tag new">new</span> PAD-US shape of who already owns what (not in Lake Co. report)</li>
-      <li><span class="tag gap">gap</span> Demographics — outside the geo-agent today</li>
-      <li><span class="tag gap">gap</span> County CAFR / millage / debt — outside the geo-agent</li>
-      <li><span class="tag gap">gap</span> Bond cost calculator — outside the geo-agent</li>
-      <li><span class="tag gap">gap</span> Commissioner roster — outside the geo-agent</li>
+      <li><span class="tag gap">gap</span> Demographics — outside the GLEN today</li>
+      <li><span class="tag gap">gap</span> County CAFR / millage / debt — outside the GLEN</li>
+      <li><span class="tag gap">gap</span> Bond cost calculator — outside the GLEN</li>
+      <li><span class="tag gap">gap</span> Commissioner roster — outside the GLEN</li>
     </ul>
   </div>
 </div>
 
 <p>Honest summary: <strong>roughly seven of the twelve sections of a
-Lake-County-style feasibility study come out of the geo-agent in
+Lake-County-style feasibility study come out of the GLEN in
 under an hour</strong>; the other five still require external sources
 and a sit-down with the county finance director.  This case study walks
 through every section in the same order Lake County's appears, so the
@@ -119,7 +119,7 @@ maps to what.</p>
 <p>Larimer County (FIPS 08069) sits in north-central Colorado, against the
 Wyoming border, with the Front Range running down its spine.  It contains
 Fort Collins, Loveland, Estes Park, and a sliver of Windsor, plus
-unincorporated mountain communities.  The geo-agent's first job in any
+unincorporated mountain communities.  The GLEN's first job in any
 feasibility is to fix the geography.</p>
 
 <div class="prompt"><q>Show me Larimer County, Colorado on the map.  Include the Conservation Almanac sites in the county and label the biggest named ones.</q></div>
@@ -176,7 +176,7 @@ and uninsured rate, all side-by-side with the Florida statewide figures.</p>
 <div class="prompt"><q>Pull a US Census demographics table for Larimer County compared to Colorado statewide — population, race, housing, education, income, health.</q></div>
 
 <div class="gap">
-  The geo-agent does <strong>not</strong> currently hold US Census ACS or
+  The GLEN does <strong>not</strong> currently hold US Census ACS or
   QuickFacts data.  The closest available layer is CDC's <em>Social
   Vulnerability Index 2022</em> at tract level
   (<code>svi-2022</code>), which does carry population, housing, income,
@@ -188,7 +188,7 @@ and uninsured rate, all side-by-side with the Florida statewide figures.</p>
   and pastes the table verbatim.
 </div>
 
-<p>What the geo-agent <em>can</em> do today is summarize the
+<p>What the GLEN <em>can</em> do today is summarize the
 social-vulnerability picture, which is genuinely useful for an equity
 section the Lake County report does not contain:</p>
 
@@ -228,7 +228,7 @@ park-finance package delivers benefits.</p>
 <section id="programs">
 <h2><span class="num">3</span>§ Existing conservation programs <span class="dim" style="font-size:.7em">(Lake Co. report § 7)</span></h2>
 
-<p>This is the section the geo-agent shines on.  The Lake County report's
+<p>This is the section the GLEN shines on.  The Lake County report's
 &ldquo;Office of Parks and Trails / Lake County Water Authority / Florida
 Wildlife Corridor&rdquo; sub-sections each ran to half a page of program
 description and acreage.  The Larimer analog is:</p>
@@ -324,7 +324,7 @@ and the Rocky Mountain NP boundary adjustments (LWCF).</p>
 <p>The Lake County feasibility study did not have a dedicated climate or
 biodiversity section.  That's a function of when it was produced and the
 manual effort an analyst would have had to spend pulling carbon and
-species data from federal sources.  With the geo-agent it takes two
+species data from federal sources.  With the GLEN it takes two
 prompts.</p>
 
 <div class="prompt"><q>What does the protected-areas landscape look like in Larimer County?  Show me ownership and management of every PAD-US protected unit, by area.</q></div>
@@ -426,7 +426,7 @@ and have established a generation of voter familiarity.</p>
 <div class="gap">
   TABOR-specific legal context (de-Brucing, mill-levy cap, 30-year
   bonding limits, vote-of-the-people requirements for tax increases)
-  is <strong>not</strong> in the geo-agent.  The legal section of a
+  is <strong>not</strong> in the GLEN.  The legal section of a
   Colorado feasibility study still gets cut-and-pasted from the
   state-team template and last verified with bond counsel.
 </div>
@@ -489,7 +489,7 @@ authorized through 2043?&rdquo;</p>
 
 <p>Lake County's report cited precedent measures from neighboring Florida
 counties (Manatee 2020 $50M / 71%, Flagler 2008 $40M / 65%).  Larimer's
-comparables are everywhere in Colorado.  The geo-agent surfaces the
+comparables are everywhere in Colorado.  The GLEN surfaces the
 full list in seconds.</p>
 
 <div class="prompt"><q>What are all the recent Colorado conservation ballot measures (2018–2025), with their mechanism, dollar size, percent yes, and party-lean of the jurisdiction?</q></div>
@@ -556,7 +556,7 @@ tax (mill-levy increases) pass less reliably (64%) and are constrained
 by TABOR.  GO bonds have been used for school and infrastructure but
 are rare for conservation.</p>
 
-<h3>What's missing from the geo-agent</h3>
+<h3>What's missing from the GLEN</h3>
 <div class="gap">
   The Lake County report's strongest single page is the bond-cost
   table — &ldquo;$50M bond @ 5% / 20-year = $4M annual debt service =
@@ -565,11 +565,11 @@ are rare for conservation.</p>
   (from the county assessor), (b) current municipal interest rate
   estimates (from a financial advisor or bond counsel), and (c) a
   simple amortization calculator.  None of those three are in the
-  geo-agent.  This section of any feasibility study will continue to
+  GLEN.  This section of any feasibility study will continue to
   require an external bond-counsel or financial-advisor partner.
 </div>
 
-<h3>What the geo-agent gives you cleanly</h3>
+<h3>What the GLEN gives you cleanly</h3>
 <p>The agent can identify <strong>at what historic dollar size a Colorado
 sales-tax measure has been winning</strong> and against what
 opposition.  Sales-tax measures in the $50M–$200M range, with a
@@ -587,14 +587,14 @@ counties.</p>
 <h2><span class="num">9</span>What this walkthrough does <em>not</em> produce</h2>
 
 <p>The Lake County feasibility study runs 23 pages.  Of those, roughly
-nine pages contain content the geo-agent today cannot produce: the
+nine pages contain content the GLEN today cannot produce: the
 demographics table, the county-finance breakdown, the bond cost table,
 the millage-rate detail, the debt schedule, the commissioner roster,
 the voter-turnout history, the precinct-equipment list.  All of these
 remain manual.</p>
 
 <table class="t">
-<thead><tr><th>Lake Co. report section</th><th>Geo-agent status</th><th>External source</th></tr></thead>
+<thead><tr><th>Lake Co. report section</th><th>GLEN status</th><th>External source</th></tr></thead>
 <tbody>
   <tr><td>Demographics table</td><td><span class="tag gap">gap</span></td><td>US Census QuickFacts, ACS</td></tr>
   <tr><td>Commissioner roster &amp; term expirations</td><td><span class="tag gap">gap</span></td><td>County Clerk website</td></tr>
@@ -611,13 +611,13 @@ remain manual.</p>
   <tr><td>Voter turnout history</td><td><span class="tag gap">gap</span></td><td>CO Secretary of State, county elections</td></tr>
   <tr><td>Voting methods &amp; equipment</td><td><span class="tag gap">gap</span></td><td>County Clerk's election office</td></tr>
   <tr><td>State enabling authority detail (CRS citations, TABOR rules)</td><td><span class="tag gap">gap</span></td><td>State statutes; bond counsel</td></tr>
-  <tr><td>Equity / SVI section</td><td><span class="tag new">new</span></td><td>Available via the geo-agent's SVI 2022 layer (not in Lake Co.)</td></tr>
+  <tr><td>Equity / SVI section</td><td><span class="tag new">new</span></td><td>Available via the GLEN's SVI 2022 layer (not in Lake Co.)</td></tr>
   <tr><td>Carbon / biodiversity context</td><td><span class="tag new">new</span></td><td>Available via the agent (not in Lake Co.)</td></tr>
   <tr><td>PAD-US protected-areas inventory</td><td><span class="tag new">new</span></td><td>Available via the agent (not in Lake Co.)</td></tr>
 </tbody>
 </table>
 
-<p>Net: of the 17 components above, the geo-agent fully delivers 5,
+<p>Net: of the 17 components above, the GLEN fully delivers 5,
 adds 3 categories that the Lake County report didn't even attempt,
 and leaves 9 to external sources.  That's roughly the right division
 of labor — the agent handles the conservation-finance and spatial
@@ -635,7 +635,7 @@ verified by county staff and bond counsel anyway).</p>
 
 <p>Bringing the agent-produced sections together, here is the
 executive-summary page a 2027 Larimer feasibility study would open
-with.  Everything in plain face came from a geo-agent prompt; items
+with.  Everything in plain face came from a GLEN prompt; items
 in <span class="tag gap">gap</span> tags still need county finance office
 input before publication.</p>
 
@@ -684,7 +684,7 @@ input before publication.</p>
     <li>Adams County 2020 — $200M sales tax @ 82.6% yes</li>
   </ul>
 
-  <h3>What the geo-agent says about a 2027/28 measure</h3>
+  <h3>What the GLEN says about a 2027/28 measure</h3>
   <ul>
     <li>The political record supports a sales-tax measure in the $100–200M range.</li>
     <li>The existing county $0.25 Help Preserve Open Spaces sales tax runs to 2043, so a new ballot question would be additive — most plausibly framed as a "new initiative" (climate, water, fire-resilience, equity) rather than as a renewal.</li>
@@ -692,7 +692,7 @@ input before publication.</p>
     <li>Climate framing:  Larimer's irrecoverable-carbon load is low compared to coastal or PNW peers; a stronger frame is water (Cache la Poudre watershed, post–Cameron Peak Fire recovery, snowpack reliability) and biodiversity (Laramie Foothills wildlife migration corridor).</li>
   </ul>
 
-  <h3>What the geo-agent <em>cannot</em> tell you and what's needed next</h3>
+  <h3>What the GLEN <em>cannot</em> tell you and what's needed next</h3>
   <ul>
     <li><span class="tag gap">gap</span> Larimer County's current taxable value, debt schedule, and mill levies — pulled from the FY 2024–25 CAFR.</li>
     <li><span class="tag gap">gap</span> Bond cost table at $100M / $150M / $200M issue sizes — requires the assessor's office and bond counsel.</li>
@@ -714,7 +714,7 @@ input before publication.</p>
 <code>conservation-almanac-2024-sites</code> + <code>-funding</code> (67,428 protected
 sites with full funding history), and the Census 2024 county boundary
 parquet (FIPS 08069 = Larimer).  Spatial intersections use H3 hex
-resolution-8 SEMI JOINs as documented in the geo-agent's H3 guide;
+resolution-8 SEMI JOINs as documented in the GLEN's H3 guide;
 each query above can be pasted into the duckdb-mcp tool directly.</p>
 
 <p>The PAD-US section uses <code>pad-us-4.1-combined</code>; the SVI tract data
@@ -724,7 +724,7 @@ in 2018 — any 2019–2026 acquisitions must come from the Larimer Open
 Lands annual report and Fort Collins Natural Areas tracking.</p>
 
 <p>Total time to produce this walkthrough's app-driven sections:
-approximately 90 minutes of prompting on the geo-agent app.  Total time
+approximately 90 minutes of prompting on the GLEN app.  Total time
 the team has saved versus pulling the same content manually from
 LandVote.org's web interface plus state-by-state DEP records:
 approximately 6–8 hours.</p>
@@ -733,8 +733,8 @@ approximately 6–8 hours.</p>
 </main>
 
 <footer class="foot"><div class="page">
-  Case Study 02 of 03 · TPL geo-agent walkthrough series · drafted from
-  the geo-agent at <a href="https://github.com/boettiger-lab/tpl">github.com/boettiger-lab/tpl</a> ·
+  Case Study 02 of 03 · TPL GLEN walkthrough series · drafted from
+  the GLEN at <a href="https://github.com/boettiger-lab/tpl">github.com/boettiger-lab/tpl</a> ·
   May 2026.
   Previous: <a href="florida-sd21.html">Case Study 01 — Florida Senate District 21 briefing</a>.
   Next: <a href="maine-northwoods.html">Case Study 03 — Maine North Woods climate-finance feasibility</a>.

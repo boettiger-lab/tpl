@@ -1,4 +1,4 @@
-# Geo-Agent Capability Roadmap for TPL Reports
+# GLEN Capability Roadmap for TPL Reports
 
 ## What We Can Already Do
 
@@ -219,7 +219,7 @@ These are either technically challenging, require non-geospatial data integratio
 **Possible approaches:**
 - Export query results + map screenshots for assembly in external tools
 - Integration with a report template engine (e.g., Quarto, LaTeX)
-- This is likely out of scope for the geo-agent itself
+- This is likely out of scope for the GLEN itself
 
 ---
 
@@ -257,7 +257,7 @@ These datasets already exist in our STAC catalog with H3 hex Parquet, PMTiles, a
 
 ## Summary
 
-The geo-agent is **already well-positioned** to produce the quantitative core of TPL's Legislative District Briefings -- conservation site listings, program breakdowns, funding totals, and ballot measure history for any state senate, assembly, or congressional district in the US. This should be demonstrated to TPL as a quick win.
+The GLEN is **already well-positioned** to produce the quantitative core of TPL's Legislative District Briefings -- conservation site listings, program breakdowns, funding totals, and ballot measure history for any state senate, assembly, or congressional district in the US. This should be demonstrated to TPL as a quick win.
 
 A large number of additional datasets are **already in our STAC catalog** and just need to be wired into the app config: county/tract/state boundaries, PAD-US (656K protected areas with ownership data), and HydroBasins watershed boundaries. These are config-only changes that dramatically expand what the agent can do.
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Case Study · FL Senate District 21 · Geo-Agent Walkthrough</title>
+<title>Case Study · FL Senate District 21 · GLEN Walkthrough</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.4.0/dist/maplibre-gl.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/walkthrough.css">
@@ -12,12 +12,12 @@
 
 <header class="banner">
   <div class="page">
-    <div class="eyebrow">Geo-Agent Walkthrough · Case Study 01 of 03</div>
+    <div class="eyebrow">GLEN Walkthrough · Case Study 01 of 03</div>
     <h1>Reproducing the Florida Senate District 21 briefing</h1>
-    <p>How the geo-agent app accelerates a single-page legislative briefing —
+    <p>How the GLEN app accelerates a single-page legislative briefing —
        starting from the exact 2024 brief written for Senator Ed Hooper, then
        showing what the app surfaces beyond it.</p>
-    <p class="meta">For the TPL Conservation Finance team · drafted from the geo-agent at
+    <p class="meta">For the TPL Conservation Finance team · drafted from the GLEN at
        <a href="https://github.com/boettiger-lab/tpl">github.com/boettiger-lab/tpl</a> ·
        compared against <code>example-reports/Florida Senate District 21 Hooper 121123.pdf</code></p>
   </div>
@@ -57,7 +57,7 @@ were funded through Florida Forever programs, the district's total acreage
 and dollars spent, and the district's vote on Amendment 1 in 2014.  Every
 number in the brief is hand-compiled from internal TPL databases and the
 Florida Department of Environmental Protection's records.  This case study
-shows how the geo-agent app reproduces that compilation, and where it falls
+shows how the GLEN app reproduces that compilation, and where it falls
 short.</p>
 
 <div class="compare">
@@ -78,7 +78,7 @@ short.</p>
   <div>
     <h4>What this walkthrough delivers</h4>
     <p>For every figure above, we show the prompt the analyst would type into
-       the geo-agent app, the app's response, and how it lands in the
+       the GLEN app, the app's response, and how it lands in the
        brief.  Where the app's number matches we mark it <span class="tag match">match</span>;
        where the app surfaces something the original brief omitted we mark
        it <span class="tag new">new</span>; where the app cannot produce the figure we
@@ -371,7 +371,7 @@ for $140M.  That's a re-usable hook for any 2026 brief.</p>
   Raw vote counts by senate district are <strong>not</strong> in LandVote.
   For the &ldquo;125,089 Yes votes&rdquo;-style line, use the Florida Division of
   Elections' precinct-level results aggregated to the SD-21 boundary.
-  The geo-agent could ingest precinct-results CSVs in a future iteration —
+  The GLEN could ingest precinct-results CSVs in a future iteration —
   flag for the data-pipelines team.
 </div>
 </section>
@@ -512,8 +512,8 @@ congressional, county).</p>
       for a future data layer.</li>
   <li><span class="tag gap">gap</span> <strong>Legislator metadata.</strong>
       Senator name, party, hometown, committee assignments — none of this
-      is in the geo-agent.  A small lookup table mapping SLDU GEOID → current
-      legislator would solve it; flagged in <code>example-reports/02-geo-agent-tasks.md</code>.</li>
+      is in the GLEN.  A small lookup table mapping SLDU GEOID → current
+      legislator would solve it; flagged in <code>example-reports/02-glen-tasks.md</code>.</li>
   <li><span class="tag gap">gap</span> <strong>Brief photo + branding.</strong>
       The app does not generate the 1-pager layout or assemble the photo.
       That stays in the state-team's existing template.</li>
@@ -530,7 +530,7 @@ congressional, county).</p>
 </table>
 
 <h3>Re-running everything</h3>
-<p>Every SQL block above can be pasted into the geo-agent at
+<p>Every SQL block above can be pasted into the GLEN at
 <a href="https://duckdb-mcp.nrp-nautilus.io/mcp">duckdb-mcp.nrp-nautilus.io/mcp</a>
 or run via the in-app chat by typing the natural-language prompts.  The
 underlying data come from the project's public STAC catalog at
@@ -543,7 +543,7 @@ All query results in this case study were generated on
 
 
 <footer class="foot"><div class="page">
-  Case Study 01 of 03 · TPL geo-agent walkthrough series ·
+  Case Study 01 of 03 · TPL GLEN walkthrough series ·
   Source data: TPL LandVote 1988–2025 · TPL Conservation Almanac 2024 ·
   US Census 2025 SLDU · all via the project's STAC catalog.
   Next: <a href="larimer-co.html">Case Study 02 — Larimer County, Colorado feasibility study</a>.

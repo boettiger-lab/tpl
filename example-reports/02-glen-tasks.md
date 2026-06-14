@@ -1,12 +1,12 @@
-# Geo-Agent Tasks Relevant to TPL Reports
+# GLEN Tasks Relevant to TPL Reports
 
-This document maps the data needs identified in TPL's reports to tasks that the geo-agent could perform -- either with current data layers or with additional datasets.
+This document maps the data needs identified in TPL's reports to tasks that the GLEN could perform -- either with current data layers or with additional datasets.
 
 ---
 
-## Current Geo-Agent Capabilities
+## Current GLEN Capabilities
 
-The TPL geo-agent currently has:
+The TPL GLEN currently has:
 - **Conservation Almanac 2024** -- site-level conservation transactions (site name, acreage, funding amount, program, owner, year, state, county) as both PMTiles and H3-indexed Parquet
 - **LandVote ballot measures** -- 3,886 conservation ballot measures (1988-2025) with jurisdiction geometry, year, status (Pass/Fail/Pass*), percent_yes/percent_no, finance_mechanism (property tax, bond, sales tax, income tax, real estate transfer tax, other), total_funds_at_stake, total_funds_approved, conservation_funds_at_stake, conservation_funds_approved, party affiliation, purpose, full ballot description text, and notes. Available as GeoParquet, PMTiles, H3 hex Parquet, and raw CSV.
 - **Carbon layers** -- irrecoverable, vulnerable, and manageable carbon (2024 rasters + H3 hex Parquet)
@@ -19,7 +19,7 @@ The TPL geo-agent currently has:
 
 ## Task Category 1: Legislative District Briefings
 
-These are the most directly addressable report type. The geo-agent can already generate most of the quantitative content.
+These are the most directly addressable report type. The GLEN can already generate most of the quantitative content.
 
 ### Tasks the agent CAN do now:
 
@@ -140,7 +140,7 @@ These are tasks that span all report types and represent the highest-value agent
 
 ---
 
-## Feature Enhancements for the Geo-Agent
+## Feature Enhancements for the GLEN
 
 Beyond new data layers, these agent capabilities would help with report generation:
 

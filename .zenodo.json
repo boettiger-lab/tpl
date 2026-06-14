@@ -17,12 +17,32 @@
   "license": "bsd-2-clause",
   "doi": "10.5281/zenodo.18500623",
   "upload_type": "software",
-  "grants": [
+  "funding": [
     {
-      "id": "10.13039/100000001::2153040"
+      "funder": {
+        "id": "021nxhr62",
+        "name": "U.S. National Science Foundation"
+      },
+      "award": {
+        "id": "021nxhr62::2153040",
+        "number": "2153040",
+        "program": "BIO/OAD",
+        "title": {
+          "en": "Full Proposal: Environmental Data Science Innovation and Inclusion Lab (ESIIL): Accelerating Discovery by Fostering an Open and Diverse Earth Data Revolution"
+        }
+      }
     },
     {
-      "id": "10.13039/100000104::80NSSC25K7241"
+      "funder": {
+        "id": "027ka1x80",
+        "name": "National Aeronautics and Space Administration"
+      },
+      "award": {
+        "number": "80NSSC25K7241",
+        "title": {
+          "en": "Leveraging NASA Data to Guide Biodiversity Conservation Investments with The Trust for Public Land"
+        }
+      }
     }
   ]
 }

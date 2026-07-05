@@ -9,7 +9,7 @@ Each example query from the welcome screen, with expected tool calls and answers
 > *"What conservation sites have been protected in Charlotte County, Florida, and which programs funded them?"*
 
 **Expected tool calls: ~4**
-`get_dataset` (almanac) · `query` · `zoom_to` · `toggle_layer`
+`get_schema` (almanac) · `query` · `zoom_to` · `toggle_layer`
 
 ### Conservation Almanac sites — Charlotte County, FL
 
@@ -41,7 +41,7 @@ Each example query from the welcome screen, with expected tool calls and answers
 > *"Where does irrecoverable carbon overlap with conserved land in Haywood County, North Carolina?"*
 
 **Expected tool calls: ~6**
-`get_dataset` ×2 (almanac, carbon) · `query` · `zoom_to` · `toggle_layer` ×2
+`get_schema` ×2 (almanac, carbon) · `query` · `zoom_to` · `toggle_layer` ×2
 
 ### Conservation Almanac sites — Haywood County, NC (Blue Ridge)
 
@@ -66,7 +66,7 @@ Each example query from the welcome screen, with expected tool calls and answers
 > *"What programs have funded the largest conservation sites in Chester County, Pennsylvania?"*
 
 **Expected tool calls: ~4**
-`get_dataset` (almanac) · `query` · `zoom_to` · `toggle_layer`
+`get_schema` (almanac) · `query` · `zoom_to` · `toggle_layer`
 
 ### Largest conservation sites — Chester County, PA
 
@@ -99,7 +99,7 @@ Each example query from the welcome screen, with expected tool calls and answers
 > *"Which Colorado counties have passed the most conservation funding since 2020?"*
 
 **Expected tool calls: ~4**
-`get_dataset` (landvote) · `query` · `zoom_to` · `set_filter`
+`get_schema` (landvote) · `query` · `zoom_to` · `set_filter`
 
 ### All passed measures, Colorado 2020–2025
 
@@ -127,7 +127,7 @@ Each example query from the welcome screen, with expected tool calls and answers
 > *"Are Monmouth County, NJ's conservation investments reaching vulnerable coastal communities? Show ballot measures alongside social vulnerability scores."*
 
 **Expected tool calls: ~6**
-`get_dataset` ×2 (landvote, svi-2022) · `query` ×2 · `zoom_to` · `toggle_layer`
+`get_schema` ×2 (landvote, svi-2022) · `query` ×2 · `zoom_to` · `toggle_layer`
 
 ### Passed ballot measures since 2017 (all property tax)
 

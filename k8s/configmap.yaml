@@ -16,8 +16,8 @@ data:
         "llm_model": "qwen3",
         "llm_models": [
             {
-                "value": "nemotron",
-                "label": "DSE Nemotron",
+                "value": "qwen",
+                "label": "DSE-nimbus",
                 "endpoint": "/api/llm",
                 "api_key": "set-by-nginx"
             },

@@ -28,10 +28,10 @@ data:
                 "api_key": "set-by-nginx"
             },
             {
-                "value": "glm-5",
-                "label": "NRP GLM-5",
+                "value": "deepseek/deepseek-v4-flash",
+                "label": "DeepSeek V4 Flash (OpenRouter)",
                 "endpoint": "/api/llm",
-                "api_key": "set-by-nginx"
+                "api_key": "unused"
             },
             {
                 "value": "qwen3",

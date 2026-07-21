@@ -20,7 +20,8 @@
             "Compute the land cover composition of areas protected in the Conservation Almanac nationwide, and which states lead in protecting each cover type?",
             "Which Texas congressional districts recieve the mose federal funding for land conservation? Show on map",
             "Which New Jersey municipalities have passed conservation ballot measures, and how does the pattern of successful measures vary across the state?",
-            "Who has funded land conservation in Boulder County, Colorado? show areas on the map."
+            "Who has funded land conservation in Boulder County, Colorado? show areas on the map.",
+            "Show ParkServe parks in Los Angeles County, and which neighborhoods lack a park within a 10-minute walk?"
                    ]
     },
     "links": {
@@ -60,15 +61,28 @@
             ]
         },
         {
-            "collection_id": "wetlands-glwd-v2",
-            "collection_url": "https://s3-west.nrp-nautilus.io/public-wetlands/glwd/stac-collection.json",
+            "collection_id": "wetlands-nwi",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-wetlands/nwi/stac-collection.json",
             "assets": [
                 {
-                    "id": "glwd-main-class-cog",
-                    "display_name": "Wetland Type (GLWD)",
+                    "id": "nwi-pmtiles",
+                    "display_name": "Wetlands (NWI)",
                     "group": "Wetlands",
                     "visible": false,
-                    "legend_type": "categorical"
+                    "default_style": {
+                        "fill-color": ["match", ["get", "WETLAND_TYPE"],
+                            "Riverine",                          "#1565C0",
+                            "Freshwater Emergent Wetland",       "#4DB6AC",
+                            "Freshwater Forested/Shrub Wetland", "#2E7D32",
+                            "Freshwater Pond",                   "#00ACC1",
+                            "Estuarine and Marine Wetland",      "#6A1B9A",
+                            "Lake",                              "#0D47A1",
+                            "Estuarine and Marine Deepwater",    "#283593",
+                            "#9E9E9E"
+                        ],
+                        "fill-opacity": 0.6
+                    },
+                    "tooltip_fields": ["WETLAND_TYPE", "ATTRIBUTE", "state_code"]
                 }
             ]
         },
@@ -254,6 +268,58 @@
             "assets": []
         },
         {
+            "collection_id": "parkserve-2025-parks",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-tpl/parkserve-2025/parks/stac-collection.json",
+            "assets": [
+                {
+                    "id": "parks-pmtiles",
+                    "display_name": "Parks (TPL ParkServe)",
+                    "group": "Parks",
+                    "visible": true,
+                    "default_style": {
+                        "fill-color": ["match", ["get", "park_owner_type"],
+                            "MUNI",                            "#2E7D32",
+                            "CNTY",                            "#1565C0",
+                            "STATE",                           "#6A1B9A",
+                            "FED",                             "#00695C",
+                            ["SPECIAL_DIST", "SPECIAL_DISTRICT", "DIST"], "#EF6C00",
+                            "NONPROFIT",                       "#AD1457",
+                            ["PRIV", "HOA"],                   "#F9A825",
+                            "TRIB",                            "#D84315",
+                            "#9E9E9E"
+                        ],
+                        "fill-opacity": 0.6
+                    },
+                    "outline_style": {
+                        "line-color": "#1B5E20",
+                        "line-width": 0.3
+                    },
+                    "tooltip_fields": ["park_name", "park_designation", "park_owner_type", "park_manager_type", "park_size_acres", "park_access", "canopy_pct", "park_state", "park_county"]
+                }
+            ]
+        },
+        {
+            "collection_id": "parkserve-2025-service-areas",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-tpl/parkserve-2025/service-areas/stac-collection.json",
+            "assets": [
+                {
+                    "id": "service-areas-pmtiles",
+                    "display_name": "10-Minute Walk to a Park (ParkServe)",
+                    "group": "Parks",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": "#43A047",
+                        "fill-opacity": 0.25
+                    },
+                    "outline_style": {
+                        "line-color": "#2E7D32",
+                        "line-width": 0.4
+                    },
+                    "tooltip_fields": ["park_name", "park_size_acres"]
+                }
+            ]
+        },
+        {
             "collection_id": "pad-us-4.1-combined",
             "collection_url": "https://s3-west.nrp-nautilus.io/public-padus/padus-4-1/combined/stac-collection.json",
             "assets": [
@@ -327,12 +393,12 @@
             ]
         },
         {
-            "collection_id": "cgls-lc100-2019",
-            "collection_url": "https://s3-west.nrp-nautilus.io/public-land-cover/cgls-lc100-2019/stac-collection.json",
+            "collection_id": "nlcd-2024",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-land-cover/nlcd-2024/stac-collection.json",
             "assets": [
                 {
-                    "id": "cgls-lc100-2019-cog",
-                    "display_name": "Global Land Cover (CGLS-LC100, 2019)",
+                    "id": "nlcd-2024-cog",
+                    "display_name": "Land Cover (NLCD 2024)",
                     "group": "Land Cover",
                     "visible": false,
                     "legend_type": "categorical"
@@ -373,6 +439,29 @@
                         "line-width": 1.0
                     },
                     "tooltip_fields": ["NAMELSAD", "GEOID", "STATEFP", "COUNTYFP"]
+                }
+            ]
+        },
+        {
+            "collection_id": "acs-2020-2024-blockgroup",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-census/acs-2020-2024/blockgroup/stac-collection.json",
+            "assets": [
+                {
+                    "id": "blockgroup-pmtiles",
+                    "display_name": "Median Household Income (ACS 2020–2024)",
+                    "group": "Demographics",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": ["interpolate", ["linear"], ["get", "MHHI"],
+                            25000,  "#D7191C",
+                            50000,  "#FDAE61",
+                            75000,  "#FFFFBF",
+                            100000, "#A6D96A",
+                            150000, "#1A9641"
+                        ],
+                        "fill-opacity": 0.7
+                    },
+                    "tooltip_fields": ["NAMELSAD", "GEOID", "TotPop", "MHHI", "PCI", "PovInd", "Under18", "Senior65", "NoCar"]
                 }
             ]
         },
@@ -434,6 +523,181 @@
                         "line-width": 0.3
                     },
                     "tooltip_fields": ["Listed_Fire_Names", "Fire_Year", "Assigned_Fire_Type", "GIS_Acres", "Listed_Fire_Causes", "Source_Datasets"]
+                }
+            ]
+        },
+        {
+            "collection_id": "mobi-species-richness-all",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-mobi/mobi-species-richness-all/stac-collection.json",
+            "assets": [
+                {
+                    "id": "species-richness-all-cog",
+                    "display_name": "Imperiled Species Richness (MOBI)",
+                    "group": "Biodiversity",
+                    "visible": false,
+                    "colormap": "viridis",
+                    "rescale": "0,32",
+                    "legend_label": "modeled imperiled/endemic species"
+                }
+            ]
+        },
+        {
+            "collection_id": "usgs-ungulate-migration-ranges",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-usgs-ungulate-migration/ungulate-ranges/stac-collection.json",
+            "assets": [
+                {
+                    "id": "ungulate-ranges-pmtiles",
+                    "display_name": "Ungulate Migration Ranges (USGS, Western US)",
+                    "group": "Biodiversity",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": ["match", ["get", "data_type"],
+                            "Corridors",   "#E65100",
+                            "Stopovers",   "#C62828",
+                            "WinterRange", "#1565C0",
+                            "AnnualRange", "#2E7D32",
+                            "#9E9E9E"
+                        ],
+                        "fill-opacity": 0.45
+                    },
+                    "outline_style": {
+                        "line-color": "#3E2723",
+                        "line-width": 0.3
+                    },
+                    "tooltip_fields": ["species", "herd", "data_type", "contour", "state", "volume"]
+                }
+            ]
+        },
+        {
+            "collection_id": "american-rivers-wild-scenic-designated",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-rivers/american-rivers/wild-scenic-designated/stac-collection.json",
+            "assets": [
+                {
+                    "id": "wild-scenic-designated-pmtiles",
+                    "display_name": "Wild & Scenic Rivers (Designated)",
+                    "group": "Rivers",
+                    "visible": false,
+                    "layer_type": "line",
+                    "default_style": {
+                        "line-color": ["match", ["get", "CLASSIFICA"],
+                            "Wild",         "#1B5E20",
+                            "Scenic",       "#1565C0",
+                            "Recreational", "#EF6C00",
+                            "#00838F"
+                        ],
+                        "line-width": 1.8,
+                        "line-opacity": 0.9
+                    },
+                    "tooltip_fields": ["WSR_RIVER_", "CLASSIFICA", "AGENCY", "STATE", "SEGMENT_MI", "TOTAL_MILE"]
+                }
+            ]
+        },
+        {
+            "collection_id": "usgs-wbd-hu8",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-usgs-wbd/wbd/hu8/stac-collection.json",
+            "assets": [
+                {
+                    "id": "hu8-pmtiles",
+                    "display_name": "Watershed Subbasins (HUC8)",
+                    "group": "Rivers",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": "#0097A7",
+                        "fill-opacity": 0.05
+                    },
+                    "outline_style": {
+                        "line-color": "#00838F",
+                        "line-width": 0.8
+                    },
+                    "tooltip_fields": ["name", "huc8", "states", "areaacres"]
+                }
+            ]
+        },
+        {
+            "collection_id": "flood-hazard",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-hazard/flood-hazard/stac-collection.json",
+            "assets": [
+                {
+                    "id": "flood-hazard-pmtiles",
+                    "display_name": "Flood Hazard Zones (FEMA NFHL)",
+                    "group": "Hazards",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": ["match", ["get", "FLD_ZONE"],
+                            ["A", "AE", "AH", "AO", "A99"], "#1565C0",
+                            ["V", "VE"],                    "#6A1B9A",
+                            "X",                            "#B0BEC5",
+                            "D",                            "#FFD54F",
+                            "#CFD8DC"
+                        ],
+                        "fill-opacity": 0.45
+                    },
+                    "tooltip_fields": ["FLD_ZONE", "ZONE_SUBTY", "SFHA_TF", "STATIC_BFE"]
+                }
+            ]
+        },
+        {
+            "collection_id": "sea-level-rise",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-hazard/sea-level-rise/stac-collection.json",
+            "assets": [
+                {
+                    "id": "sea-level-rise-pmtiles",
+                    "display_name": "Sea Level Rise — 5 ft Inundation (NOAA)",
+                    "group": "Hazards",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": "#0277BD",
+                        "fill-opacity": 0.5
+                    },
+                    "tooltip_fields": ["state", "region", "slr_ft"]
+                }
+            ]
+        },
+        {
+            "collection_id": "silvis-wui-2020",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-wui/stac-collection.json",
+            "assets": [
+                {
+                    "id": "wui-2020-pmtiles",
+                    "display_name": "Wildland-Urban Interface (SILVIS 2020)",
+                    "group": "Wildfires",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": ["match", ["get", "WUICLASS2020"],
+                            ["High_Dens_Interface", "Med_Dens_Interface", "Low_Dens_Interface"], "#E65100",
+                            ["High_Dens_Intermix", "Med_Dens_Intermix", "Low_Dens_Intermix"],    "#AD1457",
+                            "rgba(0,0,0,0)"
+                        ],
+                        "fill-opacity": 0.6
+                    },
+                    "tooltip_fields": ["WUICLASS2020", "STATE", "POP2020", "HU2020"]
+                }
+            ]
+        },
+        {
+            "collection_id": "mappinginequality",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-mappinginequality/stac-collection.json",
+            "assets": [
+                {
+                    "id": "mappinginequality-pmtiles",
+                    "display_name": "Redlining — HOLC Grades (1930s–40s)",
+                    "group": "Social Vulnerability",
+                    "visible": false,
+                    "default_style": {
+                        "fill-color": ["match", ["get", "grade"],
+                            "A", "#4CAF50",
+                            "B", "#2196F3",
+                            "C", "#FFC107",
+                            "D", "#E53935",
+                            "#9E9E9E"
+                        ],
+                        "fill-opacity": 0.6
+                    },
+                    "outline_style": {
+                        "line-color": "#424242",
+                        "line-width": 0.3
+                    },
+                    "tooltip_fields": ["city", "state", "grade", "category", "label"]
                 }
             ]
         }

@@ -393,11 +393,11 @@
             ]
         },
         {
-            "collection_id": "nlcd-2024",
-            "collection_url": "https://s3-west.nrp-nautilus.io/public-land-cover/nlcd-2024/stac-collection.json",
+            "collection_id": "nlcd",
+            "collection_url": "https://s3-west.nrp-nautilus.io/public-land-cover/nlcd/stac-collection.json",
             "assets": [
                 {
-                    "id": "nlcd-2024-cog",
+                    "id": "nlcd-cog-2024",
                     "display_name": "Land Cover (NLCD 2024)",
                     "group": "Land Cover",
                     "visible": false,

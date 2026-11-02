@@ -2,14 +2,14 @@
 
 ## Repo relationship
 
-This is a **template repo** for creating geo-agent map applications. The core library lives at [boettiger-lab/geo-agent](https://github.com/boettiger-lab/geo-agent) and is loaded from CDN — you never modify it here.
+This is a **template repo** for creating geo-agent map applications. The core library lives at [SchmidtDSE/glen](https://github.com/SchmidtDSE/glen) and is loaded from CDN — you never modify it here.
 
 | Repo | Purpose |
 |---|---|
 | `geo-agent` | Core library (map, chat, agent, tools). Source of truth for all functionality. |
 | `tpl` | Application repo. Configure `layers-input.json`, `system-prompt.md`, and `k8s/` for this dataset. |
 
-**Full docs:** [boettiger-lab.github.io/geo-agent/docs](https://boettiger-lab.github.io/geo-agent/docs/)
+**Full docs:** [schmidtdse.github.io/glen/](https://schmidtdse.github.io/glen/)
 — includes the complete configuration reference, deployment guide, and agent loop internals.
 
 The schema below is kept inline so you can work without a network fetch. If it conflicts with the docs, the docs are authoritative.
@@ -45,7 +45,7 @@ Instead, add a "Discovering data" section directing the agent to verify against 
 
 ## Deployment
 
-Full guide: [boettiger-lab.github.io/geo-agent/docs/guide/deployment](https://boettiger-lab.github.io/geo-agent/docs/guide/deployment)
+Full guide: [schmidtdse.github.io/glen/guide/deployment](https://schmidtdse.github.io/glen/guide/deployment)
 
 **Read the sections below before fetching that URL** — they cover the two common k8s patterns. Fetch the docs only if you need details beyond what's here (e.g., GitHub Pages, Hugging Face Spaces, private data modules).
 
@@ -81,7 +81,7 @@ git add <source-files> k8s/content-configmap.yaml && git commit -m "<message>" &
 
 The git push does **not** update running pods — step 3 does. Skipping `generate-configmap.sh` and re-applying serves the old ConfigMap.
 
-For private data modules (rclone sidecar, oauth2-proxy, private parquet credentials): [docs/guide/private-deployment](https://boettiger-lab.github.io/geo-agent/docs/guide/private-deployment)
+For private data modules (rclone sidecar, oauth2-proxy, private parquet credentials): [docs/guide/private-deployment](https://schmidtdse.github.io/glen/guide/private-deployment)
 
 ### CDN versioning
 
@@ -89,16 +89,16 @@ For private data modules (rclone sidecar, oauth2-proxy, private parquet credenti
 
 ```html
 <!-- Pinned — immutable, recommended for production -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/boettiger-lab/geo-agent@v3.0.2/app/main.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v3.0.2/app/main.js"></script>
 
 <!-- Latest main — staging/development only -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/boettiger-lab/geo-agent@main/app/main.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@main/app/main.js"></script>
 ```
 
 To upgrade: change the tag in `index.html` and redeploy. **Verify jsDelivr serves the new tag before deploying** — new tags can take up to an hour to be indexed:
 
 ```bash
-curl -sI https://cdn.jsdelivr.net/gh/boettiger-lab/geo-agent@vX.Y.Z/app/style.css | grep HTTP
+curl -sI https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@vX.Y.Z/app/style.css | grep HTTP
 # Must return HTTP/2 200 — a 404 means jsDelivr hasn't indexed the tag yet
 ```
 

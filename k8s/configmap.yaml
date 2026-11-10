@@ -8,7 +8,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: tpl-config
-  namespace: biodiversity
+  namespace: schmidtdse
 data:
   config.template.json: |
     {
@@ -80,7 +80,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: tpl-nginx
-  namespace: biodiversity
+  namespace: schmidtdse
 data:
   nginx.conf.template: |
     # ── Per-client limits on the LLM and MCP paths (glen-ops#246) ──
@@ -128,9 +128,8 @@ data:
         # so both failure modes disappear. The Origin header still forwards by
         # default, so proxy logging/routing is unchanged.
         #
-        # Cross-namespace apps (e.g. schmidtdse) use this same FQDN; the
-        # ClusterIP is reachable cluster-wide. The service lives only in the
-        # biodiversity namespace: ClusterIP open-llm-proxy:8002 (http).
+        # Since 2026-11-10 this app runs in schmidtdse and uses schmidtdse's own
+        # proxy (open-llm-proxy#176): NRP drops pod traffic between namespaces.
         # Only two calls are relayed (glen-ops#246): POST chat/completions
         # (chat and transcription) and GET models. Any other path or method
         # under /api/llm/ is answered here and never reaches the proxy.
@@ -139,8 +138,9 @@ data:
             proxy_set_header X-Real-IP $client_addr;
             limit_req zone=llm burst=30 nodelay;
             limit_conn addr 20;
-            proxy_pass http://open-llm-proxy.biodiversity.svc.cluster.local:8002/v1/chat/completions;
+            proxy_pass http://open-llm-proxy.schmidtdse.svc.cluster.local:8002/v1/chat/completions;
             proxy_set_header Authorization "Bearer ${PROXY_KEY}";
+            proxy_set_header X-Glen-App "tpl";
 
             # Allow long agent loops (multi-turn tool use). 600s keeps the
             # timeout uniform across the whole chain: the geo-agent client
@@ -160,8 +160,9 @@ data:
             proxy_set_header X-Real-IP $client_addr;
             limit_req zone=llm burst=30 nodelay;
             limit_conn addr 20;
-            proxy_pass http://open-llm-proxy.biodiversity.svc.cluster.local:8002/v1/models;
+            proxy_pass http://open-llm-proxy.schmidtdse.svc.cluster.local:8002/v1/models;
             proxy_set_header Authorization "Bearer ${PROXY_KEY}";
+            proxy_set_header X-Glen-App "tpl";
             proxy_read_timeout 600s;
             proxy_send_timeout 600s;
             proxy_buffering off;
@@ -176,22 +177,37 @@ data:
         # it here from ${MCP_AUTH_TOKEN} so the browser never holds it, and
         # proxies the in-cluster Service rather than the public hostname
         # (same reasoning as /api/llm/ above, glen-ops#73).
-        # TEMPORARY (glen-ops, 2026-11-09): NRP's incident-mcp-deny-ingress
-        # NetworkPolicy blocks every in-cluster DuckDB MCP server, so this goes to
-        # Carl's mirror off NRP, which serves the same public data. Switch back to
-        # the in-cluster Service and the duckdb-mcp-auth Secret once NRP lifts it.
+        # Since 2026-11-09 schmidtdse has its own copy of the server, because pods here
+        # cannot reach Services in biodiversity. The token is this app's own key in
+        # Secret duckdb-mcp-tokens.
         location /api/mcp {
             proxy_set_header X-Real-IP $client_addr;
             limit_req zone=mcp burst=120 nodelay;
-            proxy_pass https://duckdb-mcp.carlboettiger.info/mcp;
-            proxy_ssl_server_name on;
+            proxy_pass http://duckdb-mcp.schmidtdse.svc.cluster.local:8000/mcp;
+            # register_hex_tiles returns tile URLs on the server's in-cluster address,
+            # which browsers cannot reach. Rewrite them to this app's /tiles/ (below).
+            proxy_set_header Accept-Encoding "";
+            sub_filter 'http://duckdb-mcp.schmidtdse.svc.cluster.local:8000/tiles/' 'https://$host/tiles/';
+            sub_filter_once off;
+            sub_filter_types text/event-stream application/json;
             proxy_http_version 1.1;
-            proxy_set_header Host duckdb-mcp.carlboettiger.info;
+            proxy_set_header Host duckdb-mcp.schmidtdse.svc.cluster.local;
             proxy_set_header Connection "";
             proxy_set_header Authorization "Bearer ${MCP_AUTH_TOKEN}";
             proxy_read_timeout 600s;
             proxy_send_timeout 600s;
             proxy_buffering off;
+        }
+
+        # Hex tiles from register_hex_tiles, served through the app with its token.
+        location /tiles/ {
+            limit_except GET { deny all; }
+            proxy_pass http://duckdb-mcp.schmidtdse.svc.cluster.local:8000/tiles/;
+            proxy_http_version 1.1;
+            proxy_set_header Host duckdb-mcp.schmidtdse.svc.cluster.local;
+            proxy_set_header Connection "";
+            proxy_set_header X-Real-IP $client_addr;
+            proxy_set_header Authorization "Bearer ${MCP_AUTH_TOKEN}";
         }
 
         location / {

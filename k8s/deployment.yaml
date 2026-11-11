@@ -52,7 +52,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: duckdb-mcp-tokens
-              key: tpl
+              key: public
         - name: PROXY_KEY
           valueFrom:
             secretKeyRef:
